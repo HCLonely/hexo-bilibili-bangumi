@@ -24,6 +24,7 @@ bangumi:
   vmid: 
   title: '追番列表'
   quote: '生命不息，追番不止！'
+  show: 1
   loading: '/img/bangumi-loading.gif'
 ```
 
@@ -31,6 +32,7 @@ bangumi:
 - **vmid**: 哔哩哔哩番剧页面的 `vmid(uid)`,[如何获取？](#获取uid)
 - **title**: 该页面的标题
 - **quote**: 写在页面开头的一段话,支持html语法
+- **show**: 初始显示页面：`0: 想看`, `1: 在看`, `2: 看过`，默认为`1`
 - **loading**: 图片加载完成前的loading图片
 
 ## 使用
