@@ -4,7 +4,7 @@
 
 ## 介绍
 
-&#160;&#160;&#160;&#160;**为Hexo添加哔哩哔哩番剧页面，参考了[hexo-douban](https://github.com/mythsman/hexo-douban)的部分代码**
+**为Hexo添加哔哩哔哩番剧页面，参考了[hexo-douban](https://github.com/mythsman/hexo-douban)的部分代码**
 
 ## 安装
 
@@ -28,12 +28,12 @@ bangumi:
 ```
 
 - **enable**: 是否启用
-- **vmid**: 哔哩哔哩番剧页面的 `vmid(uid)` (),[如何获取？](#获取uid)
+- **vmid**: 哔哩哔哩番剧页面的 `vmid(uid)`,[如何获取？](#获取uid)
 - **title**: 该页面的标题
 - **quote**: 写在页面开头的一段话,支持html语法
 - **loading**: 图片加载完成前的loading图片
 
-##使用
+## 使用
 
 1. 前往你的 Hexo 博客的根目录
 2. 输入`hexo new page bangumis` (`bangumis可任意替换`)
@@ -47,6 +47,6 @@ type: "bangumis"
 ---
 ```
 
-##获取uid
+## 获取uid
 
 登录哔哩哔哩后前往[https://space.bilibili.com/](https://space.bilibili.com/)页面，网址最后的一串数字就是 `uid`
