@@ -50,3 +50,10 @@ type: "bangumis"
 ## 获取uid
 
 登录哔哩哔哩后前往[https://space.bilibili.com/](https://space.bilibili.com/)页面，网址最后的一串数字就是 `uid`
+
+## 示例
+
+![示例图片](https://github.com/HCLonely/hexo-bilibili-bangumi/raw/master/example.png)
+## Lisense
+
+[MIT](https://github.com/HCLonely/hexo-bilibili-bangumi/blob/master/LICENSE)

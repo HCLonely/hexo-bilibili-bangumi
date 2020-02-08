@@ -1,6 +1,6 @@
 {
   "name": "hexo-bilibili-bangumi",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "hexo bilibili番剧页",
   "main": "index.js",
   "scripts": {
@@ -23,5 +23,9 @@
     "hexo-log": "^0.2.0",
     "path": "^0.12.7",
     "axios": "^0.19.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HCLonely/hexo-bilibili-bangumi.git"
   }
 }
