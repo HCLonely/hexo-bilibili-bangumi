@@ -1,0 +1,27 @@
+{
+  "name": "hexo-bilibili-bangumi",
+  "version": "1.0.0",
+  "description": "hexo bilibili番剧页",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "HCLonely",
+  "license": "MIT",
+  "keywords": [
+    "generator",
+    "plugin",
+    "bilibili",
+    "bangumi",
+    "hexo",
+    "anime"
+  ],
+  "dependencies": {
+    "ejs": "2.5.6",
+    "hexo-fs": "^0.2.2",
+    "hexo-i18n": "^0.2.1",
+    "hexo-log": "^0.2.0",
+    "path": "^0.12.7",
+    "axios": "^0.19.2"
+  }
+}
