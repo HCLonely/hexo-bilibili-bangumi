@@ -94,7 +94,7 @@ a.bangumi-tab {
 
 .bangumi-info-item {
     display: inline-block;
-    width: 76px;
+    width: 13%;
     border-right: 1px solid #2fd8d8;
     text-align: center;
     height: 34px;
@@ -128,4 +128,50 @@ a.bangumi-tab {
     color: #0000;
     line-height: 6px !important;
     padding: 0 !important;
+}
+
+@media (max-width:650px) {
+    .bangumi-coin{
+        display:none;
+    }
+    .bangumi-info-item{
+        width: 16%;
+    }
+}
+@media (max-width:590px) {
+    .bangumi-danmaku {
+        display: none;
+    }
+    .bangumi-info-item {
+        width: 19%;
+    }
+}
+
+@media (max-width:520px) {
+    .bangumi-play {
+        display: none;
+    }
+
+    .bangumi-info-item {
+        width: 24%;
+    }
+}
+
+@media (max-width:480px) {
+    .bangumi-follow {
+        display: none;
+    }
+
+    .bangumi-info-item {
+        width: 30%;
+    }
+}
+@media (max-width:400px) {
+    .bangumi-area {
+        display: none;
+    }
+
+    .bangumi-info-item {
+        width: 45%;
+    }
 }
