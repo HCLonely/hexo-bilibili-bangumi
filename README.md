@@ -38,7 +38,7 @@ bangumi:
 ## 使用
 
 1. 前往你的 Hexo 博客的根目录
-2. 输入`hexo new page bangumis` (`bangumis可任意替换`)
+2. 输入`hexo new page bangumis`
 3. 你会找到`source/bangumis/index.md`这个文件
 4. 修改这个文件，添加`type: "bangumis"`：
 ```markdown
