@@ -50,7 +50,7 @@ bangumi:
     ---
     ```
 
-5. 防止请求次数过多插件不再获取番剧数据，所以请根据自己的需要在`hexo generate`或`hexo deploy`之前使用`hexo bangumi update`命令更新番剧数据！
+5. 防止请求次数过多插件不再自动获取番剧数据，所以请根据自己的需要在`hexo generate`或`hexo deploy`之前使用`hexo bangumi update`命令更新番剧数据！
 
 ## 获取uid
 
