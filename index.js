@@ -8,23 +8,35 @@ const log = require('hexo-log')({
   silent: false
 });
 
-
+let options = {
+  options: [
+    { name: '-u, --update', desc: 'Update bangumi data' },
+    { name: '-d, --delete', desc: 'Delete bangumi data' }
+  ]
+};
 hexo.extend.generator.register('bangumis', function (locals) {
   if (!this.config.bangumi || !this.config.bangumi.enable) {
     return;
   }
   return require('./lib/bangumi-generator').call(this, locals);
 });
-hexo.extend.console.register('bangumi update', 'Update bilibili bangumis data', function (args) {
-  if (!this.config.bangumi || !this.config.bangumi.enable) {
-    log.info("Please add config to _config.yml");
-    return;
+hexo.extend.console.register('bangumi', 'Update bilibili bangumis data', options, function (args) {
+  if (args.d) {
+    if (fs.existsSync(path.join(__dirname, "/data/"))) {
+      fs.rmdirSync(path.join(__dirname, "/data/"));
+      log.info('Bangumis data has been deleted');
+    }
+  } else {
+    if (!this.config.bangumi || !this.config.bangumi.enable) {
+      log.info("Please add config to _config.yml");
+      return;
+    }
+    if (!this.config.bangumi.vmid) {
+      log.info("Please add vmid to _config.yml");
+      return;
+    }
+    saveBangumiData(this.config.bangumi.vmid);
   }
-  if (!this.config.bangumi.vmid) {
-    log.info("Please add vmid to _config.yml");
-    return;
-  }
-  saveBangumiData(this.config.bangumi.vmid);
 });
 
 async function getBangumiPage(vmid, status) {
@@ -86,9 +98,9 @@ async function saveBangumiData(vmid) {
   fs.writeFile(path.join(__dirname, "/data/bangumis.json"), JSON.stringify(bangumis), err => {
     if (err) {
       log.info("Failed to write data to bangumis.json");
-      console.log(err);
+      console.error(err);
     } else {
-      log.info("Bilibili bangumis data saved");
+      log.info("Bilibili bangumis data has been saved");
     }
   });
 }

@@ -12,6 +12,12 @@
 $ npm install hexo-bilibili-bangumi --save
 ```
 
+## 更新
+
+```bash
+$ npm install hexo-bilibili-bangumi --update --save
+```
+
 ------------
 
 ## 配置
@@ -50,7 +56,8 @@ bangumi:
     ---
     ```
 
-5. 防止请求次数过多插件不再自动获取番剧数据，所以请根据自己的需要在`hexo generate`或`hexo deploy`之前使用`hexo bangumi update`命令更新番剧数据！
+5. 防止请求次数过多插件不再自动获取番剧数据，所以请根据自己的需要在`hexo generate`或`hexo deploy`之前使用`hexo bangumi -u`命令更新番剧数据！
+6. 删除数据命令:`hexo bangumi -d`
 
 ## 获取uid
 
