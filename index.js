@@ -41,9 +41,9 @@ hexo.extend.console.register('bangumi', 'Update bilibili bangumis data', options
 
 async function getBangumiPage(vmid, status) {
   let response = await axios.get(`https://api.bilibili.com/x/space/bangumi/follow/list?type=1&follow_status=${status}&vmid=${vmid}&ps=1&pn=1`);
-  if (response && response.data && response.data.code === 0 && response.data.message === "0" && response.data.data && response.data.data.total){
+  if (response && response.data && response.data.code === 0 && response.data.message === "0" && response.data.data && typeof response.data.data.total !== "undefined"){
     return {success:true,data:Math.ceil(response.data.data.total / 50) + 1};
-  } else if (response && response.data && response.data.message){
+  } else if (response && response.data && response.data.message!=="0"){
     return { success: false, data: response.data.message};
   } else if (response && response.data){
     return { success: false, data: response.data };
