@@ -40,8 +40,16 @@ hexo.extend.console.register('bangumi', 'Update bilibili bangumis data', options
 });
 
 async function getBangumiPage(vmid, status) {
-  let response = await axios.get(`https://api.bilibili.com/x/space/bangumi/follow/list?type=1&follow_status=${status}&vmid=${vmid}&ps=1&pn=1`)
-  return Math.ceil(response.data.data.total / 50) + 1;
+  let response = await axios.get(`https://api.bilibili.com/x/space/bangumi/follow/list?type=1&follow_status=${status}&vmid=${vmid}&ps=1&pn=1`);
+  if (response && response.data && response.data.code === 0 && response.data.message === "0" && response.data.data && response.data.data.total){
+    return {success:true,data:Math.ceil(response.data.data.total / 50) + 1};
+  } else if (response && response.data && response.data.message){
+    return { success: false, data: response.data.message};
+  } else if (response && response.data){
+    return { success: false, data: response.data };
+  }else{
+    return { success: false, data: response };
+  }
 }
 async function getBangumi(vmid, status, pn) {
   let response = await axios.get(`https://api.bilibili.com/x/space/bangumi/follow/list?type=1&follow_status=${status}&vmid=${vmid}&ps=50&pn=${pn}`)
@@ -76,12 +84,17 @@ function total(e) {
 }
 async function biliBangumi(vmid, status) {
   let page = await getBangumiPage(vmid, status);
-  let list = [];
-  for (let i = 1; i < page; i++) {
-    let data = await getBangumi(vmid, status, i);
-    list.push(...data);
+  if(page.success){
+    let list = [];
+    for (let i = 1; i < page.data; i++) {
+      let data = await getBangumi(vmid, status, i);
+      list.push(...data);
+    }
+    return list;
+  }else{
+    console.log("Get bangumi data error:",page.data);
+    return [];
   }
-  return list;
 }
 async function saveBangumiData(vmid) {
   log.info("Getting bilibili bangumis, please wait...");
