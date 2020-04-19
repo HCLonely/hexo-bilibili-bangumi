@@ -26,7 +26,7 @@ hexo.extend.console.register('bangumi', 'Update bilibili bangumis data', options
       fs.rmdirSync(path.join(__dirname, "/data/"));
       log.info('Bangumis data has been deleted');
     }
-  } else {
+  } else if (args.u) {
     if (!this.config.bangumi || !this.config.bangumi.enable) {
       log.info("Please add config to _config.yml");
       return;
@@ -36,6 +36,8 @@ hexo.extend.console.register('bangumi', 'Update bilibili bangumis data', options
       return;
     }
     saveBangumiData(this.config.bangumi.vmid);
+  } else {
+    log.info("Unknown command.")
   }
 });
 
