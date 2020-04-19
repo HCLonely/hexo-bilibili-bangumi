@@ -12,12 +12,6 @@
 $ npm install hexo-bilibili-bangumi --save
 ```
 
-## 更新
-
-```bash
-$ npm install hexo-bilibili-bangumi --update --save
-```
-
 ------------
 
 ## 配置
