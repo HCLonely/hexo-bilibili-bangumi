@@ -37,7 +37,7 @@ hexo.extend.console.register('bangumi', 'Update bilibili bangumis data', options
     }
     saveBangumiData(this.config.bangumi.vmid);
   } else {
-    log.info("Unknown command.")
+    log.info("Unknown command, please use \"hexo bangumi -h\" to see the available commands")
   }
 });
 
