@@ -60,11 +60,18 @@ async function getBangumi(vmid, status, pn) {
     let data = response.data.data;
     let list = data.list;
     for (let bangumi of list) {
+      let cover = bangumi.cover
+      if (cover){
+        let href = new URL(cover)
+        href.protocol = 'https'
+        href.pathname += '@220w_280h.webp'
+        cover = href.href
+      }
       $data.push({
         title: bangumi.title,
         type: bangumi.season_type_name,
         area: bangumi.areas[0].name,
-        cover: bangumi.cover + "@220w_280h.webp",
+        cover: cover,
         totalCount: total(bangumi.total_count),
         id: bangumi.media_id,
         follow: count(bangumi.stat.follow),
