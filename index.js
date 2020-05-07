@@ -1,128 +1,347 @@
 /* global hexo */
 'use strict';
-const fs = require('hexo-fs');
-const path = require('path');
-const axios = require("axios");
-const log = require('hexo-log')({
+
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _createForOfIteratorHelper(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = _unsupportedIterableToArray(o))) { var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+var fs = require('hexo-fs');
+
+var path = require('path');
+
+var axios = require("axios");
+
+var log = require('hexo-log')({
   debug: false,
   silent: false
 });
 
-let options = {
-  options: [
-    { name: '-u, --update', desc: 'Update bangumi data' },
-    { name: '-d, --delete', desc: 'Delete bangumi data' }
-  ]
+var options = {
+  options: [{
+    name: '-u, --update',
+    desc: 'Update bangumi data'
+  }, {
+    name: '-d, --delete',
+    desc: 'Delete bangumi data'
+  }]
 };
 hexo.extend.generator.register('bangumis', function (locals) {
-  if (!this.config.bangumi || !this.config.bangumi.enable) {
+  var _this$config, _this$config$bangumi;
+
+  if (!(this === null || this === void 0 ? void 0 : (_this$config = this.config) === null || _this$config === void 0 ? void 0 : (_this$config$bangumi = _this$config.bangumi) === null || _this$config$bangumi === void 0 ? void 0 : _this$config$bangumi.enable)) {
     return;
   }
+
   return require('./lib/bangumi-generator').call(this, locals);
 });
-hexo.extend.console.register('bangumi', 'Update bilibili bangumis data', options, function (args) {
+hexo.extend.console.register('bangumi', 'Generate pages of bilibili bangumis for Hexo', options, function (args) {
   if (args.d) {
     if (fs.existsSync(path.join(__dirname, "/data/"))) {
       fs.rmdirSync(path.join(__dirname, "/data/"));
       log.info('Bangumis data has been deleted');
     }
   } else if (args.u) {
-    if (!this.config.bangumi || !this.config.bangumi.enable) {
+    var _this$config2;
+
+    if (!(this === null || this === void 0 ? void 0 : (_this$config2 = this.config) === null || _this$config2 === void 0 ? void 0 : _this$config2.bangumi)) {
       log.info("Please add config to _config.yml");
       return;
     }
+
+    if (!this.config.bangumi.enable) {
+      return;
+    }
+
     if (!this.config.bangumi.vmid) {
       log.info("Please add vmid to _config.yml");
       return;
     }
+
     saveBangumiData(this.config.bangumi.vmid);
   } else {
-    log.info("Unknown command, please use \"hexo bangumi -h\" to see the available commands")
+    log.info("Unknown command, please use \"hexo bangumi -h\" to see the available commands");
   }
 });
 
-async function getBangumiPage(vmid, status) {
-  let response = await axios.get(`https://api.bilibili.com/x/space/bangumi/follow/list?type=1&follow_status=${status}&vmid=${vmid}&ps=1&pn=1`);
-  if (response && response.data && response.data.code === 0 && response.data.message === "0" && response.data.data && typeof response.data.data.total !== "undefined"){
-    return {success:true,data:Math.ceil(response.data.data.total / 50) + 1};
-  } else if (response && response.data && response.data.message!=="0"){
-    return { success: false, data: response.data.message};
-  } else if (response && response.data){
-    return { success: false, data: response.data };
-  }else{
-    return { success: false, data: response };
-  }
+function getBangumiPage(_x, _x2) {
+  return _getBangumiPage.apply(this, arguments);
 }
-async function getBangumi(vmid, status, pn) {
-  let response = await axios.get(`https://api.bilibili.com/x/space/bangumi/follow/list?type=1&follow_status=${status}&vmid=${vmid}&ps=50&pn=${pn}`)
-  let $data = [];
-  if (response.data.code === 0) {
-    let data = response.data.data;
-    let list = data.list;
-    for (let bangumi of list) {
-      let cover = bangumi.cover
-      if (cover){
-        let href = new URL(cover)
-        href.protocol = 'https'
-        href.pathname += '@220w_280h.webp'
-        cover = href.href
+
+function _getBangumiPage() {
+  _getBangumiPage = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(vmid, status) {
+    var _response$data, _response$data2, _response$data3, _response$data4, _response$data4$data;
+
+    var response;
+    return regeneratorRuntime.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            _context.next = 2;
+            return axios.get("https://api.bilibili.com/x/space/bangumi/follow/list?type=1&follow_status=".concat(status, "&vmid=").concat(vmid, "&ps=1&pn=1"));
+
+          case 2:
+            response = _context.sent;
+
+            if (!((response === null || response === void 0 ? void 0 : (_response$data = response.data) === null || _response$data === void 0 ? void 0 : _response$data.code) === 0 && (response === null || response === void 0 ? void 0 : (_response$data2 = response.data) === null || _response$data2 === void 0 ? void 0 : _response$data2.message) === "0" && (response === null || response === void 0 ? void 0 : (_response$data3 = response.data) === null || _response$data3 === void 0 ? void 0 : _response$data3.data) && typeof (response === null || response === void 0 ? void 0 : (_response$data4 = response.data) === null || _response$data4 === void 0 ? void 0 : (_response$data4$data = _response$data4.data) === null || _response$data4$data === void 0 ? void 0 : _response$data4$data.total) !== "undefined")) {
+              _context.next = 7;
+              break;
+            }
+
+            return _context.abrupt("return", {
+              success: true,
+              data: Math.ceil(response.data.data.total / 50) + 1
+            });
+
+          case 7:
+            if (!(response && response.data && response.data.message !== "0")) {
+              _context.next = 11;
+              break;
+            }
+
+            return _context.abrupt("return", {
+              success: false,
+              data: response.data.message
+            });
+
+          case 11:
+            if (!(response && response.data)) {
+              _context.next = 15;
+              break;
+            }
+
+            return _context.abrupt("return", {
+              success: false,
+              data: response.data
+            });
+
+          case 15:
+            return _context.abrupt("return", {
+              success: false,
+              data: response
+            });
+
+          case 16:
+          case "end":
+            return _context.stop();
+        }
       }
-      $data.push({
-        title: bangumi.title,
-        type: bangumi.season_type_name,
-        area: bangumi.areas[0].name,
-        cover: cover,
-        totalCount: total(bangumi.total_count),
-        id: bangumi.media_id,
-        follow: count(bangumi.stat.follow),
-        view: count(bangumi.stat.view),
-        danmaku: count(bangumi.stat.danmaku),
-        coin: count(bangumi.stat.coin),
-        score: bangumi.rating ? bangumi.rating.score : "暂无评分",
-        des: bangumi.evaluate
-      });
-    }
-    return $data;
-  }
+    }, _callee);
+  }));
+  return _getBangumiPage.apply(this, arguments);
 }
+
+function getBangumi(_x3, _x4, _x5) {
+  return _getBangumi.apply(this, arguments);
+}
+
+function _getBangumi() {
+  _getBangumi = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(vmid, status, pn) {
+    var _response$data5;
+
+    var response, $data, _response$data6, data, list, _iterator, _step, _bangumi$areas, _bangumi$areas$, _bangumi$stat, _bangumi$stat2, _bangumi$stat3, _bangumi$rating, bangumi, cover, href;
+
+    return regeneratorRuntime.wrap(function _callee2$(_context2) {
+      while (1) {
+        switch (_context2.prev = _context2.next) {
+          case 0:
+            _context2.next = 2;
+            return axios.get("https://api.bilibili.com/x/space/bangumi/follow/list?type=1&follow_status=".concat(status, "&vmid=").concat(vmid, "&ps=50&pn=").concat(pn));
+
+          case 2:
+            response = _context2.sent;
+            $data = [];
+
+            if (!((response === null || response === void 0 ? void 0 : (_response$data5 = response.data) === null || _response$data5 === void 0 ? void 0 : _response$data5.code) === 0)) {
+              _context2.next = 10;
+              break;
+            }
+
+            data = response === null || response === void 0 ? void 0 : (_response$data6 = response.data) === null || _response$data6 === void 0 ? void 0 : _response$data6.data;
+            list = (data === null || data === void 0 ? void 0 : data.list) || [];
+            _iterator = _createForOfIteratorHelper(list);
+
+            try {
+              for (_iterator.s(); !(_step = _iterator.n()).done;) {
+                bangumi = _step.value;
+                cover = bangumi === null || bangumi === void 0 ? void 0 : bangumi.cover;
+
+                if (cover) {
+                  href = new URL(cover);
+                  href.protocol = 'https';
+                  href.pathname += '@220w_280h.webp';
+                  cover = href.href;
+                }
+
+                $data.push({
+                  title: bangumi === null || bangumi === void 0 ? void 0 : bangumi.title,
+                  type: bangumi === null || bangumi === void 0 ? void 0 : bangumi.season_type_name,
+                  area: bangumi === null || bangumi === void 0 ? void 0 : (_bangumi$areas = bangumi.areas) === null || _bangumi$areas === void 0 ? void 0 : (_bangumi$areas$ = _bangumi$areas[0]) === null || _bangumi$areas$ === void 0 ? void 0 : _bangumi$areas$.name,
+                  cover: cover,
+                  totalCount: total(bangumi === null || bangumi === void 0 ? void 0 : bangumi.total_count),
+                  id: bangumi === null || bangumi === void 0 ? void 0 : bangumi.media_id,
+                  follow: count(bangumi === null || bangumi === void 0 ? void 0 : (_bangumi$stat = bangumi.stat) === null || _bangumi$stat === void 0 ? void 0 : _bangumi$stat.follow),
+                  view: count(bangumi === null || bangumi === void 0 ? void 0 : (_bangumi$stat2 = bangumi.stat) === null || _bangumi$stat2 === void 0 ? void 0 : _bangumi$stat2.view),
+                  danmaku: count(bangumi === null || bangumi === void 0 ? void 0 : (_bangumi$stat3 = bangumi.stat) === null || _bangumi$stat3 === void 0 ? void 0 : _bangumi$stat3.danmaku),
+                  coin: count(bangumi.stat.coin),
+                  score: (bangumi === null || bangumi === void 0 ? void 0 : bangumi.rating) ? bangumi === null || bangumi === void 0 ? void 0 : (_bangumi$rating = bangumi.rating) === null || _bangumi$rating === void 0 ? void 0 : _bangumi$rating.score : "暂无评分",
+                  des: bangumi === null || bangumi === void 0 ? void 0 : bangumi.evaluate
+                });
+              }
+            } catch (err) {
+              _iterator.e(err);
+            } finally {
+              _iterator.f();
+            }
+
+            return _context2.abrupt("return", $data);
+
+          case 10:
+          case "end":
+            return _context2.stop();
+        }
+      }
+    }, _callee2);
+  }));
+  return _getBangumi.apply(this, arguments);
+}
+
 function count(e) {
-  return e > 10000 && e < 100000000 ? `${(e / 10000).toFixed(1)} 万` : e > 100000000 ? `${(e / 100000000).toFixed(1)} 亿` : e;
+  return e ? e > 10000 && e < 100000000 ? "".concat((e / 10000).toFixed(1), " \u4E07") : e > 100000000 ? "".concat((e / 100000000).toFixed(1), " \u4EBF") : e : '-';
 }
+
 function total(e) {
-  return e === -1 ? `未完结` : `全${e}话`;
+  return e ? e === -1 ? "\u672A\u5B8C\u7ED3" : "\u5168".concat(e, "\u8BDD") : '-';
 }
-async function biliBangumi(vmid, status) {
-  let page = await getBangumiPage(vmid, status);
-  if(page.success){
-    let list = [];
-    for (let i = 1; i < page.data; i++) {
-      let data = await getBangumi(vmid, status, i);
-      list.push(...data);
-    }
-    return list;
-  }else{
-    console.log("Get bangumi data error:",page.data);
-    return [];
-  }
+
+function biliBangumi(_x6, _x7) {
+  return _biliBangumi.apply(this, arguments);
 }
-async function saveBangumiData(vmid) {
-  log.info("Getting bilibili bangumis, please wait...");
-  let startTime = new Date().getTime();
-  let wantWatch = await biliBangumi(vmid, 1);
-  let watching = await biliBangumi(vmid, 2);
-  let watched = await biliBangumi(vmid, 3);
-  let endTime = new Date().getTime();
-  log.info(wantWatch.length + watching.length + watched.length + ' bangumis have been loaded in ' + (endTime - startTime) + " ms");
-  let bangumis = { wantWatch, watching, watched };
-  if (!fs.existsSync(path.join(__dirname, "/data/"))) {
-    fs.mkdirsSync(path.join(__dirname, "/data/"));
-  }
-  fs.writeFile(path.join(__dirname, "/data/bangumis.json"), JSON.stringify(bangumis), err => {
-    if (err) {
-      log.info("Failed to write data to bangumis.json");
-      console.error(err);
-    } else {
-      log.info("Bilibili bangumis data has been saved");
-    }
-  });
+
+function _biliBangumi() {
+  _biliBangumi = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(vmid, status) {
+    var page, list, i, data;
+    return regeneratorRuntime.wrap(function _callee3$(_context3) {
+      while (1) {
+        switch (_context3.prev = _context3.next) {
+          case 0:
+            _context3.next = 2;
+            return getBangumiPage(vmid, status);
+
+          case 2:
+            page = _context3.sent;
+
+            if (!(page === null || page === void 0 ? void 0 : page.success)) {
+              _context3.next = 17;
+              break;
+            }
+
+            list = [];
+            i = 1;
+
+          case 6:
+            if (!(i < page.data)) {
+              _context3.next = 14;
+              break;
+            }
+
+            _context3.next = 9;
+            return getBangumi(vmid, status, i);
+
+          case 9:
+            data = _context3.sent;
+            list.push.apply(list, _toConsumableArray(data));
+
+          case 11:
+            i++;
+            _context3.next = 6;
+            break;
+
+          case 14:
+            return _context3.abrupt("return", list);
+
+          case 17:
+            console.log("Get bangumi data error:", page === null || page === void 0 ? void 0 : page.data);
+            return _context3.abrupt("return", []);
+
+          case 19:
+          case "end":
+            return _context3.stop();
+        }
+      }
+    }, _callee3);
+  }));
+  return _biliBangumi.apply(this, arguments);
+}
+
+function saveBangumiData(_x8) {
+  return _saveBangumiData.apply(this, arguments);
+}
+
+function _saveBangumiData() {
+  _saveBangumiData = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(vmid) {
+    var startTime, wantWatch, watching, watched, endTime, bangumis;
+    return regeneratorRuntime.wrap(function _callee4$(_context4) {
+      while (1) {
+        switch (_context4.prev = _context4.next) {
+          case 0:
+            log.info("Getting bilibili bangumis, please wait...");
+            startTime = new Date().getTime();
+            _context4.next = 4;
+            return biliBangumi(vmid, 1);
+
+          case 4:
+            wantWatch = _context4.sent;
+            _context4.next = 7;
+            return biliBangumi(vmid, 2);
+
+          case 7:
+            watching = _context4.sent;
+            _context4.next = 10;
+            return biliBangumi(vmid, 3);
+
+          case 10:
+            watched = _context4.sent;
+            endTime = new Date().getTime();
+            log.info(wantWatch.length + watching.length + watched.length + ' bangumis have been loaded in ' + (endTime - startTime) + " ms");
+            bangumis = {
+              wantWatch: wantWatch,
+              watching: watching,
+              watched: watched
+            };
+
+            if (!fs.existsSync(path.join(__dirname, "/data/"))) {
+              fs.mkdirsSync(path.join(__dirname, "/data/"));
+            }
+
+            fs.writeFile(path.join(__dirname, "/data/bangumis.json"), JSON.stringify(bangumis), function (err) {
+              if (err) {
+                log.info("Failed to write data to bangumis.json");
+                console.error(err);
+              } else {
+                log.info("Bilibili bangumis data has been saved");
+              }
+            });
+
+          case 16:
+          case "end":
+            return _context4.stop();
+        }
+      }
+    }, _callee4);
+  }));
+  return _saveBangumiData.apply(this, arguments);
 }

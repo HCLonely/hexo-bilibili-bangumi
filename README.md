@@ -25,7 +25,7 @@ bangumi:
   title: '追番列表'
   quote: '生命不息，追番不止！'
   show: 1
-  loading: '/img/bangumi-loading.gif'
+  loading: 
 ```
 
 - **enable**: 是否启用
