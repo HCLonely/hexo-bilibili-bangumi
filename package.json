@@ -18,12 +18,13 @@
     "anime"
   ],
   "dependencies": {
+    "@babel/runtime": "^7.9.6",
+    "axios": "^0.19.2",
     "ejs": "2.5.6",
     "hexo-fs": "^0.2.2",
     "hexo-i18n": "^0.2.1",
     "hexo-log": "^0.2.0",
-    "path": "^0.12.7",
-    "axios": "^0.19.2"
+    "path": "^0.12.7"
   },
   "repository": {
     "type": "git",
