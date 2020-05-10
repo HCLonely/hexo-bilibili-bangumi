@@ -51,6 +51,7 @@ bangumi:
 ## 示例
 
 ![示例图片](https://github.com/HCLonely/hexo-bilibili-bangumi/raw/master/example.png)
+
 ## Lisense
 
-[MIT](https://github.com/HCLonely/hexo-bilibili-bangumi/blob/master/LICENSE)
+[Apache Licence 2.0](https://github.com/HCLonely/hexo-bilibili-bangumi/blob/master/LICENSE)

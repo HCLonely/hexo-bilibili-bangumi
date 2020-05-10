@@ -49,8 +49,7 @@ module.exports = async function (locals) {
         path: config.bangumi.path || 'bangumis/index.html',
         data: {
             title: config.bangumi.title,
-            content: contents,
-            slug: 'bangumis'
+            content: contents
         },
         layout: ['page', 'post']
     };
