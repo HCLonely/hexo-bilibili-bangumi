@@ -21,6 +21,7 @@ $ npm install hexo-bilibili-bangumi --save
 ``` yaml
 bangumi:
   enable: true 
+  path: 
   vmid: 
   title: '追番列表'
   quote: '生命不息，追番不止！'
@@ -29,6 +30,7 @@ bangumi:
 ```
 
 - **enable**: 是否启用
+- **path**: 番剧页面路径，默认`bangumis/index.html`
 - **vmid**: 哔哩哔哩番剧页面的 `vmid(uid)`,[如何获取？](#获取uid)
 - **title**: 该页面的标题
 - **quote**: 写在页面开头的一段话,支持html语法
@@ -37,21 +39,8 @@ bangumi:
 
 ## 使用
 
-1. 前往你的 Hexo 博客的根目录
-2. 输入`hexo new page bangumis`
-3. 你会找到`source/bangumis/index.md`这个文件
-4. 修改这个文件，添加`type: "bangumis"`：
-
-    ```markdown
-    ---
-    title: bangumis
-    date: 2018-01-05 00:00:00
-    type: "bangumis"
-    ---
-    ```
-
-5. 防止请求次数过多插件不再自动获取番剧数据，所以请根据自己的需要在`hexo generate`或`hexo deploy`之前使用`hexo bangumi -u`命令更新番剧数据！
-6. 删除数据命令:`hexo bangumi -d`
+1. 在`hexo generate`或`hexo deploy`之前使用`hexo bangumi -u`命令更新番剧数据！
+2. 删除数据命令:`hexo bangumi -d`
 
 ## 获取uid
 

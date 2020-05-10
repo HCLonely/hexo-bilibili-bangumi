@@ -46,7 +46,7 @@ module.exports = async function (locals) {
         });
         
     return {
-        path: 'bangumis/index.html',
+        path: config.bangumi.path || 'bangumis/index.html',
         data: {
             title: config.bangumi.title,
             content: contents,
