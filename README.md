@@ -22,13 +22,15 @@ $ npm install hexo-bilibili-bangumi --save
 
 ``` yaml
 bangumi:
-  enable: true 
-  path: 
-  vmid: 
+  enable: true
+  path:
+  vmid:
   title: '追番列表'
   quote: '生命不息，追番不止！'
   show: 1
-  loading: 
+  loading:
+  metaColor:
+  color:
 ```
 
 - **enable**: 是否启用
@@ -38,6 +40,8 @@ bangumi:
 - **quote**: 写在页面开头的一段话,支持html语法
 - **show**: 初始显示页面：`0: 想看`, `1: 在看`, `2: 看过`，默认为`1`
 - **loading**: 图片加载完成前的loading图片
+- **metaColor**: meta部分(简介上方)字体颜色
+- **color**: 简介字体颜色
 
 ## 使用
 

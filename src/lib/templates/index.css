@@ -125,7 +125,9 @@ a.bangumi-tab {
 }
 
 .bangumi-info-label-em {
-    color: #0000;
+    color: rgba(0, 0, 0, 0);
+    opacity:0;
+    visibility:hidden;
     line-height: 6px !important;
     padding: 0 !important;
 }
