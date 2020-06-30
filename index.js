@@ -26,6 +26,8 @@ var log = require('hexo-log')({
   silent: false
 });
 
+if (typeof URL !== 'function') var _require = require('url'),
+    URL = _require.URL;
 var options = {
   options: [{
     name: '-u, --update',

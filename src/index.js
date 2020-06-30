@@ -8,6 +8,8 @@ const log = require('hexo-log')({
   silent: false
 });
 
+if (typeof URL !== 'function') var { URL } = require('url')
+
 let options = {
   options: [
     { name: '-u, --update', desc: 'Update bangumi data' },
