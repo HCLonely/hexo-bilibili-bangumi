@@ -1,11 +1,11 @@
 {
   "name": "hexo-bilibili-bangumi",
-  "version": "1.3.3",
+  "version": "1.3.4",
   "description": "hexo bilibili番剧页",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "babel src/index.js --out-file index.js && babel src/lib/util.js --out-file lib/util.js && babel src/lib/bangumi-generator.js --out-file lib/bangumi-generator.js && babel src/lib/templates/index.js --out-file lib/templates/index.js --presets minify && babel src/lib/templates/pagination.js --out-file lib/templates/pagination.js --presets minify && babel src/lib/templates/webpSupport.js --out-file lib/templates/webpSupport.js --presets minify && cleancss src/lib/templates/index.css -O2 -o lib/templates/index.css"
+    "build": "babel src/index.js --out-file index.js && babel src/lib/util.js --out-file lib/util.js && babel src/lib/bangumi-generator.js --out-file lib/bangumi-generator.js && babel src/lib/templates/index.js --out-file lib/templates/index.js --presets minify && babel src/lib/templates/pagination.js --out-file lib/templates/pagination.js --presets minify && cleancss src/lib/templates/index.css -O2 -o lib/templates/index.css"
   },
   "author": "HCLonely",
   "license": "Apache Licence 2.0",

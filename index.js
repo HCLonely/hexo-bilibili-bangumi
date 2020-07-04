@@ -69,7 +69,7 @@ hexo.extend.console.register('bangumi', 'Generate pages of bilibili bangumis for
       return;
     }
 
-    saveBangumiData(this.config.bangumi.vmid);
+    saveBangumiData(this.config.bangumi.vmid, this.config.bangumi.webp);
   } else {
     log.info("Unknown command, please use \"hexo bangumi -h\" to see the available commands");
   }
@@ -142,12 +142,12 @@ function _getBangumiPage() {
   return _getBangumiPage.apply(this, arguments);
 }
 
-function getBangumi(_x3, _x4, _x5) {
+function getBangumi(_x3, _x4, _x5, _x6) {
   return _getBangumi.apply(this, arguments);
 }
 
 function _getBangumi() {
-  _getBangumi = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(vmid, status, pn) {
+  _getBangumi = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(vmid, status, webp, pn) {
     var _response$data5;
 
     var response, $data, _response$data6, data, list, _iterator, _step, _bangumi$areas, _bangumi$areas$, _bangumi$stat, _bangumi$stat2, _bangumi$stat3, _bangumi$rating, bangumi, cover, href;
@@ -180,7 +180,7 @@ function _getBangumi() {
                 if (cover) {
                   href = new URL(cover);
                   href.protocol = 'https';
-                  href.pathname += '@220w_280h.webp';
+                  if (webp) href.pathname += '@220w_280h.webp';
                   cover = href.href;
                 }
 
@@ -225,19 +225,19 @@ function total(e) {
   return e ? e === -1 ? "\u672A\u5B8C\u7ED3" : "\u5168".concat(e, "\u8BDD") : '-';
 }
 
-function biliBangumi(_x6, _x7) {
+function biliBangumi(_x7, _x8, _x9) {
   return _biliBangumi.apply(this, arguments);
 }
 
 function _biliBangumi() {
-  _biliBangumi = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3(vmid, status) {
+  _biliBangumi = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3(vmid, status, webp) {
     var page, list, i, data;
     return _regenerator["default"].wrap(function _callee3$(_context3) {
       while (1) {
         switch (_context3.prev = _context3.next) {
           case 0:
             _context3.next = 2;
-            return getBangumiPage(vmid, status);
+            return getBangumiPage(vmid, status, webp);
 
           case 2:
             page = _context3.sent;
@@ -257,7 +257,7 @@ function _biliBangumi() {
             }
 
             _context3.next = 9;
-            return getBangumi(vmid, status, i);
+            return getBangumi(vmid, status, webp, i);
 
           case 9:
             data = _context3.sent;
@@ -285,33 +285,41 @@ function _biliBangumi() {
   return _biliBangumi.apply(this, arguments);
 }
 
-function saveBangumiData(_x8) {
+function saveBangumiData(_x10) {
   return _saveBangumiData.apply(this, arguments);
 }
 
 function _saveBangumiData() {
   _saveBangumiData = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4(vmid) {
-    var startTime, wantWatch, watching, watched, endTime, bangumis;
+    var webp,
+        startTime,
+        wantWatch,
+        watching,
+        watched,
+        endTime,
+        bangumis,
+        _args4 = arguments;
     return _regenerator["default"].wrap(function _callee4$(_context4) {
       while (1) {
         switch (_context4.prev = _context4.next) {
           case 0:
+            webp = _args4.length > 1 && _args4[1] !== undefined ? _args4[1] : true;
             log.info("Getting bilibili bangumis, please wait...");
             startTime = new Date().getTime();
-            _context4.next = 4;
-            return biliBangumi(vmid, 1);
+            _context4.next = 5;
+            return biliBangumi(vmid, 1, webp);
 
-          case 4:
+          case 5:
             wantWatch = _context4.sent;
-            _context4.next = 7;
-            return biliBangumi(vmid, 2);
+            _context4.next = 8;
+            return biliBangumi(vmid, 2, webp);
 
-          case 7:
+          case 8:
             watching = _context4.sent;
-            _context4.next = 10;
-            return biliBangumi(vmid, 3);
+            _context4.next = 11;
+            return biliBangumi(vmid, 3, webp);
 
-          case 10:
+          case 11:
             watched = _context4.sent;
             endTime = new Date().getTime();
             log.info(wantWatch.length + watching.length + watched.length + ' bangumis have been loaded in ' + (endTime - startTime) + " ms");
@@ -334,7 +342,7 @@ function _saveBangumiData() {
               }
             });
 
-          case 16:
+          case 17:
           case "end":
             return _context4.stop();
         }
