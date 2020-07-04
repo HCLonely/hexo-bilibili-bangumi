@@ -40,7 +40,7 @@ hexo.extend.console.register('bangumi', 'Generate pages of bilibili bangumis for
       log.info("Please add vmid to _config.yml");
       return;
     }
-    saveBangumiData(this.config.bangumi.vmid);
+    saveBangumiData(this.config.bangumi.vmid, this.config.bangumi.webp);
   } else {
     log.info("Unknown command, please use \"hexo bangumi -h\" to see the available commands")
   }
@@ -58,7 +58,7 @@ async function getBangumiPage(vmid, status) {
     return { success: false, data: response };
   }
 }
-async function getBangumi(vmid, status, pn) {
+async function getBangumi(vmid, status, webp, pn) {
   let response = await axios.get(`https://api.bilibili.com/x/space/bangumi/follow/list?type=1&follow_status=${status}&vmid=${vmid}&ps=50&pn=${pn}`)
   let $data = [];
   if (response?.data?.code === 0) {
@@ -69,7 +69,7 @@ async function getBangumi(vmid, status, pn) {
       if (cover){
         let href = new URL(cover)
         href.protocol = 'https'
-        href.pathname += '@220w_280h.webp'
+        if(webp) href.pathname += '@220w_280h.webp'
         cover = href.href
       }
       $data.push({
@@ -96,12 +96,12 @@ function count(e) {
 function total(e) {
   return e ? (e === -1 ? `未完结` : `全${e}话`) : '-';
 }
-async function biliBangumi(vmid, status) {
-  let page = await getBangumiPage(vmid, status);
+async function biliBangumi(vmid, status, webp) {
+  let page = await getBangumiPage(vmid, status, webp);
   if(page?.success){
     let list = [];
     for (let i = 1; i < page.data; i++) {
-      let data = await getBangumi(vmid, status, i);
+      let data = await getBangumi(vmid, status, webp, i);
       list.push(...data);
     }
     return list;
@@ -110,12 +110,12 @@ async function biliBangumi(vmid, status) {
     return [];
   }
 }
-async function saveBangumiData(vmid) {
+async function saveBangumiData(vmid, webp = true) {
   log.info("Getting bilibili bangumis, please wait...");
   let startTime = new Date().getTime();
-  let wantWatch = await biliBangumi(vmid, 1);
-  let watching = await biliBangumi(vmid, 2);
-  let watched = await biliBangumi(vmid, 3);
+  let wantWatch = await biliBangumi(vmid, 1, webp);
+  let watching = await biliBangumi(vmid, 2, webp);
+  let watched = await biliBangumi(vmid, 3, webp);
   let endTime = new Date().getTime();
   log.info(wantWatch.length + watching.length + watched.length + ' bangumis have been loaded in ' + (endTime - startTime) + " ms");
   let bangumis = { wantWatch, watching, watched };

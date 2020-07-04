@@ -31,6 +31,7 @@ bangumi:
   loading:
   metaColor:
   color:
+  webp:
 ```
 
 - **enable**: 是否启用
@@ -42,6 +43,7 @@ bangumi:
 - **loading**: 图片加载完成前的loading图片
 - **metaColor**: meta部分(简介上方)字体颜色
 - **color**: 简介字体颜色
+- **webp**: 番剧封面使用`webp`格式(此格式在`safari`浏览器下不显示，但是图片大小可以缩小100倍左右), 默认`true`
 
 ## 使用
 
