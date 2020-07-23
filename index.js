@@ -157,7 +157,7 @@ function _getBangumi() {
         switch (_context2.prev = _context2.next) {
           case 0:
             _context2.next = 2;
-            return axios.get("https://api.bilibili.com/x/space/bangumi/follow/list?type=1&follow_status=".concat(status, "&vmid=").concat(vmid, "&ps=50&pn=").concat(pn));
+            return axios.get("https://api.bilibili.com/x/space/bangumi/follow/list?type=1&follow_status=".concat(status, "&vmid=").concat(vmid, "&ps=30&pn=").concat(pn));
 
           case 2:
             response = _context2.sent;

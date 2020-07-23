@@ -59,7 +59,7 @@ async function getBangumiPage(vmid, status) {
   }
 }
 async function getBangumi(vmid, status, webp, pn) {
-  let response = await axios.get(`https://api.bilibili.com/x/space/bangumi/follow/list?type=1&follow_status=${status}&vmid=${vmid}&ps=50&pn=${pn}`)
+  let response = await axios.get(`https://api.bilibili.com/x/space/bangumi/follow/list?type=1&follow_status=${status}&vmid=${vmid}&ps=30&pn=${pn}`)
   let $data = [];
   if (response?.data?.code === 0) {
     let data = response?.data?.data;
