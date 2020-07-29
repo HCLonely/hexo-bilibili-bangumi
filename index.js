@@ -101,7 +101,7 @@ function _getBangumiPage() {
 
             return _context.abrupt("return", {
               success: true,
-              data: Math.ceil(response.data.data.total / 50) + 1
+              data: Math.ceil(response.data.data.total / 30) + 1
             });
 
           case 7:
