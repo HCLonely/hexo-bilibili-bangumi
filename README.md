@@ -32,6 +32,7 @@ bangumi:
   metaColor:
   color:
   webp:
+  progress:
 ```
 
 - **enable**: 是否启用
