@@ -1,75 +1,76 @@
 /* global hexo */
-'use strict';
-const fs = require('hexo-fs');
-const path = require('path');
-const axios = require("axios");
+'use strict'
+const fs = require('hexo-fs')
+const path = require('path')
+const axios = require('axios')
 const log = require('hexo-log')({
   debug: false,
   silent: false
-});
+})
+const ProgressBar = require('progress')
 
 if (typeof URL !== 'function') var { URL } = require('url')
 
-let options = {
+const options = {
   options: [
     { name: '-u, --update', desc: 'Update bangumi data' },
     { name: '-d, --delete', desc: 'Delete bangumi data' }
   ]
-};
+}
 hexo.extend.generator.register('bangumis', function (locals) {
   if (!this?.config?.bangumi?.enable) {
-    return;
+    return
   }
-  return require('./lib/bangumi-generator').call(this, locals);
-});
+  return require('./lib/bangumi-generator').call(this, locals)
+})
 hexo.extend.console.register('bangumi', 'Generate pages of bilibili bangumis for Hexo', options, function (args) {
   if (args.d) {
-    if (fs.existsSync(path.join(__dirname, "/data/"))) {
-      fs.rmdirSync(path.join(__dirname, "/data/"));
-      log.info('Bangumis data has been deleted');
+    if (fs.existsSync(path.join(__dirname, '/data/'))) {
+      fs.rmdirSync(path.join(__dirname, '/data/'))
+      log.info('Bangumis data has been deleted')
     }
   } else if (args.u) {
     if (!this?.config?.bangumi) {
-      log.info("Please add config to _config.yml");
-      return;
+      log.info('Please add config to _config.yml')
+      return
     }
     if (!this.config.bangumi.enable) {
-      return;
+      return
     }
     if (!this.config.bangumi.vmid) {
-      log.info("Please add vmid to _config.yml");
-      return;
+      log.info('Please add vmid to _config.yml')
+      return
     }
-    saveBangumiData(this.config.bangumi.vmid, this.config.bangumi.webp);
+    saveBangumiData(this.config.bangumi.vmid, this.config.bangumi.webp, this.config.bangumi.progress)
   } else {
-    log.info("Unknown command, please use \"hexo bangumi -h\" to see the available commands")
+    log.info('Unknown command, please use "hexo bangumi -h" to see the available commands')
   }
-});
+})
 
-async function getBangumiPage(vmid, status) {
-  let response = await axios.get(`https://api.bilibili.com/x/space/bangumi/follow/list?type=1&follow_status=${status}&vmid=${vmid}&ps=1&pn=1`);
-  if (response?.data?.code === 0 && response?.data?.message === "0" && response?.data?.data && typeof response?.data?.data?.total !== "undefined"){
-    return {success:true,data:Math.ceil(response.data.data.total / 30) + 1};
-  } else if (response && response.data && response.data.message!=="0"){
-    return { success: false, data: response.data.message};
-  } else if (response && response.data){
-    return { success: false, data: response.data };
-  }else{
-    return { success: false, data: response };
+async function getBangumiPage (vmid, status) {
+  const response = await axios.get(`https://api.bilibili.com/x/space/bangumi/follow/list?type=1&follow_status=${status}&vmid=${vmid}&ps=1&pn=1`)
+  if (response?.data?.code === 0 && response?.data?.message === '0' && response?.data?.data && typeof response?.data?.data?.total !== 'undefined') {
+    return { success: true, data: Math.ceil(response.data.data.total / 30) + 1 }
+  } else if (response && response.data && response.data.message !== '0') {
+    return { success: false, data: response.data.message }
+  } else if (response && response.data) {
+    return { success: false, data: response.data }
+  } else {
+    return { success: false, data: response }
   }
 }
-async function getBangumi(vmid, status, webp, pn) {
-  let response = await axios.get(`https://api.bilibili.com/x/space/bangumi/follow/list?type=1&follow_status=${status}&vmid=${vmid}&ps=30&pn=${pn}`)
-  let $data = [];
+async function getBangumi (vmid, status, webp, pn) {
+  const response = await axios.get(`https://api.bilibili.com/x/space/bangumi/follow/list?type=1&follow_status=${status}&vmid=${vmid}&ps=30&pn=${pn}`)
+  const $data = []
   if (response?.data?.code === 0) {
-    let data = response?.data?.data;
-    let list = data?.list || [];
-    for (let bangumi of list) {
+    const data = response?.data?.data
+    const list = data?.list || []
+    for (const bangumi of list) {
       let cover = bangumi?.cover
-      if (cover){
-        let href = new URL(cover)
+      if (cover) {
+        const href = new URL(cover)
         href.protocol = 'https'
-        if(webp) href.pathname += '@220w_280h.webp'
+        if (webp) href.pathname += '@220w_280h.webp'
         cover = href.href
       }
       $data.push({
@@ -83,51 +84,54 @@ async function getBangumi(vmid, status, webp, pn) {
         view: count(bangumi?.stat?.view),
         danmaku: count(bangumi?.stat?.danmaku),
         coin: count(bangumi.stat.coin),
-        score: bangumi?.rating ? bangumi?.rating?.score : "暂无评分",
+        score: bangumi?.rating ? bangumi?.rating?.score : '暂无评分',
         des: bangumi?.evaluate
-      });
+      })
     }
-    return $data;
+    return $data
   }
 }
-function count(e) {
-  return e ? (e > 10000 && e < 100000000 ? `${(e / 10000).toFixed(1)} 万` : e > 100000000 ? `${(e / 100000000).toFixed(1)} 亿` : e) : '-';
+function count (e) {
+  return e ? (e > 10000 && e < 100000000 ? `${(e / 10000).toFixed(1)} 万` : e > 100000000 ? `${(e / 100000000).toFixed(1)} 亿` : e) : '-'
 }
-function total(e) {
-  return e ? (e === -1 ? `未完结` : `全${e}话`) : '-';
+function total (e) {
+  return e ? (e === -1 ? '未完结' : `全${e}话`) : '-'
 }
-async function biliBangumi(vmid, status, webp) {
-  let page = await getBangumiPage(vmid, status, webp);
-  if(page?.success){
-    let list = [];
+async function biliBangumi (vmid, status, webp, progress) {
+  const page = await getBangumiPage(vmid, status, webp)
+  if (page?.success) {
+    const list = []
+    let bar = null
+    if (progress) bar = new ProgressBar(`正在获取 ${status === 1 ? '[想看]' : status === 2 ? '[在看]' : '[已看]'} 番剧 [:bar] :percent :elapseds`, { total: page.data - 1, complete: '█' })
     for (let i = 1; i < page.data; i++) {
-      let data = await getBangumi(vmid, status, webp, i);
-      list.push(...data);
+      if (progress) bar.tick()
+      const data = await getBangumi(vmid, status, webp, i)
+      list.push(...data)
     }
-    return list;
-  }else{
-    console.log("Get bangumi data error:",page?.data);
-    return [];
+    return list
+  } else {
+    console.log('Get bangumi data error:', page?.data)
+    return []
   }
 }
-async function saveBangumiData(vmid, webp = true) {
-  log.info("Getting bilibili bangumis, please wait...");
-  let startTime = new Date().getTime();
-  let wantWatch = await biliBangumi(vmid, 1, webp);
-  let watching = await biliBangumi(vmid, 2, webp);
-  let watched = await biliBangumi(vmid, 3, webp);
-  let endTime = new Date().getTime();
-  log.info(wantWatch.length + watching.length + watched.length + ' bangumis have been loaded in ' + (endTime - startTime) + " ms");
-  let bangumis = { wantWatch, watching, watched };
-  if (!fs.existsSync(path.join(__dirname, "/data/"))) {
-    fs.mkdirsSync(path.join(__dirname, "/data/"));
+async function saveBangumiData (vmid, webp = true, progress) {
+  log.info('Getting bilibili bangumis, please wait...')
+  const startTime = new Date().getTime()
+  const wantWatch = await biliBangumi(vmid, 1, webp, progress)
+  const watching = await biliBangumi(vmid, 2, webp, progress)
+  const watched = await biliBangumi(vmid, 3, webp, progress)
+  const endTime = new Date().getTime()
+  log.info(wantWatch.length + watching.length + watched.length + ' bangumis have been loaded in ' + (endTime - startTime) + ' ms')
+  const bangumis = { wantWatch, watching, watched }
+  if (!fs.existsSync(path.join(__dirname, '/data/'))) {
+    fs.mkdirsSync(path.join(__dirname, '/data/'))
   }
-  fs.writeFile(path.join(__dirname, "/data/bangumis.json"), JSON.stringify(bangumis), err => {
+  fs.writeFile(path.join(__dirname, '/data/bangumis.json'), JSON.stringify(bangumis), err => {
     if (err) {
-      log.info("Failed to write data to bangumis.json");
-      console.error(err);
+      log.info('Failed to write data to bangumis.json')
+      console.error(err)
     } else {
-      log.info("Bilibili bangumis data has been saved");
+      log.info('Bilibili bangumis data has been saved')
     }
-  });
+  })
 }

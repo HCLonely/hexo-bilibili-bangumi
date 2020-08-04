@@ -1,13 +1,13 @@
 {
   "name": "hexo-bilibili-bangumi",
-  "version": "1.3.6",
+  "version": "1.4.0",
   "description": "hexo bilibili番剧页",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "standard --fix",
     "build": "babel src/index.js --out-file index.js && babel src/lib/util.js --out-file lib/util.js && babel src/lib/bangumi-generator.js --out-file lib/bangumi-generator.js && babel src/lib/templates/index.js --out-file lib/templates/index.js --presets minify && babel src/lib/templates/pagination.js --out-file lib/templates/pagination.js --presets minify && cleancss src/lib/templates/index.css -O2 -o lib/templates/index.css"
   },
-  "author": "HCLonely",
+  "author": "HCLonely <h1606051253@gmail.com>",
   "license": "Apache Licence 2.0",
   "keywords": [
     "generator",
@@ -24,7 +24,8 @@
     "hexo-fs": "^0.2.2",
     "hexo-i18n": "^0.2.1",
     "hexo-log": "^0.2.0",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "progress": "^2.0.3"
   },
   "repository": {
     "type": "git",
@@ -36,6 +37,13 @@
     "@babel/plugin-transform-runtime": "^7.9.6",
     "@babel/preset-env": "^7.9.6",
     "babel-preset-minify": "^0.5.1",
-    "clean-css-cli": "^4.3.0"
+    "clean-css-cli": "^4.3.0",
+    "standard": "^14.3.4"
+  },
+  "standard":{
+    "ignore": [
+      "index.js",
+      "lib/*"
+    ]
   }
 }
