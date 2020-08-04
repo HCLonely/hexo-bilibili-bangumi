@@ -55,7 +55,7 @@ hexo.extend.console.register('bangumi', 'Generate pages of bilibili bangumis for
       log.info('Bangumis data has been deleted');
     }
   } else if (args.u) {
-    var _this$config2;
+    var _this$config2, _this$config$bangumi$;
 
     if (!(this === null || this === void 0 ? void 0 : (_this$config2 = this.config) === null || _this$config2 === void 0 ? void 0 : _this$config2.bangumi)) {
       log.info('Please add config to _config.yml');
@@ -71,7 +71,7 @@ hexo.extend.console.register('bangumi', 'Generate pages of bilibili bangumis for
       return;
     }
 
-    saveBangumiData(this.config.bangumi.vmid, this.config.bangumi.webp, this.config.bangumi.progress);
+    saveBangumiData(this.config.bangumi.vmid, this.config.bangumi.webp, (_this$config$bangumi$ = this.config.bangumi.progress) !== null && _this$config$bangumi$ !== void 0 ? _this$config$bangumi$ : true);
   } else {
     log.info('Unknown command, please use "hexo bangumi -h" to see the available commands');
   }

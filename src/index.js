@@ -41,7 +41,7 @@ hexo.extend.console.register('bangumi', 'Generate pages of bilibili bangumis for
       log.info('Please add vmid to _config.yml')
       return
     }
-    saveBangumiData(this.config.bangumi.vmid, this.config.bangumi.webp, this.config.bangumi.progress)
+    saveBangumiData(this.config.bangumi.vmid, this.config.bangumi.webp, this.config.bangumi.progress ?? true)
   } else {
     log.info('Unknown command, please use "hexo bangumi -h" to see the available commands')
   }
