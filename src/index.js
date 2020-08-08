@@ -25,8 +25,8 @@ hexo.extend.generator.register('bangumis', function (locals) {
 })
 hexo.extend.console.register('bangumi', 'Generate pages of bilibili bangumis for Hexo', options, function (args) {
   if (args.d) {
-    if (fs.existsSync(path.join(__dirname, '/data/'))) {
-      fs.rmdirSync(path.join(__dirname, '/data/'))
+    if (fs.existsSync(path.join(this.source_dir, '/_data/'))) {
+      fs.rmdirSync(path.join(this.source_dir, '/_data/'))
       log.info('Bangumis data has been deleted')
     }
   } else if (args.u) {
@@ -41,7 +41,7 @@ hexo.extend.console.register('bangumi', 'Generate pages of bilibili bangumis for
       log.info('Please add vmid to _config.yml')
       return
     }
-    saveBangumiData(this.config.bangumi.vmid, this.config.bangumi.webp, this.config.bangumi.progress ?? true)
+    saveBangumiData(this.config.bangumi.vmid, this.config.bangumi.webp, this.config.bangumi.progress ?? true, this.source_dir)
   } else {
     log.info('Unknown command, please use "hexo bangumi -h" to see the available commands')
   }
@@ -114,7 +114,7 @@ async function biliBangumi (vmid, status, webp, progress) {
     return []
   }
 }
-async function saveBangumiData (vmid, webp = true, progress) {
+async function saveBangumiData(vmid, webp = true, progress, sourceDir) {
   log.info('Getting bilibili bangumis, please wait...')
   const startTime = new Date().getTime()
   const wantWatch = await biliBangumi(vmid, 1, webp, progress)
@@ -123,10 +123,10 @@ async function saveBangumiData (vmid, webp = true, progress) {
   const endTime = new Date().getTime()
   log.info(wantWatch.length + watching.length + watched.length + ' bangumis have been loaded in ' + (endTime - startTime) + ' ms')
   const bangumis = { wantWatch, watching, watched }
-  if (!fs.existsSync(path.join(__dirname, '/data/'))) {
-    fs.mkdirsSync(path.join(__dirname, '/data/'))
+  if (!fs.existsSync(path.join(sourceDir, '/_data/'))) {
+    fs.mkdirsSync(path.join(sourceDir, '/_data/'))
   }
-  fs.writeFile(path.join(__dirname, '/data/bangumis.json'), JSON.stringify(bangumis), err => {
+  fs.writeFile(path.join(sourceDir, '/_data/bangumis.json'), JSON.stringify(bangumis), err => {
     if (err) {
       log.info('Failed to write data to bangumis.json')
       console.error(err)

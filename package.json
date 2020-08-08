@@ -1,6 +1,6 @@
 {
   "name": "hexo-bilibili-bangumi",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "description": "hexo bilibili番剧页",
   "main": "index.js",
   "scripts": {
@@ -40,7 +40,7 @@
     "clean-css-cli": "^4.3.0",
     "standard": "^14.3.4"
   },
-  "standard":{
+  "standard": {
     "ignore": [
       "index.js",
       "lib/*"

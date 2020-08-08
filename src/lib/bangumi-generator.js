@@ -20,10 +20,11 @@ module.exports = async function (locals) {
     root = root.slice(0, root.length - 1)
   }
   let wantWatch = []; let watching = []; let watched = []
-  if (!fs.existsSync(path.resolve(__dirname, '../data/bangumis.json'))) {
+  console.log(path.join(this.source_dir, '/_data/bangumis.json'))
+  if (!fs.existsSync(path.join(this.source_dir, '/_data/bangumis.json'))) {
     log.info('Can\'t find bilibili bangumi data, please use \'hexo bangumi -u\' command to get data')
   } else {
-    ({ wantWatch, watching, watched } = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../data/bangumis.json'))))
+    ({ wantWatch, watching, watched } = JSON.parse(fs.readFileSync(path.join(this.source_dir, '/_data/bangumis.json'))))
     log.info(wantWatch.length + watching.length + watched.length + ' bangumis have been loaded')
   }
 

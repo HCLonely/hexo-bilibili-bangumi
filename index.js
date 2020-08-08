@@ -9,7 +9,7 @@ var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"))
 
 var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
 
-function _createForOfIteratorHelper(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = _unsupportedIterableToArray(o))) { var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
@@ -50,8 +50,8 @@ hexo.extend.generator.register('bangumis', function (locals) {
 });
 hexo.extend.console.register('bangumi', 'Generate pages of bilibili bangumis for Hexo', options, function (args) {
   if (args.d) {
-    if (fs.existsSync(path.join(__dirname, '/data/'))) {
-      fs.rmdirSync(path.join(__dirname, '/data/'));
+    if (fs.existsSync(path.join(this.source_dir, '/_data/'))) {
+      fs.rmdirSync(path.join(this.source_dir, '/_data/'));
       log.info('Bangumis data has been deleted');
     }
   } else if (args.u) {
@@ -71,7 +71,7 @@ hexo.extend.console.register('bangumi', 'Generate pages of bilibili bangumis for
       return;
     }
 
-    saveBangumiData(this.config.bangumi.vmid, this.config.bangumi.webp, (_this$config$bangumi$ = this.config.bangumi.progress) !== null && _this$config$bangumi$ !== void 0 ? _this$config$bangumi$ : true);
+    saveBangumiData(this.config.bangumi.vmid, this.config.bangumi.webp, (_this$config$bangumi$ = this.config.bangumi.progress) !== null && _this$config$bangumi$ !== void 0 ? _this$config$bangumi$ : true, this.source_dir);
   } else {
     log.info('Unknown command, please use "hexo bangumi -h" to see the available commands');
   }
@@ -301,6 +301,7 @@ function _saveBangumiData() {
   _saveBangumiData = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4(vmid) {
     var webp,
         progress,
+        sourceDir,
         startTime,
         wantWatch,
         watching,
@@ -314,22 +315,23 @@ function _saveBangumiData() {
           case 0:
             webp = _args4.length > 1 && _args4[1] !== undefined ? _args4[1] : true;
             progress = _args4.length > 2 ? _args4[2] : undefined;
+            sourceDir = _args4.length > 3 ? _args4[3] : undefined;
             log.info('Getting bilibili bangumis, please wait...');
             startTime = new Date().getTime();
-            _context4.next = 6;
+            _context4.next = 7;
             return biliBangumi(vmid, 1, webp, progress);
 
-          case 6:
+          case 7:
             wantWatch = _context4.sent;
-            _context4.next = 9;
+            _context4.next = 10;
             return biliBangumi(vmid, 2, webp, progress);
 
-          case 9:
+          case 10:
             watching = _context4.sent;
-            _context4.next = 12;
+            _context4.next = 13;
             return biliBangumi(vmid, 3, webp, progress);
 
-          case 12:
+          case 13:
             watched = _context4.sent;
             endTime = new Date().getTime();
             log.info(wantWatch.length + watching.length + watched.length + ' bangumis have been loaded in ' + (endTime - startTime) + ' ms');
@@ -339,11 +341,11 @@ function _saveBangumiData() {
               watched: watched
             };
 
-            if (!fs.existsSync(path.join(__dirname, '/data/'))) {
-              fs.mkdirsSync(path.join(__dirname, '/data/'));
+            if (!fs.existsSync(path.join(sourceDir, '/_data/'))) {
+              fs.mkdirsSync(path.join(sourceDir, '/_data/'));
             }
 
-            fs.writeFile(path.join(__dirname, '/data/bangumis.json'), JSON.stringify(bangumis), function (err) {
+            fs.writeFile(path.join(sourceDir, '/_data/bangumis.json'), JSON.stringify(bangumis), function (err) {
               if (err) {
                 log.info('Failed to write data to bangumis.json');
                 console.error(err);
@@ -352,7 +354,7 @@ function _saveBangumiData() {
               }
             });
 
-          case 18:
+          case 19:
           case "end":
             return _context4.stop();
         }
