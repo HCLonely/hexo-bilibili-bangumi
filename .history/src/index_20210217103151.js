@@ -25,8 +25,8 @@ hexo.extend.generator.register('bangumis', function (locals) {
 })
 hexo.extend.console.register('bangumi', 'Generate pages of bilibili bangumis for Hexo', options, function (args) {
   if (args.d) {
-    if (fs.existsSync(path.join(this.source_dir, '/_data/bangumis.json'))) {
-      fs.unlinkSync(path.join(this.source_dir, '/_data/bangumis.json'))
+    if (fs.existsSync(path.join(this.source_dir, '/_data/'))) {
+      fs.rmdirSync(path.join(this.source_dir, '/_data/'))
       log.info('Bangumis data has been deleted')
     }
   } else if (args.u) {

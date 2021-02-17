@@ -42,7 +42,7 @@ var options = {
 hexo.extend.generator.register('bangumis', function (locals) {
   var _this$config, _this$config$bangumi;
 
-  if (!(this === null || this === void 0 ? void 0 : (_this$config = this.config) === null || _this$config === void 0 ? void 0 : (_this$config$bangumi = _this$config.bangumi) === null || _this$config$bangumi === void 0 ? void 0 : _this$config$bangumi.enable)) {
+  if (!(this !== null && this !== void 0 && (_this$config = this.config) !== null && _this$config !== void 0 && (_this$config$bangumi = _this$config.bangumi) !== null && _this$config$bangumi !== void 0 && _this$config$bangumi.enable)) {
     return;
   }
 
@@ -50,14 +50,14 @@ hexo.extend.generator.register('bangumis', function (locals) {
 });
 hexo.extend.console.register('bangumi', 'Generate pages of bilibili bangumis for Hexo', options, function (args) {
   if (args.d) {
-    if (fs.existsSync(path.join(this.source_dir, '/_data/'))) {
-      fs.rmdirSync(path.join(this.source_dir, '/_data/'));
+    if (fs.existsSync(path.join(this.source_dir, '/_data/bangumis.json'))) {
+      fs.unlinkSync(path.join(this.source_dir, '/_data/bangumis.json'));
       log.info('Bangumis data has been deleted');
     }
   } else if (args.u) {
     var _this$config2, _this$config$bangumi$;
 
-    if (!(this === null || this === void 0 ? void 0 : (_this$config2 = this.config) === null || _this$config2 === void 0 ? void 0 : _this$config2.bangumi)) {
+    if (!(this !== null && this !== void 0 && (_this$config2 = this.config) !== null && _this$config2 !== void 0 && _this$config2.bangumi)) {
       log.info('Please add config to _config.yml');
       return;
     }
@@ -96,7 +96,7 @@ function _getBangumiPage() {
           case 2:
             response = _context.sent;
 
-            if (!((response === null || response === void 0 ? void 0 : (_response$data = response.data) === null || _response$data === void 0 ? void 0 : _response$data.code) === 0 && (response === null || response === void 0 ? void 0 : (_response$data2 = response.data) === null || _response$data2 === void 0 ? void 0 : _response$data2.message) === '0' && (response === null || response === void 0 ? void 0 : (_response$data3 = response.data) === null || _response$data3 === void 0 ? void 0 : _response$data3.data) && typeof (response === null || response === void 0 ? void 0 : (_response$data4 = response.data) === null || _response$data4 === void 0 ? void 0 : (_response$data4$data = _response$data4.data) === null || _response$data4$data === void 0 ? void 0 : _response$data4$data.total) !== 'undefined')) {
+            if (!((response === null || response === void 0 ? void 0 : (_response$data = response.data) === null || _response$data === void 0 ? void 0 : _response$data.code) === 0 && (response === null || response === void 0 ? void 0 : (_response$data2 = response.data) === null || _response$data2 === void 0 ? void 0 : _response$data2.message) === '0' && response !== null && response !== void 0 && (_response$data3 = response.data) !== null && _response$data3 !== void 0 && _response$data3.data && typeof (response === null || response === void 0 ? void 0 : (_response$data4 = response.data) === null || _response$data4 === void 0 ? void 0 : (_response$data4$data = _response$data4.data) === null || _response$data4$data === void 0 ? void 0 : _response$data4$data.total) !== 'undefined')) {
               _context.next = 7;
               break;
             }
@@ -197,7 +197,7 @@ function _getBangumi() {
                   view: count(bangumi === null || bangumi === void 0 ? void 0 : (_bangumi$stat2 = bangumi.stat) === null || _bangumi$stat2 === void 0 ? void 0 : _bangumi$stat2.view),
                   danmaku: count(bangumi === null || bangumi === void 0 ? void 0 : (_bangumi$stat3 = bangumi.stat) === null || _bangumi$stat3 === void 0 ? void 0 : _bangumi$stat3.danmaku),
                   coin: count(bangumi.stat.coin),
-                  score: (bangumi === null || bangumi === void 0 ? void 0 : bangumi.rating) ? bangumi === null || bangumi === void 0 ? void 0 : (_bangumi$rating = bangumi.rating) === null || _bangumi$rating === void 0 ? void 0 : _bangumi$rating.score : '暂无评分',
+                  score: bangumi !== null && bangumi !== void 0 && bangumi.rating ? bangumi === null || bangumi === void 0 ? void 0 : (_bangumi$rating = bangumi.rating) === null || _bangumi$rating === void 0 ? void 0 : _bangumi$rating.score : '暂无评分',
                   des: bangumi === null || bangumi === void 0 ? void 0 : bangumi.evaluate
                 });
               }
@@ -244,7 +244,7 @@ function _biliBangumi() {
           case 2:
             page = _context3.sent;
 
-            if (!(page === null || page === void 0 ? void 0 : page.success)) {
+            if (!(page !== null && page !== void 0 && page.success)) {
               _context3.next = 20;
               break;
             }
