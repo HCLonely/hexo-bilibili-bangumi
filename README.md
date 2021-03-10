@@ -62,6 +62,43 @@ bangumi:
 
 ![示例图片](https://github.com/HCLonely/hexo-bilibili-bangumi/raw/master/example.png)
 
+## 手动添加番剧数据
+因为某些番剧在哔哩哔哩上没有，但是又想在hexo中展示，怎么办呢？现在支持手动添加番剧数据了！
+
+在 `sources/_data/` 目录下新建文件，命名为 `extra_bangumis.json` ，并添加以如下内容:
+```json
+{
+  "watched": [
+    {
+      "title": "缘之空", 
+      "type": "番剧", 
+      "area": "日本", 
+      "cover": "https://cdn.jsdelivr.net/gh/mmdjiji/bangumis@main/Yosuga-no-Sora/cover.jpg", 
+      "totalCount": "全12话", 
+      "id": 0,
+      "follow": "不可用", 
+      "view": "不可用", 
+      "danmaku": "不可用", 
+      "coin": "不可用", 
+      "score": "不可用", 
+      "des": "远离都市的田园小镇，奥木染。春日野悠带着妹妹穹，来到了这座城镇。坐落在这里的是，儿时暑假经常造访的充满回忆的已故祖父的家。双亲因意外事故而丧生，变得无依无靠..."
+    }
+  ]
+}
+```
+
+`title` 是番剧的标题，`cover` 是封面图链接， `des` 是简介，上述字段均根据需要修改。
+
+另外除了 `watched` 数组，还可以在后面添加新的数组，可用数组名如下:
+
+|可用数组名|含义|
+|-|-|
+|wantWatch|想看|
+|watching|在看|
+|watched|看过|
+
+需要注意，在两个数组之间需要用 `,` 分隔。
+
 ## Lisense
 
 [Apache Licence 2.0](https://github.com/HCLonely/hexo-bilibili-bangumi/blob/master/LICENSE)
