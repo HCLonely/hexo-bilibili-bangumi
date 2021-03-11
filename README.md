@@ -68,7 +68,7 @@ bangumi:
 在 `sources/_data/` 目录下新建文件，命名为 `extra_bangumis.json` ，并添加以如下内容:
 ```json
 {
-  "watched": [
+  "watchedExtra": [
     {
       "title": "缘之空", 
       "type": "番剧", 
@@ -89,13 +89,13 @@ bangumi:
 
 `title` 是番剧的标题，`cover` 是封面图链接， `des` 是简介，上述字段均根据需要修改。
 
-另外除了 `watched` 数组，还可以在后面添加新的数组，可用数组名如下:
+另外除了 `watchedExtra` 数组，还可以在后面添加新的数组，可用数组名如下:
 
 |可用数组名|含义|
 |-|-|
-|wantWatch|想看|
-|watching|在看|
-|watched|看过|
+|wantWatchExtra|想看|
+|watchingExtra|在看|
+|watchedExtra|看过|
 
 需要注意，在两个数组之间需要用 `,` 分隔。
 
