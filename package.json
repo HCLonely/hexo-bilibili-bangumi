@@ -1,11 +1,12 @@
 {
   "name": "hexo-bilibili-bangumi",
-  "version": "1.5.3",
+  "version": "1.5.4",
   "description": "hexo bilibili番剧页",
   "main": "index.js",
   "scripts": {
-    "test": "standard --fix",
-    "build": "babel src/index.js --out-file index.js && babel src/lib/util.js --out-file lib/util.js && babel src/lib/bangumi-generator.js --out-file lib/bangumi-generator.js && babel src/lib/templates/index.js --out-file lib/templates/index.js --presets minify && babel src/lib/templates/pagination.js --out-file lib/templates/pagination.js --presets minify && cleancss src/lib/templates/index.css -O2 -o lib/templates/index.css"
+    "test": "standard --fix && ejslint lib/templates/*.ejs",
+    "build": "babel src/index.js --out-file index.js && babel src/lib/util.js --out-file lib/util.js && babel src/lib/bangumi-generator.js --out-file lib/bangumi-generator.js && babel src/lib/templates/index.js --out-file lib/templates/index.js --presets minify && babel src/lib/templates/pagination.js --out-file lib/templates/pagination.js --presets minify && cleancss src/lib/templates/index.css -O2 -o lib/templates/index.css",
+    "ejslint": "ejslint lib/templates/*.ejs"
   },
   "author": "HCLonely <h1606051253@gmail.com>",
   "license": "Apache Licence 2.0",
@@ -21,10 +22,9 @@
     "@babel/runtime": "^7.9.6",
     "axios": "^0.21.1",
     "ejs": "3.1.6",
-    "hexo-fs": "^0.2.2",
-    "hexo-i18n": "^0.2.1",
+    "hexo-fs": "^3.1.0",
+    "hexo-i18n": "^1.0.0",
     "hexo-log": "^2.0.0",
-    "path": "^0.12.7",
     "progress": "^2.0.3"
   },
   "repository": {
@@ -38,6 +38,7 @@
     "@babel/preset-env": "^7.9.6",
     "babel-preset-minify": "^0.5.1",
     "clean-css-cli": "^4.3.0",
+    "ejs-lint": "^1.1.0",
     "standard": "^14.3.4"
   },
   "standard": {
