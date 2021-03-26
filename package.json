@@ -38,7 +38,7 @@
     "@babel/preset-env": "^7.9.6",
     "babel-preset-minify": "^0.5.1",
     "clean-css-cli": "^4.3.0",
-    "standard": "^14.3.4"
+    "standard": "^16.0.3"
   },
   "standard": {
     "ignore": [
