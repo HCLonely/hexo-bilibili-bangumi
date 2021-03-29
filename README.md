@@ -4,7 +4,7 @@
 
 ## 介绍
 
-**为 Hexo 添加哔哩哔哩番剧页面，参考了[hexo-douban](https://github.com/mythsman/hexo-douban)的部分代码**.
+**为 Hexo 添加哔哩哔哩番剧页面，参考自[hexo-douban](https://github.com/mythsman/hexo-douban)**.
 
 [Demo](https://demo.hclonely.com/bangumis/)
 
