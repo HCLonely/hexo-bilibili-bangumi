@@ -52,7 +52,7 @@ bangumi:
 - **bgmtv**: 从Bangumi番组计划获取数据，评分等，设置为`true`便激活，同时相应修改部分显示内容,webp和progress暂不支持
 
 ## 使用
-
+0. 从Bilibili获取数据，bgmtv不填或`false`， 从Bangumi番组计划获取数据， bgmtv填`true`
 1. 在`hexo generate`或`hexo deploy`之前使用`hexo bangumi -u`命令更新番剧数据！
 2. 删除数据命令:`hexo bangumi -d`
 
