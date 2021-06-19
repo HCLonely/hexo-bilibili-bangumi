@@ -1,50 +1,88 @@
 {
-  "name": "hexo-bilibili-bangumi",
-  "version": "1.5.4",
-  "description": "hexo bilibili番剧页",
-  "main": "index.js",
-  "scripts": {
-    "test": "standard --fix && ejslint lib/templates/*.ejs",
-    "build": "babel src/index.js --out-file index.js && babel src/lib/util.js --out-file lib/util.js && babel src/lib/bangumi-generator.js --out-file lib/bangumi-generator.js && babel src/lib/templates/index.js --out-file lib/templates/index.js --presets minify && babel src/lib/templates/pagination.js --out-file lib/templates/pagination.js --presets minify && cleancss src/lib/templates/index.css -O2 -o lib/templates/index.css",
-    "ejslint": "ejslint lib/templates/*.ejs"
+  "_from": "hexo-bilibili-bangumi",
+  "_id": "hexo-bilibili-bangumi@1.5.4",
+  "_inBundle": false,
+  "_integrity": "sha512-3ep+p6F6ShpwBaYaNQ6lBIVDZGXTySOaoPdzXV+z2xiKflnIgNiju59fD9/EeXeGfd82Miq7SdkcIPci8oA4QA==",
+  "_location": "/hexo-bilibili-bangumi",
+  "_phantomChildren": {
+    "jake": "10.8.2"
   },
-  "author": "HCLonely <h1606051253@gmail.com>",
-  "license": "Apache Licence 2.0",
-  "keywords": [
-    "generator",
-    "plugin",
-    "bilibili",
-    "bangumi",
-    "hexo",
-    "anime"
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "hexo-bilibili-bangumi",
+    "name": "hexo-bilibili-bangumi",
+    "escapedName": "hexo-bilibili-bangumi",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
   ],
+  "_resolved": "https://registry.npmjs.org/hexo-bilibili-bangumi/-/hexo-bilibili-bangumi-1.5.4.tgz",
+  "_shasum": "2d8af621d0f6463875268f88d5764bcd16088e61",
+  "_spec": "hexo-bilibili-bangumi",
+  "_where": "H:\\programming\\blog\\myblog\\source\\_posts",
+  "author": {
+    "name": "HCLonely",
+    "email": "h1606051253@gmail.com"
+  },
+  "bugs": {
+    "url": "https://github.com/HCLonely/hexo-bilibili-bangumi/issues"
+  },
+  "bundleDependencies": false,
   "dependencies": {
     "@babel/runtime": "^7.9.6",
     "axios": "^0.21.1",
+    "bangumi-data": "^0.3.62",
     "ejs": "3.1.6",
     "hexo-fs": "^3.1.0",
     "hexo-i18n": "^1.0.0",
     "hexo-log": "^2.0.0",
     "progress": "^2.0.3"
   },
+  "deprecated": false,
+  "description": "hexo bilibili番剧页",
+  "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.14.6",
+    "@babel/plugin-transform-runtime": "^7.14.5",
+    "@babel/preset-env": "^7.14.5",
+    "@babel/preset-stage-2": "^7.8.3",
+    "babel-preset-minify": "^0.5.1",
+    "clean-css-cli": "^4.3.0",
+    "ejs-lint": "^1.1.0",
+    "standard": "^14.3.4"
+  },
+  "homepage": "https://github.com/HCLonely/hexo-bilibili-bangumi#readme",
+  "keywords": [
+    "generator",
+    "plugin",
+    "bilibili",
+    "bangumi",
+    "hexo",
+    "anime",
+    "bgmtv"
+  ],
+  "license": "Apache Licence 2.0",
+  "main": "index.js",
+  "name": "hexo-bilibili-bangumi",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/HCLonely/hexo-bilibili-bangumi.git"
   },
-  "devDependencies": {
-    "@babel/cli": "^7.8.4",
-    "@babel/core": "^7.9.6",
-    "@babel/plugin-transform-runtime": "^7.9.6",
-    "@babel/preset-env": "^7.9.6",
-    "babel-preset-minify": "^0.5.1",
-    "clean-css-cli": "^5.2.2",
-    "ejs-lint": "^1.1.0",
-    "standard": "^14.3.4"
+  "scripts": {
+    "build": "babel src/index.js --out-file index.js && babel src/lib/util.js --out-file lib/util.js && babel src/lib/bangumi-generator.js --out-file lib/bangumi-generator.js && babel src/lib/templates/index.js --out-file lib/templates/index.js --presets minify && babel src/lib/templates/pagination.js --out-file lib/templates/pagination.js --presets minify && cleancss src/lib/templates/index.css -O2 -o lib/templates/index.css",
+    "ejslint": "ejslint lib/templates/*.ejs",
+    "test": "standard --fix && ejslint lib/templates/*.ejs"
   },
   "standard": {
     "ignore": [
       "index.js",
       "lib/*"
     ]
-  }
+  },
+  "version": "1.5.4"
 }

@@ -4,9 +4,11 @@
 
 ## 介绍
 
-**为 Hexo 添加哔哩哔哩番剧页面，参考自[hexo-douban](https://github.com/mythsman/hexo-douban)**.
+**为 Hexo 添加番剧页面，参考了[hexo-douban](https://github.com/mythsman/hexo-douban)的部分代码**
+**支持从`Bilbili`和`Bangumi番组计划`选择一种获取数据**
 
-[Demo](https://demo.hclonely.com/bangumis/)
+[BiliBili Demo](https://demo.hclonely.com/bangumis/)
+[Bangumi番组计划 Demo]() （待续）
 
 ## 安装
 
@@ -33,6 +35,7 @@ bangumi:
   color:
   webp:
   progress:
+  bgmtv:
 ```
 
 - **enable**: 是否启用
@@ -46,24 +49,30 @@ bangumi:
 - **color**: 简介字体颜色
 - **webp**: 番剧封面使用`webp`格式(此格式在`safari`浏览器下不显示，但是图片大小可以缩小 100 倍左右), 默认`true`
 - **progress**: 获取番剧数据时是否显示进度条，默认`true`
+- **bgmtv**: 从Bangumi番组计划获取数据，评分等，设置为`true`便激活，同时相应修改部分显示内容,webp和progress暂不支持
 
 ## 使用
 
 1. 在`hexo generate`或`hexo deploy`之前使用`hexo bangumi -u`命令更新番剧数据！
 2. 删除数据命令:`hexo bangumi -d`
 
-## 获取 uid
+## 获取 vmid
 
-登录哔哩哔哩后前往[https://space.bilibili.com/](https://space.bilibili.com/)页面，网址最后的一串数字就是 `uid`
+- 使用Bilibili数据
+登录哔哩哔哩后前往[https://space.bilibili.com/](https://space.bilibili.com/)页面，网址最后的一串数字就是 `vmid`
 
 ***需要将追番列表设置为公开！***
+
+- 使用Bangumi番组计划数据
+登录Bangumi番组计划后，点击自己头像或者名字，得到形如`https://bgm.tv/user/xxxxxx`网址最后的一串数字就是 `vmid`
 
 ## 示例
 
 ![示例图片](https://github.com/HCLonely/hexo-bilibili-bangumi/raw/master/example.png)
 
 ## 手动添加番剧数据
-因为某些番剧在哔哩哔哩上没有，但是又想在hexo中展示，怎么办呢？现在支持手动添加番剧数据了！
+**只支持从B站获取数据的方式**
+从B站获取数据时，因为某些番剧在哔哩哔哩上没有，但是又想在hexo中展示，可以手动添加番剧数据！
 
 在 `sources/_data/` 目录下新建文件，命名为 `extra_bangumis.json` ，并添加以如下内容:
 ```json

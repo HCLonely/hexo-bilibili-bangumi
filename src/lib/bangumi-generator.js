@@ -48,7 +48,10 @@ module.exports = async function (locals) {
 
   const __ = i18n.__(config.language)
 
-  const contents = await ejs.renderFile(path.join(__dirname, 'templates/bangumi.ejs'), {
+  const ejsFile = config?.bangumi?.bgmtv ? 'templates/bangumi-tv.ejs' : 'templates/bangumi.ejs'
+  log.info('use ' + ejsFile)
+
+  const contents = await ejs.renderFile(path.join(__dirname, ejsFile), {
     quote: config.bangumi.quote,
     show: config.bangumi.show || 1,
     loading: config.bangumi.loading,

@@ -9,7 +9,7 @@ var _toConsumableArray2 = _interopRequireDefault(require("@babel/runtime/helpers
 
 var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
 
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
@@ -21,6 +21,12 @@ var path = require('path');
 
 var axios = require('axios');
 
+var cheerio = require('cheerio');
+
+var util = require('util');
+
+var bangumiData = require('bangumi-data');
+
 var log = require('hexo-log')({
   debug: false,
   silent: false
@@ -28,8 +34,11 @@ var log = require('hexo-log')({
 
 var ProgressBar = require('progress');
 
-if (typeof URL !== 'function') var _require = require('url'),
-    URL = _require.URL;
+var _require = require('process'),
+    config = _require.config;
+
+if (typeof URL !== 'function') var _require2 = require('url'),
+    URL = _require2.URL;
 var options = {
   options: [{
     name: '-u, --update',
@@ -71,7 +80,15 @@ hexo.extend.console.register('bangumi', 'Generate pages of bilibili bangumis for
       return;
     }
 
-    saveBangumiData(this.config.bangumi.vmid, this.config.bangumi.webp, (_this$config$bangumi$ = this.config.bangumi.progress) !== null && _this$config$bangumi$ !== void 0 ? _this$config$bangumi$ : true, this.source_dir);
+    if (this.config.bangumi.bgmtv) {
+      log.info('Use bgmtv to construct!');
+      var constructMethod = bgmtvBangumi;
+    } else {
+      log.info('Use bilibili to construct!');
+      var constructMethod = biliBangumi; // 保留原模式供选择
+    }
+
+    saveBangumiData(constructMethod, this.config.bangumi.vmid, this.config.bangumi.webp, (_this$config$bangumi$ = this.config.bangumi.progress) !== null && _this$config$bangumi$ !== void 0 ? _this$config$bangumi$ : true, this.source_dir);
   } else {
     log.info('Unknown command, please use "hexo bangumi -h" to see the available commands');
   }
@@ -229,7 +246,9 @@ function total(e) {
 
 function biliBangumi(_x7, _x8, _x9, _x10) {
   return _biliBangumi.apply(this, arguments);
-}
+} // added by @Freddd13
+// 不太会JS，花了半天读了一遍这个项目的代码后，模仿作者的一些用法和现查一些文档改出来的，请见谅
+
 
 function _biliBangumi() {
   _biliBangumi = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3(vmid, status, webp, progress) {
@@ -293,46 +312,262 @@ function _biliBangumi() {
   return _biliBangumi.apply(this, arguments);
 }
 
-function saveBangumiData(_x11) {
+function dealDes(des) {
+  // 解决pc描述过长 移动页面？
+  des = des.replace('　', ' ');
+  var cutNum = 150;
+  return des.length > cutNum ? des.substr(0, 150) + '...' : des.substr(0, des.length - 1) + '...';
+}
+
+function getPageNum(_x11, _x12) {
+  return _getPageNum.apply(this, arguments);
+}
+
+function _getPageNum() {
+  _getPageNum = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4(userid, status) {
+    var idlist, res, $, pagenum, _loop, i;
+
+    return _regenerator["default"].wrap(function _callee4$(_context5) {
+      while (1) {
+        switch (_context5.prev = _context5.next) {
+          case 0:
+            idlist = [];
+            _context5.next = 3;
+            return axios.get("https://bangumi.tv/anime/list/".concat(userid, "/").concat(status));
+
+          case 3:
+            res = _context5.sent;
+            $ = cheerio.load(res.data);
+            pagenum = $('#multipage').find('a').length;
+            pagenum = pagenum > 0 ? pagenum : 1; // console.log(pagenum);
+
+            _loop = /*#__PURE__*/_regenerator["default"].mark(function _loop() {
+              var res, $;
+              return _regenerator["default"].wrap(function _loop$(_context4) {
+                while (1) {
+                  switch (_context4.prev = _context4.next) {
+                    case 0:
+                      _context4.next = 2;
+                      return axios.get("https://bangumi.tv/anime/list/".concat(userid, "/").concat(status, "?page=").concat(i + 1));
+
+                    case 2:
+                      res = _context4.sent;
+                      $ = cheerio.load(res.data);
+                      $('li', '#browserItemList').each(function (index, elem) {
+                        idlist.push($(elem).attr('id').split('_')[1]);
+                      });
+
+                    case 5:
+                    case "end":
+                      return _context4.stop();
+                  }
+                }
+              }, _loop);
+            });
+            i = 0;
+
+          case 9:
+            if (!(i < pagenum)) {
+              _context5.next = 14;
+              break;
+            }
+
+            return _context5.delegateYield(_loop(), "t0", 11);
+
+          case 11:
+            i++;
+            _context5.next = 9;
+            break;
+
+          case 14:
+            return _context5.abrupt("return", idlist);
+
+          case 15:
+          case "end":
+            return _context5.stop();
+        }
+      }
+    }, _callee4);
+  }));
+  return _getPageNum.apply(this, arguments);
+}
+
+function dealBgmtvData(rawdata) {
+  var $data = [];
+  var tmptags = []; // 生成数据, 后续再整理
+
+  rawdata.forEach(function (elem) {
+    var _elem$data$name, _elem$data, _elem$data$rating$sco, _elem$data2, _elem$data2$rating, _elem$data3, _elem$data4, _elem$data$collection, _elem$data5, _elem$data5$collectio, _elem$data$collection2, _elem$data6, _elem$data6$collectio, _elem$data$collection3, _elem$data7, _elem$data7$collectio, _elem$data8, _elem$data8$eps, _elem$data9, _elem$data9$eps, _elem$data10, _elem$data11, _elem$data12, _elem$data13, _elem$data14, _elem$data15;
+
+    var jp_title = (_elem$data$name = elem === null || elem === void 0 ? void 0 : (_elem$data = elem.data) === null || _elem$data === void 0 ? void 0 : _elem$data.name) !== null && _elem$data$name !== void 0 ? _elem$data$name : null; //TODO undefined? 有些cdn数据有问题，后面再写一个修复
+
+    var cn_name = jp_title ? findBangumiCn(jp_title) : null;
+    var title = cn_name;
+    var score = (_elem$data$rating$sco = elem === null || elem === void 0 ? void 0 : (_elem$data2 = elem.data) === null || _elem$data2 === void 0 ? void 0 : (_elem$data2$rating = _elem$data2.rating) === null || _elem$data2$rating === void 0 ? void 0 : _elem$data2$rating.score) !== null && _elem$data$rating$sco !== void 0 ? _elem$data$rating$sco : null;
+    var summary = elem !== null && elem !== void 0 && (_elem$data3 = elem.data) !== null && _elem$data3 !== void 0 && _elem$data3.summary ? dealDes(elem === null || elem === void 0 ? void 0 : (_elem$data4 = elem.data) === null || _elem$data4 === void 0 ? void 0 : _elem$data4.summary) : null;
+    var wish = (_elem$data$collection = elem === null || elem === void 0 ? void 0 : (_elem$data5 = elem.data) === null || _elem$data5 === void 0 ? void 0 : (_elem$data5$collectio = _elem$data5.collection) === null || _elem$data5$collectio === void 0 ? void 0 : _elem$data5$collectio.wish) !== null && _elem$data$collection !== void 0 ? _elem$data$collection : null;
+    var collect = (_elem$data$collection2 = elem === null || elem === void 0 ? void 0 : (_elem$data6 = elem.data) === null || _elem$data6 === void 0 ? void 0 : (_elem$data6$collectio = _elem$data6.collection) === null || _elem$data6$collectio === void 0 ? void 0 : _elem$data6$collectio.collect) !== null && _elem$data$collection2 !== void 0 ? _elem$data$collection2 : null;
+    var doing = (_elem$data$collection3 = elem === null || elem === void 0 ? void 0 : (_elem$data7 = elem.data) === null || _elem$data7 === void 0 ? void 0 : (_elem$data7$collectio = _elem$data7.collection) === null || _elem$data7$collectio === void 0 ? void 0 : _elem$data7$collectio.doing) !== null && _elem$data$collection3 !== void 0 ? _elem$data$collection3 : null; // TODO 有些动画计数包含了sp, .5集等，待优化
+
+    var totalCount = elem !== null && elem !== void 0 && (_elem$data8 = elem.data) !== null && _elem$data8 !== void 0 && (_elem$data8$eps = _elem$data8.eps) !== null && _elem$data8$eps !== void 0 && _elem$data8$eps.length ? (elem === null || elem === void 0 ? void 0 : (_elem$data9 = elem.data) === null || _elem$data9 === void 0 ? void 0 : (_elem$data9$eps = _elem$data9.eps) === null || _elem$data9$eps === void 0 ? void 0 : _elem$data9$eps.length) + '话' : '未知'; // 防止没有样式塌了。。
+
+    var type = (elem === null || elem === void 0 ? void 0 : (_elem$data10 = elem.data) === null || _elem$data10 === void 0 ? void 0 : _elem$data10.type) === 2 ? '番剧' : '其他';
+    var viewArray = elem !== null && elem !== void 0 && (_elem$data11 = elem.data) !== null && _elem$data11 !== void 0 && _elem$data11.collection ? Object.values(elem === null || elem === void 0 ? void 0 : (_elem$data12 = elem.data) === null || _elem$data12 === void 0 ? void 0 : _elem$data12.collection) : null;
+    var id = elem === null || elem === void 0 ? void 0 : (_elem$data13 = elem.data) === null || _elem$data13 === void 0 ? void 0 : _elem$data13.id;
+    var view = viewArray ? function () {
+      var sum = 0;
+      viewArray.forEach(function (val) {
+        sum += val;
+      });
+      return sum;
+    }() : null;
+    var cover = elem !== null && elem !== void 0 && (_elem$data14 = elem.data) !== null && _elem$data14 !== void 0 && _elem$data14.image ? "https:" + (elem === null || elem === void 0 ? void 0 : (_elem$data15 = elem.data) === null || _elem$data15 === void 0 ? void 0 : _elem$data15.image) : null; // TODO,tags
+    // 完成了一组动画数据
+
+    $data.push({
+      title: cn_name,
+      score: score,
+      des: summary,
+      wish: wish,
+      collect: collect,
+      doing: doing,
+      cover: cover,
+      totalCount: totalCount,
+      type: type,
+      view: view,
+      id: id
+    });
+  });
+  return $data;
+} // 查找中文名
+
+
+function findBangumiCn() {
+  var jp = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+  var item = bangumiData.items.find(function (item) {
+    return item.title === jp;
+  });
+
+  if (item) {
+    var cn = item.titleTranslate && item.titleTranslate['zh-Hans'] && item.titleTranslate['zh-Hans'][0] || jp;
+    return cn;
+  }
+
+  return jp;
+}
+
+function getBangumiCDN(_x13) {
+  return _getBangumiCDN.apply(this, arguments);
+}
+
+function _getBangumiCDN() {
+  _getBangumiCDN = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee5(idlist) {
+    var url, response;
+    return _regenerator["default"].wrap(function _callee5$(_context6) {
+      while (1) {
+        switch (_context6.prev = _context6.next) {
+          case 0:
+            url = "https://cdn.jsdelivr.net/gh/czy0729/Bangumi-Subject@master/data/"; // 并发请求，很爽
+
+            _context6.next = 3;
+            return axios.all(idlist.map(function (subjectId) {
+              return axios.get(url + "".concat(parseInt(parseInt(subjectId) / 100), "/").concat(subjectId, ".json"));
+            }));
+
+          case 3:
+            response = _context6.sent;
+            return _context6.abrupt("return", response);
+
+          case 5:
+          case "end":
+            return _context6.stop();
+        }
+      }
+    }, _callee5);
+  }));
+  return _getBangumiCDN.apply(this, arguments);
+}
+
+function bgmtvBangumi(_x14, _x15, _x16, _x17) {
+  return _bgmtvBangumi.apply(this, arguments);
+} // --------
+
+
+function _bgmtvBangumi() {
+  _bgmtvBangumi = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee6(vmid, status, webp, progress) {
+    var idlist, rawdata, finaldata;
+    return _regenerator["default"].wrap(function _callee6$(_context7) {
+      while (1) {
+        switch (_context7.prev = _context7.next) {
+          case 0:
+            //TODO: webp, progress
+            status = status === 1 ? 'wish' : status === 2 ? 'do' : 'collect';
+            _context7.next = 3;
+            return getPageNum(vmid, status);
+
+          case 3:
+            idlist = _context7.sent;
+            _context7.next = 6;
+            return getBangumiCDN(idlist);
+
+          case 6:
+            rawdata = _context7.sent;
+            finaldata = dealBgmtvData(rawdata); // console.log(finaldata)
+
+            return _context7.abrupt("return", finaldata);
+
+          case 9:
+          case "end":
+            return _context7.stop();
+        }
+      }
+    }, _callee6);
+  }));
+  return _bgmtvBangumi.apply(this, arguments);
+}
+
+function saveBangumiData(_x18, _x19) {
   return _saveBangumiData.apply(this, arguments);
 }
 
 function _saveBangumiData() {
-  _saveBangumiData = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4(vmid) {
+  _saveBangumiData = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee7(constructMethod, vmid) {
     var webp,
         progress,
         sourceDir,
+        methodInfo,
         startTime,
         wantWatch,
         watching,
         watched,
         endTime,
         bangumis,
-        _args4 = arguments;
-    return _regenerator["default"].wrap(function _callee4$(_context4) {
+        _args8 = arguments;
+    return _regenerator["default"].wrap(function _callee7$(_context8) {
       while (1) {
-        switch (_context4.prev = _context4.next) {
+        switch (_context8.prev = _context8.next) {
           case 0:
-            webp = _args4.length > 1 && _args4[1] !== undefined ? _args4[1] : true;
-            progress = _args4.length > 2 ? _args4[2] : undefined;
-            sourceDir = _args4.length > 3 ? _args4[3] : undefined;
-            log.info('Getting bilibili bangumis, please wait...');
+            webp = _args8.length > 2 && _args8[2] !== undefined ? _args8[2] : true;
+            progress = _args8.length > 3 ? _args8[3] : undefined;
+            sourceDir = _args8.length > 4 ? _args8[4] : undefined;
+            methodInfo = constructMethod === biliBangumi ? 'bilibili' : 'bgmtv';
+            log.info("Getting ".concat(methodInfo, " bangumis, please wait..."));
             startTime = new Date().getTime();
-            _context4.next = 7;
-            return biliBangumi(vmid, 1, webp, progress);
+            _context8.next = 8;
+            return constructMethod(vmid, 1, webp, progress);
 
-          case 7:
-            wantWatch = _context4.sent;
-            _context4.next = 10;
-            return biliBangumi(vmid, 2, webp, progress);
+          case 8:
+            wantWatch = _context8.sent;
+            _context8.next = 11;
+            return constructMethod(vmid, 2, webp, progress);
 
-          case 10:
-            watching = _context4.sent;
-            _context4.next = 13;
-            return biliBangumi(vmid, 3, webp, progress);
+          case 11:
+            watching = _context8.sent;
+            _context8.next = 14;
+            return constructMethod(vmid, 3, webp, progress);
 
-          case 13:
-            watched = _context4.sent;
+          case 14:
+            watched = _context8.sent;
             endTime = new Date().getTime();
             log.info(wantWatch.length + watching.length + watched.length + ' bangumis have been loaded in ' + (endTime - startTime) + ' ms');
             bangumis = {
@@ -350,16 +585,16 @@ function _saveBangumiData() {
                 log.info('Failed to write data to bangumis.json');
                 console.error(err);
               } else {
-                log.info('Bilibili bangumis data has been saved');
+                log.info("All ".concat(methodInfo, " bangumis data has been saved"));
               }
             });
 
-          case 19:
+          case 20:
           case "end":
-            return _context4.stop();
+            return _context8.stop();
         }
       }
-    }, _callee4);
+    }, _callee7);
   }));
   return _saveBangumiData.apply(this, arguments);
 }
