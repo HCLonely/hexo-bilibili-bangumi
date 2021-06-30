@@ -9,7 +9,7 @@
 
 [BiliBili Demo](https://demo.hclonely.com/bangumis/)
 
-[Bangumi番组计划 Demo](https://yunzd.life/) 
+[Bangumi番组计划 Demo，见我的BLOG] 
 
 ## 安装
 
