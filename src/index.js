@@ -127,108 +127,144 @@ async function biliBangumi (vmid, status, webp, progress) {
 }
 
 // added by @Freddd13
-// 不太会JS，花了半天读了一遍这个项目的代码后，模仿作者的一些用法和现查一些文档改出来的，请见谅
-function dealDes(des){  // 解决pc描述过长 移动页面？
-  des = des.replace('　',' ');
-  var cutNum = 150;
+// 裁剪动画描述解决pc描述过长 TODO: 移动页面？
+function dealDes(des){  
+  des = des.replace('　','').replace(' ', '')
+  const cutNum = 150;
   return des.length > cutNum ? des.substr(0, 150) + '...' : des.substr(0, des.length - 1) + '...'
 }
 
-async function getPageNum(userid, status){
-  var idlist = [];
-  const res = await axios.get(`https://bangumi.tv/anime/list/${userid}/${status}`)
-  const $ = cheerio.load(res.data);
-  var pagenum = $('#multipage').find('a').length;
-  pagenum = pagenum > 0 ? pagenum : 1
-  // console.log(pagenum);
-  for (var i=0; i<pagenum; i++){
-    const res = await axios.get(`https://bangumi.tv/anime/list/${userid}/${status}?page=${i+1}`)
-    const $ = cheerio.load(res.data);
-    $('li','#browserItemList').each(function(index, elem) {
-      idlist.push($(elem).attr('id').split('_')[1]);
-    })
-  }
-  return idlist;
-}
-
-function dealBgmtvData(rawdata){
-  const $data = [];
-  const tmptags = [];
-
-  // 生成数据, 后续再整理
-  rawdata.forEach(function(elem) {
-    const jp_title = elem?.data?.name ?? null
-    //TODO undefined? 有些cdn数据有问题，后面再写一个修复
-    const cn_name = jp_title ? findBangumiCn(jp_title) : null
-    const title = cn_name
-    const score = elem?.data?.rating?.score ?? null
-    const summary = elem?.data?.summary ? dealDes(elem?.data?.summary) : null
-    const wish = elem?.data?.collection?.wish ?? null
-    const collect = elem?.data?.collection?.collect ?? null
-    const doing = elem?.data?.collection?.doing ?? null
-    // TODO 有些动画计数包含了sp, .5集等，待优化
-    const totalCount = elem?.data?.eps?.length ? elem?.data?.eps?.length + '话' : '未知'  // 防止没有样式塌了。。
-    const type = elem?.data?.type === 2 ? '番剧' : '其他'
-    const viewArray = elem?.data?.collection ? Object.values(elem?.data?.collection) : null
-    const id = elem?.data?.id
-    const view = viewArray ? (function(){
-      var sum = 0;
-      viewArray.forEach(function(val){sum += val;});
-      return sum;
-    })() : null
-    const cover = elem?.data?.image ? "https:" + elem?.data?.image : null
-    // TODO,tags
-
-    // 完成了一组动画数据
-    $data.push({
-      title: cn_name,
-      score: score,
-      des: summary,
-      wish: wish,
-      collect: collect,
-      doing: doing,
-      cover: cover,
-      totalCount: totalCount,
-      type: type,
-      view: view,
-      id: id
-    })
-  })
-  return $data
-}
-
-// 查找中文名
+// 从bangumi-data查找中文名, 查不到返回null
 function findBangumiCn(jp = '') {
   const item = bangumiData.items.find(item => item.title === jp)
   if (item) {
     const cn =
       (item.titleTranslate &&
         item.titleTranslate['zh-Hans'] &&
-        item.titleTranslate['zh-Hans'][0]) ||
-      jp
+        item.titleTranslate['zh-Hans'][0]) || jp
     return cn
   }
-  return jp
+  return null
 }
 
+// 从bgmtv抓取中文名， 查不到返回日文名
+async function queryCNName(id, jpname = null){
+  const res =  await axios.get(`https://bgm.tv/subject/${id}`)
+  const $ = cheerio.load(res.data)
+  // const cn_name = $('span', '#infobox')[0]?.next?.data ?? null
+  const cn_name = $('meta[name="keywords"]').attr('content').split(',')[0] ?? null;
+  return cn_name ?? jpname ?? null
+}
+
+// 对于有问题的CDN， 从源网页抓取
+async function fixData(id){
+  const res =  await axios.get(`https://bgm.tv/subject/${id}`)
+  const $ = cheerio.load(res.data)
+
+  const hastotalCount = $('span', '#infobox')[1]?.children[0]?.data;
+  const people = $('.tip_i')?.find('a') ?? null
+  var view = 0
+  for(var i=1; i<people.length;i++)
+  {
+      view+= parseInt(people[i].children[0]?.data?.split('人')[0]) 
+  }
+  const typeNum = $('option[selected*=selected]')?.attr('value') ?? null
+  return {
+      title: await queryCNName(id) ?? null,
+      score: $('span[property*="v:average"]')?.text() ?? null,
+      des: $('#subject_summary')?.text() ? dealDes($('#subject_summary')?.text()) : null,
+      wish: $('a[href$="wishes"]')?.text().split('人')[0] ?? null,
+      collect: $('a[href$="collections"]')?.text().split('人')[0] ?? null,
+      doing: $('a[href$="doings"]')?.text().split('人')[0] ?? null,
+      cover: 'https:' +　$('img','#bangumiInfo')?.attr('src') ?? null,
+      totalCount: hastotalCount ? $('span', '#infobox')[1]?.next.data + '话' : '未知',
+      type: typeNum === '2' ? '番剧' : '其他', // 这里还有书籍等未列，可到网页代码看
+      view: view,
+      id: id
+    }
+}
+
+// 抓取源网页时，话数只计算正式的集数，排除sp等
+function findEps(eps){
+  const result = eps.filter(item => item.type === 0);
+  const epSum = result.length;
+  // console.log('debug: eps ', epSum)
+  return epSum
+}
+
+// 处理获取到的CDN数据
+async function dealBgmtvData(rawdata, idlist){
+  const $data = []
+  // 使用CDN的数据，个别CDN数据有问题，则根据title是否正常去判断去源页面抓取
+  for (var index = 0; index < rawdata.length; index ++){
+    var elem = rawdata[index]
+    const jp_title = elem?.data?.name ?? null
+    if (!jp_title){
+      console.log('fix bangumi data: ', idlist[index])
+      // console.log(fData)
+      $data.push(await fixData(idlist[index]))
+      continue
+    }
+
+    const viewArray = elem?.data?.collection ? Object.values(elem?.data?.collection) : null
+    // TODO: tags
+    $data.push({
+      title: findBangumiCn(jp_title) ?? await queryCNName(idlist[index], jp_title),
+      // 上面实现先从本地bangumi-data查找中文名，查不到再去bgmtv抓取，这里一个个请求比较慢,不行可用下面      
+      // title: findBangumiCn(jp_title) ?? jp_title,
+      score: elem?.data?.rating?.score ?? null,
+      des: elem?.data?.summary ? dealDes(elem?.data?.summary) : null,
+      wish: elem?.data?.collection?.wish ?? null,
+      collect: elem?.data?.collection?.collect ?? null,
+      doing: elem?.data?.collection?.doing ?? null,
+      cover: elem?.data?.image ? "https:" + elem?.data?.image : null,
+      totalCount: elem?.data?.eps?.length ? findEps(elem?.data?.eps) + '话' : '未知',  // 防止没有样式塌了。。elem?.data?.eps?.length ? findEps(elem?.data?.eps) + '话' : '未知'  // 防止没有样式塌了。。,
+      type: elem?.data?.type === 2 ? '番剧' : '其他',
+      view: viewArray ? (function(){var sum = 0; viewArray.forEach(function(val){sum += val;}); return sum; })() : null,
+      id: elem?.data?.id
+    })
+  }
+  return $data
+}
+
+// 从CDN获取数据
 async function getBangumiCDN(idlist){
     const url = "https://cdn.jsdelivr.net/gh/czy0729/Bangumi-Subject@master/data/"
-    // 并发请求，很爽
     const response = await axios.all(
         idlist.map(subjectId => axios.get(url + `${parseInt(parseInt(subjectId) / 100)}/${subjectId}.json`)))
       return response
 }
 
-async function bgmtvBangumi(vmid, status, webp, progress){  //TODO: webp, progress
-    status = status === 1 ? 'wish' : status === 2 ? 'do' : 'collect';
-    const idlist = await getPageNum(vmid, status);
-    const rawdata = await getBangumiCDN(idlist);
-    const finaldata = dealBgmtvData(rawdata);
-    // console.log(finaldata)
-    return finaldata;
-}
-// --------
 
+// 计算页面数目，获取收藏的动画id
+async function getPageNum(userid, status){
+  var idlist = []
+  const res = await axios.get(`https://bangumi.tv/anime/list/${userid}/${status}`)
+  const $ = cheerio.load(res.data)
+  var pagenum = $('#multipage').find('a').length
+  pagenum = pagenum > 0 ? pagenum : 1
+  // console.log(pagenum);
+  for (var i=0; i<pagenum; i++){
+    const res = await axios.get(`https://bangumi.tv/anime/list/${userid}/${status}?page=${i+1}`)
+    const $ = cheerio.load(res.data)
+    $('li','#browserItemList').each(function(index, elem) {
+      idlist.push($(elem).attr('id').split('_')[1])
+    })
+  }
+  return idlist
+}
+
+// bangumi 获取方式入口
+async function bgmtvBangumi(vmid, status, webp, progress){  //TODO: webp, progress
+    status = status === 1 ? 'wish' : status === 2 ? 'do' : 'collect'
+    const idlist = await getPageNum(vmid, status)
+    const rawdata = await getBangumiCDN(idlist)
+    const finaldata = await dealBgmtvData(rawdata, idlist)
+    // console.log(finaldata)
+    return finaldata
+}
+
+// 程序更新追番入口
 async function saveBangumiData(constructMethod, vmid, webp = true, progress, sourceDir) {
   const methodInfo = constructMethod === biliBangumi ? 'bilibili' : 'bgmtv'
   log.info(`Getting ${methodInfo} bangumis, please wait...`)

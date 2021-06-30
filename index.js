@@ -247,7 +247,7 @@ function total(e) {
 function biliBangumi(_x7, _x8, _x9, _x10) {
   return _biliBangumi.apply(this, arguments);
 } // added by @Freddd13
-// 不太会JS，花了半天读了一遍这个项目的代码后，模仿作者的一些用法和现查一些文档改出来的，请见谅
+// 裁剪动画描述解决pc描述过长 TODO: 移动页面？
 
 
 function _biliBangumi() {
@@ -313,133 +313,10 @@ function _biliBangumi() {
 }
 
 function dealDes(des) {
-  // 解决pc描述过长 移动页面？
-  des = des.replace('　', ' ');
+  des = des.replace('　', '').replace(' ', '');
   var cutNum = 150;
   return des.length > cutNum ? des.substr(0, 150) + '...' : des.substr(0, des.length - 1) + '...';
-}
-
-function getPageNum(_x11, _x12) {
-  return _getPageNum.apply(this, arguments);
-}
-
-function _getPageNum() {
-  _getPageNum = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4(userid, status) {
-    var idlist, res, $, pagenum, _loop, i;
-
-    return _regenerator["default"].wrap(function _callee4$(_context5) {
-      while (1) {
-        switch (_context5.prev = _context5.next) {
-          case 0:
-            idlist = [];
-            _context5.next = 3;
-            return axios.get("https://bangumi.tv/anime/list/".concat(userid, "/").concat(status));
-
-          case 3:
-            res = _context5.sent;
-            $ = cheerio.load(res.data);
-            pagenum = $('#multipage').find('a').length;
-            pagenum = pagenum > 0 ? pagenum : 1; // console.log(pagenum);
-
-            _loop = /*#__PURE__*/_regenerator["default"].mark(function _loop() {
-              var res, $;
-              return _regenerator["default"].wrap(function _loop$(_context4) {
-                while (1) {
-                  switch (_context4.prev = _context4.next) {
-                    case 0:
-                      _context4.next = 2;
-                      return axios.get("https://bangumi.tv/anime/list/".concat(userid, "/").concat(status, "?page=").concat(i + 1));
-
-                    case 2:
-                      res = _context4.sent;
-                      $ = cheerio.load(res.data);
-                      $('li', '#browserItemList').each(function (index, elem) {
-                        idlist.push($(elem).attr('id').split('_')[1]);
-                      });
-
-                    case 5:
-                    case "end":
-                      return _context4.stop();
-                  }
-                }
-              }, _loop);
-            });
-            i = 0;
-
-          case 9:
-            if (!(i < pagenum)) {
-              _context5.next = 14;
-              break;
-            }
-
-            return _context5.delegateYield(_loop(), "t0", 11);
-
-          case 11:
-            i++;
-            _context5.next = 9;
-            break;
-
-          case 14:
-            return _context5.abrupt("return", idlist);
-
-          case 15:
-          case "end":
-            return _context5.stop();
-        }
-      }
-    }, _callee4);
-  }));
-  return _getPageNum.apply(this, arguments);
-}
-
-function dealBgmtvData(rawdata) {
-  var $data = [];
-  var tmptags = []; // 生成数据, 后续再整理
-
-  rawdata.forEach(function (elem) {
-    var _elem$data$name, _elem$data, _elem$data$rating$sco, _elem$data2, _elem$data2$rating, _elem$data3, _elem$data4, _elem$data$collection, _elem$data5, _elem$data5$collectio, _elem$data$collection2, _elem$data6, _elem$data6$collectio, _elem$data$collection3, _elem$data7, _elem$data7$collectio, _elem$data8, _elem$data8$eps, _elem$data9, _elem$data9$eps, _elem$data10, _elem$data11, _elem$data12, _elem$data13, _elem$data14, _elem$data15;
-
-    var jp_title = (_elem$data$name = elem === null || elem === void 0 ? void 0 : (_elem$data = elem.data) === null || _elem$data === void 0 ? void 0 : _elem$data.name) !== null && _elem$data$name !== void 0 ? _elem$data$name : null; //TODO undefined? 有些cdn数据有问题，后面再写一个修复
-
-    var cn_name = jp_title ? findBangumiCn(jp_title) : null;
-    var title = cn_name;
-    var score = (_elem$data$rating$sco = elem === null || elem === void 0 ? void 0 : (_elem$data2 = elem.data) === null || _elem$data2 === void 0 ? void 0 : (_elem$data2$rating = _elem$data2.rating) === null || _elem$data2$rating === void 0 ? void 0 : _elem$data2$rating.score) !== null && _elem$data$rating$sco !== void 0 ? _elem$data$rating$sco : null;
-    var summary = elem !== null && elem !== void 0 && (_elem$data3 = elem.data) !== null && _elem$data3 !== void 0 && _elem$data3.summary ? dealDes(elem === null || elem === void 0 ? void 0 : (_elem$data4 = elem.data) === null || _elem$data4 === void 0 ? void 0 : _elem$data4.summary) : null;
-    var wish = (_elem$data$collection = elem === null || elem === void 0 ? void 0 : (_elem$data5 = elem.data) === null || _elem$data5 === void 0 ? void 0 : (_elem$data5$collectio = _elem$data5.collection) === null || _elem$data5$collectio === void 0 ? void 0 : _elem$data5$collectio.wish) !== null && _elem$data$collection !== void 0 ? _elem$data$collection : null;
-    var collect = (_elem$data$collection2 = elem === null || elem === void 0 ? void 0 : (_elem$data6 = elem.data) === null || _elem$data6 === void 0 ? void 0 : (_elem$data6$collectio = _elem$data6.collection) === null || _elem$data6$collectio === void 0 ? void 0 : _elem$data6$collectio.collect) !== null && _elem$data$collection2 !== void 0 ? _elem$data$collection2 : null;
-    var doing = (_elem$data$collection3 = elem === null || elem === void 0 ? void 0 : (_elem$data7 = elem.data) === null || _elem$data7 === void 0 ? void 0 : (_elem$data7$collectio = _elem$data7.collection) === null || _elem$data7$collectio === void 0 ? void 0 : _elem$data7$collectio.doing) !== null && _elem$data$collection3 !== void 0 ? _elem$data$collection3 : null; // TODO 有些动画计数包含了sp, .5集等，待优化
-
-    var totalCount = elem !== null && elem !== void 0 && (_elem$data8 = elem.data) !== null && _elem$data8 !== void 0 && (_elem$data8$eps = _elem$data8.eps) !== null && _elem$data8$eps !== void 0 && _elem$data8$eps.length ? (elem === null || elem === void 0 ? void 0 : (_elem$data9 = elem.data) === null || _elem$data9 === void 0 ? void 0 : (_elem$data9$eps = _elem$data9.eps) === null || _elem$data9$eps === void 0 ? void 0 : _elem$data9$eps.length) + '话' : '未知'; // 防止没有样式塌了。。
-
-    var type = (elem === null || elem === void 0 ? void 0 : (_elem$data10 = elem.data) === null || _elem$data10 === void 0 ? void 0 : _elem$data10.type) === 2 ? '番剧' : '其他';
-    var viewArray = elem !== null && elem !== void 0 && (_elem$data11 = elem.data) !== null && _elem$data11 !== void 0 && _elem$data11.collection ? Object.values(elem === null || elem === void 0 ? void 0 : (_elem$data12 = elem.data) === null || _elem$data12 === void 0 ? void 0 : _elem$data12.collection) : null;
-    var id = elem === null || elem === void 0 ? void 0 : (_elem$data13 = elem.data) === null || _elem$data13 === void 0 ? void 0 : _elem$data13.id;
-    var view = viewArray ? function () {
-      var sum = 0;
-      viewArray.forEach(function (val) {
-        sum += val;
-      });
-      return sum;
-    }() : null;
-    var cover = elem !== null && elem !== void 0 && (_elem$data14 = elem.data) !== null && _elem$data14 !== void 0 && _elem$data14.image ? "https:" + (elem === null || elem === void 0 ? void 0 : (_elem$data15 = elem.data) === null || _elem$data15 === void 0 ? void 0 : _elem$data15.image) : null; // TODO,tags
-    // 完成了一组动画数据
-
-    $data.push({
-      title: cn_name,
-      score: score,
-      des: summary,
-      wish: wish,
-      collect: collect,
-      doing: doing,
-      cover: cover,
-      totalCount: totalCount,
-      type: type,
-      view: view,
-      id: id
-    });
-  });
-  return $data;
-} // 查找中文名
+} // 从bangumi-data查找中文名, 查不到返回null
 
 
 function findBangumiCn() {
@@ -453,85 +330,449 @@ function findBangumiCn() {
     return cn;
   }
 
-  return jp;
-}
+  return null;
+} // 从bgmtv抓取中文名， 查不到返回日文名
 
-function getBangumiCDN(_x13) {
-  return _getBangumiCDN.apply(this, arguments);
-}
 
-function _getBangumiCDN() {
-  _getBangumiCDN = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee5(idlist) {
-    var url, response;
-    return _regenerator["default"].wrap(function _callee5$(_context6) {
+function queryCNName(_x11) {
+  return _queryCNName.apply(this, arguments);
+} // 对于有问题的CDN， 从源网页抓取
+
+
+function _queryCNName() {
+  _queryCNName = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4(id) {
+    var _$$attr$split$, _ref;
+
+    var jpname,
+        res,
+        $,
+        cn_name,
+        _args4 = arguments;
+    return _regenerator["default"].wrap(function _callee4$(_context4) {
       while (1) {
-        switch (_context6.prev = _context6.next) {
+        switch (_context4.prev = _context4.next) {
           case 0:
-            url = "https://cdn.jsdelivr.net/gh/czy0729/Bangumi-Subject@master/data/"; // 并发请求，很爽
-
-            _context6.next = 3;
-            return axios.all(idlist.map(function (subjectId) {
-              return axios.get(url + "".concat(parseInt(parseInt(subjectId) / 100), "/").concat(subjectId, ".json"));
-            }));
+            jpname = _args4.length > 1 && _args4[1] !== undefined ? _args4[1] : null;
+            _context4.next = 3;
+            return axios.get("https://bgm.tv/subject/".concat(id));
 
           case 3:
-            response = _context6.sent;
-            return _context6.abrupt("return", response);
+            res = _context4.sent;
+            $ = cheerio.load(res.data); // const cn_name = $('span', '#infobox')[0]?.next?.data ?? null
 
-          case 5:
+            cn_name = (_$$attr$split$ = $('meta[name="keywords"]').attr('content').split(',')[0]) !== null && _$$attr$split$ !== void 0 ? _$$attr$split$ : null;
+            return _context4.abrupt("return", (_ref = cn_name !== null && cn_name !== void 0 ? cn_name : jpname) !== null && _ref !== void 0 ? _ref : null);
+
+          case 7:
           case "end":
-            return _context6.stop();
+            return _context4.stop();
+        }
+      }
+    }, _callee4);
+  }));
+  return _queryCNName.apply(this, arguments);
+}
+
+function fixData(_x12) {
+  return _fixData.apply(this, arguments);
+} // 抓取源网页时，话数只计算正式的集数，排除sp等
+
+
+function _fixData() {
+  _fixData = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee5(id) {
+    var _$$, _$$$children$, _$$find, _$, _$$attr, _$2, _yield$queryCNName, _$$text, _$3, _$4, _$5, _$$text$split$, _$6, _$$text$split$2, _$7, _$$text$split$3, _$8, _ref2, _$9, _$$2;
+
+    var res, $, hastotalCount, people, view, i, _people$i$children$, _people$i$children$$d, typeNum;
+
+    return _regenerator["default"].wrap(function _callee5$(_context5) {
+      while (1) {
+        switch (_context5.prev = _context5.next) {
+          case 0:
+            _context5.next = 2;
+            return axios.get("https://bgm.tv/subject/".concat(id));
+
+          case 2:
+            res = _context5.sent;
+            $ = cheerio.load(res.data);
+            hastotalCount = (_$$ = $('span', '#infobox')[1]) === null || _$$ === void 0 ? void 0 : (_$$$children$ = _$$.children[0]) === null || _$$$children$ === void 0 ? void 0 : _$$$children$.data;
+            people = (_$$find = (_$ = $('.tip_i')) === null || _$ === void 0 ? void 0 : _$.find('a')) !== null && _$$find !== void 0 ? _$$find : null;
+            view = 0;
+
+            for (i = 1; i < people.length; i++) {
+              view += parseInt((_people$i$children$ = people[i].children[0]) === null || _people$i$children$ === void 0 ? void 0 : (_people$i$children$$d = _people$i$children$.data) === null || _people$i$children$$d === void 0 ? void 0 : _people$i$children$$d.split('人')[0]);
+            }
+
+            typeNum = (_$$attr = (_$2 = $('option[selected*=selected]')) === null || _$2 === void 0 ? void 0 : _$2.attr('value')) !== null && _$$attr !== void 0 ? _$$attr : null;
+            _context5.next = 11;
+            return queryCNName(id);
+
+          case 11:
+            _context5.t1 = _yield$queryCNName = _context5.sent;
+            _context5.t0 = _context5.t1 !== null;
+
+            if (!_context5.t0) {
+              _context5.next = 15;
+              break;
+            }
+
+            _context5.t0 = _yield$queryCNName !== void 0;
+
+          case 15:
+            if (!_context5.t0) {
+              _context5.next = 19;
+              break;
+            }
+
+            _context5.t2 = _yield$queryCNName;
+            _context5.next = 20;
+            break;
+
+          case 19:
+            _context5.t2 = null;
+
+          case 20:
+            _context5.t3 = _context5.t2;
+            _context5.t4 = (_$$text = (_$3 = $('span[property*="v:average"]')) === null || _$3 === void 0 ? void 0 : _$3.text()) !== null && _$$text !== void 0 ? _$$text : null;
+            _context5.t5 = (_$4 = $('#subject_summary')) !== null && _$4 !== void 0 && _$4.text() ? dealDes((_$5 = $('#subject_summary')) === null || _$5 === void 0 ? void 0 : _$5.text()) : null;
+            _context5.t6 = (_$$text$split$ = (_$6 = $('a[href$="wishes"]')) === null || _$6 === void 0 ? void 0 : _$6.text().split('人')[0]) !== null && _$$text$split$ !== void 0 ? _$$text$split$ : null;
+            _context5.t7 = (_$$text$split$2 = (_$7 = $('a[href$="collections"]')) === null || _$7 === void 0 ? void 0 : _$7.text().split('人')[0]) !== null && _$$text$split$2 !== void 0 ? _$$text$split$2 : null;
+            _context5.t8 = (_$$text$split$3 = (_$8 = $('a[href$="doings"]')) === null || _$8 === void 0 ? void 0 : _$8.text().split('人')[0]) !== null && _$$text$split$3 !== void 0 ? _$$text$split$3 : null;
+            _context5.t9 = (_ref2 = 'https:' + ((_$9 = $('img', '#bangumiInfo')) === null || _$9 === void 0 ? void 0 : _$9.attr('src'))) !== null && _ref2 !== void 0 ? _ref2 : null;
+            _context5.t10 = hastotalCount ? ((_$$2 = $('span', '#infobox')[1]) === null || _$$2 === void 0 ? void 0 : _$$2.next.data) + '话' : '未知';
+            _context5.t11 = typeNum === '2' ? '番剧' : '其他';
+            _context5.t12 = view;
+            _context5.t13 = id;
+            return _context5.abrupt("return", {
+              title: _context5.t3,
+              score: _context5.t4,
+              des: _context5.t5,
+              wish: _context5.t6,
+              collect: _context5.t7,
+              doing: _context5.t8,
+              cover: _context5.t9,
+              totalCount: _context5.t10,
+              type: _context5.t11,
+              view: _context5.t12,
+              id: _context5.t13
+            });
+
+          case 32:
+          case "end":
+            return _context5.stop();
         }
       }
     }, _callee5);
   }));
-  return _getBangumiCDN.apply(this, arguments);
+  return _fixData.apply(this, arguments);
 }
 
-function bgmtvBangumi(_x14, _x15, _x16, _x17) {
-  return _bgmtvBangumi.apply(this, arguments);
-} // --------
+function findEps(eps) {
+  var result = eps.filter(function (item) {
+    return item.type === 0;
+  });
+  var epSum = result.length; // console.log('debug: eps ', epSum)
+
+  return epSum;
+} // 处理获取到的CDN数据
 
 
-function _bgmtvBangumi() {
-  _bgmtvBangumi = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee6(vmid, status, webp, progress) {
-    var idlist, rawdata, finaldata;
+function dealBgmtvData(_x13, _x14) {
+  return _dealBgmtvData.apply(this, arguments);
+} // 从CDN获取数据
+
+
+function _dealBgmtvData() {
+  _dealBgmtvData = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee6(rawdata, idlist) {
+    var $data, _loop, index, elem, _ret;
+
     return _regenerator["default"].wrap(function _callee6$(_context7) {
       while (1) {
         switch (_context7.prev = _context7.next) {
           case 0:
-            //TODO: webp, progress
-            status = status === 1 ? 'wish' : status === 2 ? 'do' : 'collect';
-            _context7.next = 3;
-            return getPageNum(vmid, status);
+            $data = []; // 使用CDN的数据，个别CDN数据有问题，则根据title是否正常去判断去源页面抓取
+
+            _loop = /*#__PURE__*/_regenerator["default"].mark(function _loop() {
+              var _elem$data$name, _elem, _elem$data, _elem2, _elem2$data, _elem3, _elem3$data, _findBangumiCn, _elem$data$rating$sco, _elem4, _elem4$data, _elem4$data$rating, _elem5, _elem5$data, _elem6, _elem6$data, _elem$data$collection, _elem7, _elem7$data, _elem7$data$collectio, _elem$data$collection2, _elem8, _elem8$data, _elem8$data$collectio, _elem$data$collection3, _elem9, _elem9$data, _elem9$data$collectio, _elem10, _elem10$data, _elem11, _elem11$data, _elem12, _elem12$data, _elem12$data$eps, _elem13, _elem13$data, _elem14, _elem14$data, _elem15, _elem15$data;
+
+              var jp_title, viewArray;
+              return _regenerator["default"].wrap(function _loop$(_context6) {
+                while (1) {
+                  switch (_context6.prev = _context6.next) {
+                    case 0:
+                      elem = rawdata[index];
+                      jp_title = (_elem$data$name = (_elem = elem) === null || _elem === void 0 ? void 0 : (_elem$data = _elem.data) === null || _elem$data === void 0 ? void 0 : _elem$data.name) !== null && _elem$data$name !== void 0 ? _elem$data$name : null;
+
+                      if (jp_title) {
+                        _context6.next = 10;
+                        break;
+                      }
+
+                      console.log('fix bangumi data: ', idlist[index]); // console.log(fData)
+
+                      _context6.t0 = $data;
+                      _context6.next = 7;
+                      return fixData(idlist[index]);
+
+                    case 7:
+                      _context6.t1 = _context6.sent;
+
+                      _context6.t0.push.call(_context6.t0, _context6.t1);
+
+                      return _context6.abrupt("return", "continue");
+
+                    case 10:
+                      viewArray = (_elem2 = elem) !== null && _elem2 !== void 0 && (_elem2$data = _elem2.data) !== null && _elem2$data !== void 0 && _elem2$data.collection ? Object.values((_elem3 = elem) === null || _elem3 === void 0 ? void 0 : (_elem3$data = _elem3.data) === null || _elem3$data === void 0 ? void 0 : _elem3$data.collection) : null; // TODO: tags
+
+                      _context6.t2 = $data;
+
+                      if (!((_findBangumiCn = findBangumiCn(jp_title)) !== null && _findBangumiCn !== void 0)) {
+                        _context6.next = 16;
+                        break;
+                      }
+
+                      _context6.t3 = _findBangumiCn;
+                      _context6.next = 19;
+                      break;
+
+                    case 16:
+                      _context6.next = 18;
+                      return queryCNName(idlist[index], jp_title);
+
+                    case 18:
+                      _context6.t3 = _context6.sent;
+
+                    case 19:
+                      _context6.t4 = _context6.t3;
+                      _context6.t5 = (_elem$data$rating$sco = (_elem4 = elem) === null || _elem4 === void 0 ? void 0 : (_elem4$data = _elem4.data) === null || _elem4$data === void 0 ? void 0 : (_elem4$data$rating = _elem4$data.rating) === null || _elem4$data$rating === void 0 ? void 0 : _elem4$data$rating.score) !== null && _elem$data$rating$sco !== void 0 ? _elem$data$rating$sco : null;
+                      _context6.t6 = (_elem5 = elem) !== null && _elem5 !== void 0 && (_elem5$data = _elem5.data) !== null && _elem5$data !== void 0 && _elem5$data.summary ? dealDes((_elem6 = elem) === null || _elem6 === void 0 ? void 0 : (_elem6$data = _elem6.data) === null || _elem6$data === void 0 ? void 0 : _elem6$data.summary) : null;
+                      _context6.t7 = (_elem$data$collection = (_elem7 = elem) === null || _elem7 === void 0 ? void 0 : (_elem7$data = _elem7.data) === null || _elem7$data === void 0 ? void 0 : (_elem7$data$collectio = _elem7$data.collection) === null || _elem7$data$collectio === void 0 ? void 0 : _elem7$data$collectio.wish) !== null && _elem$data$collection !== void 0 ? _elem$data$collection : null;
+                      _context6.t8 = (_elem$data$collection2 = (_elem8 = elem) === null || _elem8 === void 0 ? void 0 : (_elem8$data = _elem8.data) === null || _elem8$data === void 0 ? void 0 : (_elem8$data$collectio = _elem8$data.collection) === null || _elem8$data$collectio === void 0 ? void 0 : _elem8$data$collectio.collect) !== null && _elem$data$collection2 !== void 0 ? _elem$data$collection2 : null;
+                      _context6.t9 = (_elem$data$collection3 = (_elem9 = elem) === null || _elem9 === void 0 ? void 0 : (_elem9$data = _elem9.data) === null || _elem9$data === void 0 ? void 0 : (_elem9$data$collectio = _elem9$data.collection) === null || _elem9$data$collectio === void 0 ? void 0 : _elem9$data$collectio.doing) !== null && _elem$data$collection3 !== void 0 ? _elem$data$collection3 : null;
+                      _context6.t10 = (_elem10 = elem) !== null && _elem10 !== void 0 && (_elem10$data = _elem10.data) !== null && _elem10$data !== void 0 && _elem10$data.image ? "https:" + ((_elem11 = elem) === null || _elem11 === void 0 ? void 0 : (_elem11$data = _elem11.data) === null || _elem11$data === void 0 ? void 0 : _elem11$data.image) : null;
+                      _context6.t11 = (_elem12 = elem) !== null && _elem12 !== void 0 && (_elem12$data = _elem12.data) !== null && _elem12$data !== void 0 && (_elem12$data$eps = _elem12$data.eps) !== null && _elem12$data$eps !== void 0 && _elem12$data$eps.length ? findEps((_elem13 = elem) === null || _elem13 === void 0 ? void 0 : (_elem13$data = _elem13.data) === null || _elem13$data === void 0 ? void 0 : _elem13$data.eps) + '话' : '未知';
+                      _context6.t12 = ((_elem14 = elem) === null || _elem14 === void 0 ? void 0 : (_elem14$data = _elem14.data) === null || _elem14$data === void 0 ? void 0 : _elem14$data.type) === 2 ? '番剧' : '其他';
+                      _context6.t13 = viewArray ? function () {
+                        var sum = 0;
+                        viewArray.forEach(function (val) {
+                          sum += val;
+                        });
+                        return sum;
+                      }() : null;
+                      _context6.t14 = (_elem15 = elem) === null || _elem15 === void 0 ? void 0 : (_elem15$data = _elem15.data) === null || _elem15$data === void 0 ? void 0 : _elem15$data.id;
+                      _context6.t15 = {
+                        title: _context6.t4,
+                        score: _context6.t5,
+                        des: _context6.t6,
+                        wish: _context6.t7,
+                        collect: _context6.t8,
+                        doing: _context6.t9,
+                        cover: _context6.t10,
+                        totalCount: _context6.t11,
+                        type: _context6.t12,
+                        view: _context6.t13,
+                        id: _context6.t14
+                      };
+
+                      _context6.t2.push.call(_context6.t2, _context6.t15);
+
+                    case 32:
+                    case "end":
+                      return _context6.stop();
+                  }
+                }
+              }, _loop);
+            });
+            index = 0;
 
           case 3:
-            idlist = _context7.sent;
-            _context7.next = 6;
-            return getBangumiCDN(idlist);
+            if (!(index < rawdata.length)) {
+              _context7.next = 11;
+              break;
+            }
 
-          case 6:
-            rawdata = _context7.sent;
-            finaldata = dealBgmtvData(rawdata); // console.log(finaldata)
+            return _context7.delegateYield(_loop(), "t0", 5);
 
-            return _context7.abrupt("return", finaldata);
+          case 5:
+            _ret = _context7.t0;
 
-          case 9:
+            if (!(_ret === "continue")) {
+              _context7.next = 8;
+              break;
+            }
+
+            return _context7.abrupt("continue", 8);
+
+          case 8:
+            index++;
+            _context7.next = 3;
+            break;
+
+          case 11:
+            return _context7.abrupt("return", $data);
+
+          case 12:
           case "end":
             return _context7.stop();
         }
       }
     }, _callee6);
   }));
+  return _dealBgmtvData.apply(this, arguments);
+}
+
+function getBangumiCDN(_x15) {
+  return _getBangumiCDN.apply(this, arguments);
+} // 计算页面数目，获取收藏的动画id
+
+
+function _getBangumiCDN() {
+  _getBangumiCDN = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee7(idlist) {
+    var url, response;
+    return _regenerator["default"].wrap(function _callee7$(_context8) {
+      while (1) {
+        switch (_context8.prev = _context8.next) {
+          case 0:
+            url = "https://cdn.jsdelivr.net/gh/czy0729/Bangumi-Subject@master/data/";
+            _context8.next = 3;
+            return axios.all(idlist.map(function (subjectId) {
+              return axios.get(url + "".concat(parseInt(parseInt(subjectId) / 100), "/").concat(subjectId, ".json"));
+            }));
+
+          case 3:
+            response = _context8.sent;
+            return _context8.abrupt("return", response);
+
+          case 5:
+          case "end":
+            return _context8.stop();
+        }
+      }
+    }, _callee7);
+  }));
+  return _getBangumiCDN.apply(this, arguments);
+}
+
+function getPageNum(_x16, _x17) {
+  return _getPageNum.apply(this, arguments);
+} // bangumi 获取方式入口
+
+
+function _getPageNum() {
+  _getPageNum = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee8(userid, status) {
+    var idlist, res, $, pagenum, _loop2, i;
+
+    return _regenerator["default"].wrap(function _callee8$(_context10) {
+      while (1) {
+        switch (_context10.prev = _context10.next) {
+          case 0:
+            idlist = [];
+            _context10.next = 3;
+            return axios.get("https://bangumi.tv/anime/list/".concat(userid, "/").concat(status));
+
+          case 3:
+            res = _context10.sent;
+            $ = cheerio.load(res.data);
+            pagenum = $('#multipage').find('a').length;
+            pagenum = pagenum > 0 ? pagenum : 1; // console.log(pagenum);
+
+            _loop2 = /*#__PURE__*/_regenerator["default"].mark(function _loop2() {
+              var res, $;
+              return _regenerator["default"].wrap(function _loop2$(_context9) {
+                while (1) {
+                  switch (_context9.prev = _context9.next) {
+                    case 0:
+                      _context9.next = 2;
+                      return axios.get("https://bangumi.tv/anime/list/".concat(userid, "/").concat(status, "?page=").concat(i + 1));
+
+                    case 2:
+                      res = _context9.sent;
+                      $ = cheerio.load(res.data);
+                      $('li', '#browserItemList').each(function (index, elem) {
+                        idlist.push($(elem).attr('id').split('_')[1]);
+                      });
+
+                    case 5:
+                    case "end":
+                      return _context9.stop();
+                  }
+                }
+              }, _loop2);
+            });
+            i = 0;
+
+          case 9:
+            if (!(i < pagenum)) {
+              _context10.next = 14;
+              break;
+            }
+
+            return _context10.delegateYield(_loop2(), "t0", 11);
+
+          case 11:
+            i++;
+            _context10.next = 9;
+            break;
+
+          case 14:
+            return _context10.abrupt("return", idlist);
+
+          case 15:
+          case "end":
+            return _context10.stop();
+        }
+      }
+    }, _callee8);
+  }));
+  return _getPageNum.apply(this, arguments);
+}
+
+function bgmtvBangumi(_x18, _x19, _x20, _x21) {
+  return _bgmtvBangumi.apply(this, arguments);
+} // 程序更新追番入口
+
+
+function _bgmtvBangumi() {
+  _bgmtvBangumi = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee9(vmid, status, webp, progress) {
+    var idlist, rawdata, finaldata;
+    return _regenerator["default"].wrap(function _callee9$(_context11) {
+      while (1) {
+        switch (_context11.prev = _context11.next) {
+          case 0:
+            //TODO: webp, progress
+            status = status === 1 ? 'wish' : status === 2 ? 'do' : 'collect';
+            _context11.next = 3;
+            return getPageNum(vmid, status);
+
+          case 3:
+            idlist = _context11.sent;
+            _context11.next = 6;
+            return getBangumiCDN(idlist);
+
+          case 6:
+            rawdata = _context11.sent;
+            _context11.next = 9;
+            return dealBgmtvData(rawdata, idlist);
+
+          case 9:
+            finaldata = _context11.sent;
+            return _context11.abrupt("return", finaldata);
+
+          case 11:
+          case "end":
+            return _context11.stop();
+        }
+      }
+    }, _callee9);
+  }));
   return _bgmtvBangumi.apply(this, arguments);
 }
 
-function saveBangumiData(_x18, _x19) {
+function saveBangumiData(_x22, _x23) {
   return _saveBangumiData.apply(this, arguments);
 }
 
 function _saveBangumiData() {
-  _saveBangumiData = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee7(constructMethod, vmid) {
+  _saveBangumiData = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee10(constructMethod, vmid) {
     var webp,
         progress,
         sourceDir,
@@ -542,32 +783,32 @@ function _saveBangumiData() {
         watched,
         endTime,
         bangumis,
-        _args8 = arguments;
-    return _regenerator["default"].wrap(function _callee7$(_context8) {
+        _args12 = arguments;
+    return _regenerator["default"].wrap(function _callee10$(_context12) {
       while (1) {
-        switch (_context8.prev = _context8.next) {
+        switch (_context12.prev = _context12.next) {
           case 0:
-            webp = _args8.length > 2 && _args8[2] !== undefined ? _args8[2] : true;
-            progress = _args8.length > 3 ? _args8[3] : undefined;
-            sourceDir = _args8.length > 4 ? _args8[4] : undefined;
+            webp = _args12.length > 2 && _args12[2] !== undefined ? _args12[2] : true;
+            progress = _args12.length > 3 ? _args12[3] : undefined;
+            sourceDir = _args12.length > 4 ? _args12[4] : undefined;
             methodInfo = constructMethod === biliBangumi ? 'bilibili' : 'bgmtv';
             log.info("Getting ".concat(methodInfo, " bangumis, please wait..."));
             startTime = new Date().getTime();
-            _context8.next = 8;
+            _context12.next = 8;
             return constructMethod(vmid, 1, webp, progress);
 
           case 8:
-            wantWatch = _context8.sent;
-            _context8.next = 11;
+            wantWatch = _context12.sent;
+            _context12.next = 11;
             return constructMethod(vmid, 2, webp, progress);
 
           case 11:
-            watching = _context8.sent;
-            _context8.next = 14;
+            watching = _context12.sent;
+            _context12.next = 14;
             return constructMethod(vmid, 3, webp, progress);
 
           case 14:
-            watched = _context8.sent;
+            watched = _context12.sent;
             endTime = new Date().getTime();
             log.info(wantWatch.length + watching.length + watched.length + ' bangumis have been loaded in ' + (endTime - startTime) + ' ms');
             bangumis = {
@@ -591,10 +832,10 @@ function _saveBangumiData() {
 
           case 20:
           case "end":
-            return _context8.stop();
+            return _context12.stop();
         }
       }
-    }, _callee7);
+    }, _callee10);
   }));
   return _saveBangumiData.apply(this, arguments);
 }
