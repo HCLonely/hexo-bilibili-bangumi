@@ -9,15 +9,22 @@ headers = {
     acceptLanguage: 'zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2',
     acceptEncoding: 'gzip, deflate, br',
     }
-id = 294713
+id = 325285
 // id = 333598
 
 async function queryCNName(id, jpname = null){
-    const res =  await axios.get(`https://bgm.tv/subject/${id}`)
-    const $ = cheerio.load(res.data);
-    const cn_name = $('meta[name="keywords"]').attr('content').split(',')[0] ?? null;
-    console.log(cn_name)
-    return cn_name ?? jpname ?? null
+    // const res =  await axios.get(`https://bgm.tv/subject/${id}`)
+    const res =  await axios.get(`https://cdn.jsdelivr.net/gh/czy0729/Bangumi-Subject@master/data/${parseInt(parseInt(id) / 100)}/${id}.json`)
+    // console.log(Object.keys(res.data))
+    const $ = cheerio.load(res.data.info);
+    // const cn_name = $('meta[name="keywords"]').attr('content').split(',')[0] ?? null;
+    const hasCNName = $('span')[0].children[0].data === '中文名: '
+    const cnName = hasCNName ? $('span')[0].next.data : null
+
+    // console.log(cn_name)
+    console.log(hasCNName)
+    console.log(cnName)
+    return cnName ?? jpname ?? null
 }
 
 async function test(){

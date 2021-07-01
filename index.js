@@ -316,10 +316,19 @@ function dealDes(des) {
   des = des.replace('　', '').replace(' ', '');
   var cutNum = 150;
   return des.length > cutNum ? des.substr(0, 150) + '...' : des.substr(0, des.length - 1) + '...';
-} // 从bangumi-data查找中文名, 查不到返回null
+} // 从CDN的info获取中文名，查不到返回null
 
 
-function findBangumiCn() {
+function findCNFromCDN(info) {
+  var $ = cheerio.load(info);
+  var hasCNName = $('span')[0].children[0].data === '中文名: ';
+  var cnName = hasCNName ? $('span')[0].next.data : null; // console.log(cnName)
+
+  return cnName !== null && cnName !== void 0 ? cnName : null;
+} // 从本地bangumi-data包查找中文名, 查不到返回null
+
+
+function findCNFromLocal() {
   var jp = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
   var item = bangumiData.items.find(function (item) {
     return item.title === jp;
@@ -334,13 +343,13 @@ function findBangumiCn() {
 } // 从bgmtv抓取中文名， 查不到返回日文名
 
 
-function queryCNName(_x11) {
-  return _queryCNName.apply(this, arguments);
+function findCNFromBgmtv(_x11) {
+  return _findCNFromBgmtv.apply(this, arguments);
 } // 对于有问题的CDN， 从源网页抓取
 
 
-function _queryCNName() {
-  _queryCNName = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4(id) {
+function _findCNFromBgmtv() {
+  _findCNFromBgmtv = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4(id) {
     var _$$attr$split$, _ref;
 
     var jpname,
@@ -370,7 +379,7 @@ function _queryCNName() {
       }
     }, _callee4);
   }));
-  return _queryCNName.apply(this, arguments);
+  return _findCNFromBgmtv.apply(this, arguments);
 }
 
 function fixData(_x12) {
@@ -380,7 +389,7 @@ function fixData(_x12) {
 
 function _fixData() {
   _fixData = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee5(id) {
-    var _$$, _$$$children$, _$$find, _$, _$$attr, _$2, _yield$queryCNName, _$$text, _$3, _$4, _$5, _$$text$split$, _$6, _$$text$split$2, _$7, _$$text$split$3, _$8, _ref2, _$9, _$$2;
+    var _$$, _$$$children$, _$$find, _$, _$$attr, _$2, _yield$findCNFromBgmt, _$3, _$4, _$5, _$6, _$7, _$8, _$9, _$$2;
 
     var res, $, hastotalCount, people, view, i, _people$i$children$, _people$i$children$$d, typeNum;
 
@@ -404,10 +413,10 @@ function _fixData() {
 
             typeNum = (_$$attr = (_$2 = $('option[selected*=selected]')) === null || _$2 === void 0 ? void 0 : _$2.attr('value')) !== null && _$$attr !== void 0 ? _$$attr : null;
             _context5.next = 11;
-            return queryCNName(id);
+            return findCNFromBgmtv(id);
 
           case 11:
-            _context5.t1 = _yield$queryCNName = _context5.sent;
+            _context5.t1 = _yield$findCNFromBgmt = _context5.sent;
             _context5.t0 = _context5.t1 !== null;
 
             if (!_context5.t0) {
@@ -415,7 +424,7 @@ function _fixData() {
               break;
             }
 
-            _context5.t0 = _yield$queryCNName !== void 0;
+            _context5.t0 = _yield$findCNFromBgmt !== void 0;
 
           case 15:
             if (!_context5.t0) {
@@ -423,7 +432,7 @@ function _fixData() {
               break;
             }
 
-            _context5.t2 = _yield$queryCNName;
+            _context5.t2 = _yield$findCNFromBgmt;
             _context5.next = 20;
             break;
 
@@ -432,12 +441,12 @@ function _fixData() {
 
           case 20:
             _context5.t3 = _context5.t2;
-            _context5.t4 = (_$$text = (_$3 = $('span[property*="v:average"]')) === null || _$3 === void 0 ? void 0 : _$3.text()) !== null && _$$text !== void 0 ? _$$text : null;
+            _context5.t4 = (_$3 = $('span[property*="v:average"]')) === null || _$3 === void 0 ? void 0 : _$3.text();
             _context5.t5 = (_$4 = $('#subject_summary')) !== null && _$4 !== void 0 && _$4.text() ? dealDes((_$5 = $('#subject_summary')) === null || _$5 === void 0 ? void 0 : _$5.text()) : null;
-            _context5.t6 = (_$$text$split$ = (_$6 = $('a[href$="wishes"]')) === null || _$6 === void 0 ? void 0 : _$6.text().split('人')[0]) !== null && _$$text$split$ !== void 0 ? _$$text$split$ : null;
-            _context5.t7 = (_$$text$split$2 = (_$7 = $('a[href$="collections"]')) === null || _$7 === void 0 ? void 0 : _$7.text().split('人')[0]) !== null && _$$text$split$2 !== void 0 ? _$$text$split$2 : null;
-            _context5.t8 = (_$$text$split$3 = (_$8 = $('a[href$="doings"]')) === null || _$8 === void 0 ? void 0 : _$8.text().split('人')[0]) !== null && _$$text$split$3 !== void 0 ? _$$text$split$3 : null;
-            _context5.t9 = (_ref2 = 'https:' + ((_$9 = $('img', '#bangumiInfo')) === null || _$9 === void 0 ? void 0 : _$9.attr('src'))) !== null && _ref2 !== void 0 ? _ref2 : null;
+            _context5.t6 = (_$6 = $('a[href$="wishes"]')) === null || _$6 === void 0 ? void 0 : _$6.text().split('人')[0];
+            _context5.t7 = (_$7 = $('a[href$="collections"]')) === null || _$7 === void 0 ? void 0 : _$7.text().split('人')[0];
+            _context5.t8 = (_$8 = $('a[href$="doings"]')) === null || _$8 === void 0 ? void 0 : _$8.text().split('人')[0];
+            _context5.t9 = 'https:' + ((_$9 = $('img', '#bangumiInfo')) === null || _$9 === void 0 ? void 0 : _$9.attr('src'));
             _context5.t10 = hastotalCount ? ((_$$2 = $('span', '#infobox')[1]) === null || _$$2 === void 0 ? void 0 : _$$2.next.data) + '话' : '未知';
             _context5.t11 = typeNum === '2' ? '番剧' : '其他';
             _context5.t12 = view;
@@ -492,7 +501,7 @@ function _dealBgmtvData() {
             $data = []; // 使用CDN的数据，个别CDN数据有问题，则根据title是否正常去判断去源页面抓取
 
             _loop = /*#__PURE__*/_regenerator["default"].mark(function _loop() {
-              var _elem$data$name, _elem, _elem$data, _elem2, _elem2$data, _elem3, _elem3$data, _findBangumiCn, _elem$data$rating$sco, _elem4, _elem4$data, _elem4$data$rating, _elem5, _elem5$data, _elem6, _elem6$data, _elem$data$collection, _elem7, _elem7$data, _elem7$data$collectio, _elem$data$collection2, _elem8, _elem8$data, _elem8$data$collectio, _elem$data$collection3, _elem9, _elem9$data, _elem9$data$collectio, _elem10, _elem10$data, _elem11, _elem11$data, _elem12, _elem12$data, _elem12$data$eps, _elem13, _elem13$data, _elem14, _elem14$data, _elem15, _elem15$data;
+              var _elem$data$name, _elem, _elem$data, _elem2, _elem2$data, _elem3, _elem3$data, _ref2, _findCNFromCDN, _elem4, _elem4$data, _elem4$data$rating, _elem5, _elem5$data, _elem6, _elem6$data, _elem7, _elem7$data, _elem7$data$collectio, _elem8, _elem8$data, _elem8$data$collectio, _elem9, _elem9$data, _elem9$data$collectio, _elem10, _elem10$data, _elem11, _elem11$data, _elem12, _elem12$data, _elem12$data$eps, _elem13, _elem13$data, _elem14, _elem14$data, _elem15, _elem15$data;
 
               var jp_title, viewArray;
               return _regenerator["default"].wrap(function _loop$(_context6) {
@@ -525,29 +534,29 @@ function _dealBgmtvData() {
 
                       _context6.t2 = $data;
 
-                      if (!((_findBangumiCn = findBangumiCn(jp_title)) !== null && _findBangumiCn !== void 0)) {
+                      if (!((_ref2 = (_findCNFromCDN = findCNFromCDN(elem.data.info)) !== null && _findCNFromCDN !== void 0 ? _findCNFromCDN : findCNFromLocal(jp_title)) !== null && _ref2 !== void 0)) {
                         _context6.next = 16;
                         break;
                       }
 
-                      _context6.t3 = _findBangumiCn;
+                      _context6.t3 = _ref2;
                       _context6.next = 19;
                       break;
 
                     case 16:
                       _context6.next = 18;
-                      return queryCNName(idlist[index], jp_title);
+                      return findCNFromBgmtv(idlist[index], jp_title);
 
                     case 18:
                       _context6.t3 = _context6.sent;
 
                     case 19:
                       _context6.t4 = _context6.t3;
-                      _context6.t5 = (_elem$data$rating$sco = (_elem4 = elem) === null || _elem4 === void 0 ? void 0 : (_elem4$data = _elem4.data) === null || _elem4$data === void 0 ? void 0 : (_elem4$data$rating = _elem4$data.rating) === null || _elem4$data$rating === void 0 ? void 0 : _elem4$data$rating.score) !== null && _elem$data$rating$sco !== void 0 ? _elem$data$rating$sco : null;
+                      _context6.t5 = (_elem4 = elem) === null || _elem4 === void 0 ? void 0 : (_elem4$data = _elem4.data) === null || _elem4$data === void 0 ? void 0 : (_elem4$data$rating = _elem4$data.rating) === null || _elem4$data$rating === void 0 ? void 0 : _elem4$data$rating.score;
                       _context6.t6 = (_elem5 = elem) !== null && _elem5 !== void 0 && (_elem5$data = _elem5.data) !== null && _elem5$data !== void 0 && _elem5$data.summary ? dealDes((_elem6 = elem) === null || _elem6 === void 0 ? void 0 : (_elem6$data = _elem6.data) === null || _elem6$data === void 0 ? void 0 : _elem6$data.summary) : null;
-                      _context6.t7 = (_elem$data$collection = (_elem7 = elem) === null || _elem7 === void 0 ? void 0 : (_elem7$data = _elem7.data) === null || _elem7$data === void 0 ? void 0 : (_elem7$data$collectio = _elem7$data.collection) === null || _elem7$data$collectio === void 0 ? void 0 : _elem7$data$collectio.wish) !== null && _elem$data$collection !== void 0 ? _elem$data$collection : null;
-                      _context6.t8 = (_elem$data$collection2 = (_elem8 = elem) === null || _elem8 === void 0 ? void 0 : (_elem8$data = _elem8.data) === null || _elem8$data === void 0 ? void 0 : (_elem8$data$collectio = _elem8$data.collection) === null || _elem8$data$collectio === void 0 ? void 0 : _elem8$data$collectio.collect) !== null && _elem$data$collection2 !== void 0 ? _elem$data$collection2 : null;
-                      _context6.t9 = (_elem$data$collection3 = (_elem9 = elem) === null || _elem9 === void 0 ? void 0 : (_elem9$data = _elem9.data) === null || _elem9$data === void 0 ? void 0 : (_elem9$data$collectio = _elem9$data.collection) === null || _elem9$data$collectio === void 0 ? void 0 : _elem9$data$collectio.doing) !== null && _elem$data$collection3 !== void 0 ? _elem$data$collection3 : null;
+                      _context6.t7 = (_elem7 = elem) === null || _elem7 === void 0 ? void 0 : (_elem7$data = _elem7.data) === null || _elem7$data === void 0 ? void 0 : (_elem7$data$collectio = _elem7$data.collection) === null || _elem7$data$collectio === void 0 ? void 0 : _elem7$data$collectio.wish;
+                      _context6.t8 = (_elem8 = elem) === null || _elem8 === void 0 ? void 0 : (_elem8$data = _elem8.data) === null || _elem8$data === void 0 ? void 0 : (_elem8$data$collectio = _elem8$data.collection) === null || _elem8$data$collectio === void 0 ? void 0 : _elem8$data$collectio.collect;
+                      _context6.t9 = (_elem9 = elem) === null || _elem9 === void 0 ? void 0 : (_elem9$data = _elem9.data) === null || _elem9$data === void 0 ? void 0 : (_elem9$data$collectio = _elem9$data.collection) === null || _elem9$data$collectio === void 0 ? void 0 : _elem9$data$collectio.doing;
                       _context6.t10 = (_elem10 = elem) !== null && _elem10 !== void 0 && (_elem10$data = _elem10.data) !== null && _elem10$data !== void 0 && _elem10$data.image ? "https:" + ((_elem11 = elem) === null || _elem11 === void 0 ? void 0 : (_elem11$data = _elem11.data) === null || _elem11$data === void 0 ? void 0 : _elem11$data.image) : null;
                       _context6.t11 = (_elem12 = elem) !== null && _elem12 !== void 0 && (_elem12$data = _elem12.data) !== null && _elem12$data !== void 0 && (_elem12$data$eps = _elem12$data.eps) !== null && _elem12$data$eps !== void 0 && _elem12$data$eps.length ? findEps((_elem13 = elem) === null || _elem13 === void 0 ? void 0 : (_elem13$data = _elem13.data) === null || _elem13$data === void 0 ? void 0 : _elem13$data.eps) + '话' : '未知';
                       _context6.t12 = ((_elem14 = elem) === null || _elem14 === void 0 ? void 0 : (_elem14$data = _elem14.data) === null || _elem14$data === void 0 ? void 0 : _elem14$data.type) === 2 ? '番剧' : '其他';

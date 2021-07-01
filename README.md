@@ -8,8 +8,7 @@
 **支持从`Bilbili`和`Bangumi番组计划`选择一种获取数据**
 
 [BiliBili Demo](https://demo.hclonely.com/bangumis/)
-
-[Bangumi番组计划 Demo，见我的BLOG] 
+[Bangumi番组计划 Demo]() （待续）
 
 ## 安装
 

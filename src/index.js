@@ -134,8 +134,18 @@ function dealDes(des){
   return des.length > cutNum ? des.substr(0, 150) + '...' : des.substr(0, des.length - 1) + '...'
 }
 
-// 从bangumi-data查找中文名, 查不到返回null
-function findBangumiCn(jp = '') {
+// 从CDN的info获取中文名，查不到返回null
+function findCNFromCDN(info){
+  const $ = cheerio.load(info);
+  const hasCNName = $('span')[0].children[0].data === '中文名: '
+  const cnName = hasCNName ? $('span')[0].next.data : null
+  // console.log(cnName)
+  return cnName ?? null
+}
+
+
+// 从本地bangumi-data包查找中文名, 查不到返回null
+function findCNFromLocal(jp = '') {
   const item = bangumiData.items.find(item => item.title === jp)
   if (item) {
     const cn =
@@ -148,7 +158,7 @@ function findBangumiCn(jp = '') {
 }
 
 // 从bgmtv抓取中文名， 查不到返回日文名
-async function queryCNName(id, jpname = null){
+async function findCNFromBgmtv(id, jpname = null){
   const res =  await axios.get(`https://bgm.tv/subject/${id}`)
   const $ = cheerio.load(res.data)
   // const cn_name = $('span', '#infobox')[0]?.next?.data ?? null
@@ -170,13 +180,13 @@ async function fixData(id){
   }
   const typeNum = $('option[selected*=selected]')?.attr('value') ?? null
   return {
-      title: await queryCNName(id) ?? null,
-      score: $('span[property*="v:average"]')?.text() ?? null,
+      title: await findCNFromBgmtv(id) ?? null,
+      score: $('span[property*="v:average"]')?.text(),
       des: $('#subject_summary')?.text() ? dealDes($('#subject_summary')?.text()) : null,
-      wish: $('a[href$="wishes"]')?.text().split('人')[0] ?? null,
-      collect: $('a[href$="collections"]')?.text().split('人')[0] ?? null,
-      doing: $('a[href$="doings"]')?.text().split('人')[0] ?? null,
-      cover: 'https:' +　$('img','#bangumiInfo')?.attr('src') ?? null,
+      wish: $('a[href$="wishes"]')?.text().split('人')[0],
+      collect: $('a[href$="collections"]')?.text().split('人')[0],
+      doing: $('a[href$="doings"]')?.text().split('人')[0],
+      cover: 'https:' +　$('img','#bangumiInfo')?.attr('src'),
       totalCount: hastotalCount ? $('span', '#infobox')[1]?.next.data + '话' : '未知',
       type: typeNum === '2' ? '番剧' : '其他', // 这里还有书籍等未列，可到网页代码看
       view: view,
@@ -209,14 +219,14 @@ async function dealBgmtvData(rawdata, idlist){
     const viewArray = elem?.data?.collection ? Object.values(elem?.data?.collection) : null
     // TODO: tags
     $data.push({
-      title: findBangumiCn(jp_title) ?? await queryCNName(idlist[index], jp_title),
-      // 上面实现先从本地bangumi-data查找中文名，查不到再去bgmtv抓取，这里一个个请求比较慢,不行可用下面      
+      title: findCNFromCDN(elem.data.info) ?? findCNFromLocal(jp_title) ?? await findCNFromBgmtv(idlist[index], jp_title),
+      // 上面实现先从CDN的info查找中文名，查不到去本地bangumi-data包查找中文名，再查不到再去bgmtv抓取   
       // title: findBangumiCn(jp_title) ?? jp_title,
-      score: elem?.data?.rating?.score ?? null,
+      score: elem?.data?.rating?.score,
       des: elem?.data?.summary ? dealDes(elem?.data?.summary) : null,
-      wish: elem?.data?.collection?.wish ?? null,
-      collect: elem?.data?.collection?.collect ?? null,
-      doing: elem?.data?.collection?.doing ?? null,
+      wish: elem?.data?.collection?.wish,
+      collect: elem?.data?.collection?.collect,
+      doing: elem?.data?.collection?.doing,
       cover: elem?.data?.image ? "https:" + elem?.data?.image : null,
       totalCount: elem?.data?.eps?.length ? findEps(elem?.data?.eps) + '话' : '未知',  // 防止没有样式塌了。。elem?.data?.eps?.length ? findEps(elem?.data?.eps) + '话' : '未知'  // 防止没有样式塌了。。,
       type: elem?.data?.type === 2 ? '番剧' : '其他',
