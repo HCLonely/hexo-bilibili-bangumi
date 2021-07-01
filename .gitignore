@@ -1,3 +1,5 @@
+node_modules/
+.history/
 src/spider.js
 src/test.js
 src/tempCodeRunnerFile.js
