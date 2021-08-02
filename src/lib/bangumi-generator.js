@@ -9,9 +9,9 @@ const log = require('hexo-log')({
   silent: false
 })
 
-module.exports = async function (locals) {
+module.exports = async function (locals, type = 'bangumi') {
   const config = this.config
-  if (!config?.bangumi?.enable) {
+  if (!config?.[type]?.enable) {
     return
   }
 
@@ -19,19 +19,19 @@ module.exports = async function (locals) {
   if (root.endsWith('/')) {
     root = root.slice(0, root.length - 1)
   }
-  let wantWatch = []; let watching = []; let watched = [];
+  let wantWatch = []; let watching = []; let watched = []
   // console.log(path.join(this.source_dir, '/_data/bangumis.json'))
-  if (!fs.existsSync(path.join(this.source_dir, '/_data/bangumis.json'))) {
-    log.info('Can\'t find bilibili bangumi data, please use \'hexo bangumi -u\' command to get data')
+  if (!fs.existsSync(path.join(this.source_dir, '/_data/' + type + 's.json'))) {
+    log.info('Can\'t find bilibili ' + type + ' data, please use \'hexo ' + type + ' -u\' command to get data')
   } else {
-    ({ wantWatch, watching, watched } = JSON.parse(fs.readFileSync(path.join(this.source_dir, '/_data/bangumis.json'))))
+    ({ wantWatch, watching, watched } = JSON.parse(fs.readFileSync(path.join(this.source_dir, '/_data/' + type + 's.json'))))
 
     // extra bangumis
-    console.log(path.join(this.source_dir, '/_data/extra_bangumis.json'))
-    if (fs.existsSync(path.join(this.source_dir, '/_data/extra_bangumis.json'))) {
-      log.info('Found extra bangumi data');
+    // console.log(path.join(this.source_dir, '/_data/extra_' + type + 's.json'))
+    if (fs.existsSync(path.join(this.source_dir, '/_data/extra_' + type + 's.json'))) {
+      log.info('Found extra ' + type + 's data')
       let wantWatchExtra = []; let watchingExtra = []; let watchedExtra = [];
-      ({ wantWatchExtra, watchingExtra, watchedExtra } = JSON.parse(fs.readFileSync(path.join(this.source_dir, '/_data/extra_bangumis.json'))))
+      ({ wantWatchExtra, watchingExtra, watchedExtra } = JSON.parse(fs.readFileSync(path.join(this.source_dir, '/_data/extra_' + type + 's.json'))))
       if (wantWatchExtra) {
         wantWatch = wantWatch.concat(wantWatchExtra)
       }
@@ -43,28 +43,30 @@ module.exports = async function (locals) {
       }
     }
 
-    log.info(wantWatch.length + watching.length + watched.length + ' bangumis have been loaded')
+    log.info(wantWatch.length + watching.length + watched.length + ' ' + type + 's have been loaded')
   }
 
   const __ = i18n.__(config.language)
 
   const contents = await ejs.renderFile(path.join(__dirname, 'templates/bangumi.ejs'), {
-    quote: config.bangumi.quote,
-    show: config.bangumi.show || 1,
-    loading: config.bangumi.loading,
-    metaColor: config.bangumi.metaColor ? `style="color:${config.bangumi.metaColor}"` : '',
-    color: config.bangumi.color ? `style="color:${config.bangumi.color}"` : '',
+    quote: config[type].quote,
+    show: config[type].show || 1,
+    loading: config[type].loading,
+    metaColor: config[type].metaColor ? `style="color:${config[type].metaColor}"` : '',
+    color: config[type].color ? `style="color:${config[type].color}"` : '',
     wantWatch: wantWatch,
     watched: watched,
     watching: watching,
+    type: type,
     __: __,
     root: root
-  },{ async: false })
+  }, { async: false })
 
+  const customPath = config[type].path
   return {
-    path: config.bangumi.path || 'bangumis/index.html',
+    path: customPath || (type + 's/index.html'),
     data: {
-      title: config.bangumi.title,
+      title: config[type].title,
       content: contents
     },
     layout: ['page', 'post']
