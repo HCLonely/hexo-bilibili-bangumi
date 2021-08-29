@@ -33,6 +33,8 @@ bangumi: # 追番设置
   color:
   webp:
   progress:
+  extra_options:
+    key: value
 cinema: # 追剧设置
   enable: true
   path:
@@ -45,6 +47,8 @@ cinema: # 追剧设置
   color:
   webp:
   progress:
+  extra_options:
+    key: value
 ```
 
 - **enable**: 是否启用
@@ -58,6 +62,7 @@ cinema: # 追剧设置
 - **color**: 简介字体颜色
 - **webp**: 番剧封面使用`webp`格式(此格式在`safari`浏览器下不显示，但是图片大小可以缩小 100 倍左右), 默认`true`
 - **progress**: 获取番剧数据时是否显示进度条，默认`true`
+- **extra_options**: 此配置会扩展到Hexo`page`变量中
 
 ## 使用
 

@@ -67,7 +67,8 @@ module.exports = async function (locals, type = 'bangumi') {
     path: customPath || (type + 's/index.html'),
     data: {
       title: config[type].title,
-      content: contents
+      content: contents,
+      ...config?.[type]?.extra_options
     },
     layout: ['page', 'post']
   }
