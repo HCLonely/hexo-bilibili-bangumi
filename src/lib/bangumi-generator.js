@@ -54,6 +54,7 @@ module.exports = async function (locals, type = 'bangumi') {
     loading: config[type].loading,
     metaColor: config[type].metaColor ? `style="color:${config[type].metaColor}"` : '',
     color: config[type].color ? `style="color:${config[type].color}"` : '',
+    lazyload: config[type].lazyload ?? true,
     wantWatch: wantWatch,
     watched: watched,
     watching: watching,

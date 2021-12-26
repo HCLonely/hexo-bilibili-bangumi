@@ -48,8 +48,10 @@ function displayPage (arr, num) {
   for (var i = 0; i < arr.length; i++) {
     if (Math.floor(i / 10) === num) {
       arr[i].classList.remove('bangumi-hide')
-      var img = arr[i].getElementsByTagName('img')[0]
-      img.src = img.getAttribute('data-src')
+      if (bangumiLazyload) {
+        var img = arr[i].getElementsByTagName('img')[0]
+        img.src = img.getAttribute('data-src')
+      }
     } else {
       arr[i].classList.add('bangumi-hide')
     }
