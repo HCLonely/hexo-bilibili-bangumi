@@ -20,9 +20,9 @@ a.bangumi-tab {
     padding-bottom: 10px;
     position: relative;
     clear: both;
-    min-height: 170px;
     padding: 10px 0;
     border-bottom: 1px #ddd solid;
+    min-height: 180px;
 }
 
 @media screen and (max-width: 600px) {
@@ -38,17 +38,24 @@ a.bangumi-tab {
     width: 110px;
 }
 
+.bangumi-picture img {
+    margin: 10px 0;
+}
+
 .bangumi-info {
     padding-left: 120px;
+    margin-top: 10px;
 }
 
 .bangumi-meta {
     font-size: 12px;
     padding-right: 10px;
+    height: 45px;
 }
 
 .bangumi-comments {
     font-size: 12px;
+    margin-top: 10px
 }
 
 .bangumi-pagination {
