@@ -28,6 +28,7 @@ bangumi: # 追番设置
   title: '追番列表'
   quote: '生命不息，追番不止！'
   show: 1
+  lazyload: true
   loading:
   metaColor:
   color:
@@ -39,9 +40,10 @@ cinema: # 追剧设置
   enable: true
   path:
   vmid:
-  title: '追番列表'
-  quote: '生命不息，追番不止！'
+  title: '追剧列表'
+  quote: '生命不息，追剧不止！'
   show: 1
+  lazyload: true
   loading:
   metaColor:
   color:
@@ -57,7 +59,8 @@ cinema: # 追剧设置
 - **title**: 该页面的标题
 - **quote**: 写在页面开头的一段话，支持 html 语法，可留空。
 - **show**: 初始显示页面：`0: 想看`, `1: 在看`, `2: 看过`，默认为`1`
-- **loading**: 图片加载完成前的 loading 图片
+- **lazyload**: 是否启用图片懒加载，如果与主题的懒加载冲突请关闭，默认`true`
+- **loading**: 图片加载完成前的 loading 图片，需启用图片懒加载
 - **metaColor**: meta 部分(简介上方)字体颜色
 - **color**: 简介字体颜色
 - **webp**: 番剧封面使用`webp`格式(此格式在`safari`浏览器下不显示，但是图片大小可以缩小 100 倍左右), 默认`true`
