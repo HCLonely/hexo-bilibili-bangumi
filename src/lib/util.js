@@ -1,10 +1,10 @@
-'use strict'
+'use strict';
 
-const I18N = require('hexo-i18n')
+const I18N = require('hexo-i18n');
 
 const i18n = new I18N({
   languages: ['zh-CN', 'zh-TW', 'en']
-})
+});
 
 i18n.set('en', {
   wantWatch: 'Wish',
@@ -14,7 +14,7 @@ i18n.set('en', {
   next: 'Next',
   top: 'Top',
   end: 'End'
-})
+});
 
 i18n.set('zh-TW', {
   wantWatch: '想看',
@@ -24,7 +24,7 @@ i18n.set('zh-TW', {
   next: '下一頁',
   top: '首頁',
   end: '尾頁'
-})
+});
 
 i18n.set('zh-Hans', {
   wantWatch: '想看',
@@ -34,7 +34,7 @@ i18n.set('zh-Hans', {
   next: '下一页',
   top: '首页',
   end: '尾页'
-})
+});
 
 i18n.set('zh-CN', {
   wantWatch: '想看',
@@ -44,6 +44,6 @@ i18n.set('zh-CN', {
   next: '下一页',
   top: '首页',
   end: '尾页'
-})
+});
 
-module.exports.i18n = i18n
+module.exports.i18n = i18n;

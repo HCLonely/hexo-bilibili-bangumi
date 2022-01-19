@@ -1,11 +1,11 @@
 {
   "name": "hexo-bilibili-bangumi",
-  "version": "1.6.4",
+  "version": "1.7.0",
   "description": "hexo bilibili番剧页",
   "main": "index.js",
   "scripts": {
     "test": "standard --fix && ejslint lib/templates/*.ejs",
-    "build": "babel src/index.js --out-file index.js && babel src/lib/util.js --out-file lib/util.js && babel src/lib/get-bili-data.js --out-file lib/get-bili-data.js && babel src/lib/bangumi-generator.js --out-file lib/bangumi-generator.js && babel src/lib/templates/index.js --out-file lib/templates/index.js --presets minify && babel src/lib/templates/pagination.js --out-file lib/templates/pagination.js --presets minify && cleancss src/lib/templates/index.css -O2 -o lib/templates/index.css",
+    "build": "babel src/index.js --out-file index.js && babel src/lib/util.js --out-file lib/util.js && babel src/lib/get-bili-data.js --out-file lib/get-bili-data.js && babel src/lib/get-bgm-data.js --out-file lib/get-bgm-data.js && babel src/lib/bangumi-generator.js --out-file lib/bangumi-generator.js && babel src/lib/templates/index.js --out-file lib/templates/index.js --presets minify && babel src/lib/templates/pagination.js --out-file lib/templates/pagination.js --presets minify && cleancss src/lib/templates/index.css -O2 -o lib/templates/index.css",
     "ejslint": "ejslint lib/templates/*.ejs"
   },
   "author": "HCLonely <h1606051253@gmail.com>",
@@ -21,6 +21,8 @@
   "dependencies": {
     "@babel/runtime": "^7.15.3",
     "axios": "^0.24.0",
+    "bangumi-data": "^0.3.81",
+    "cheerio": "^1.0.0-rc.10",
     "ejs": "3.1.6",
     "hexo-fs": "^3.1.0",
     "hexo-i18n": "^1.0.0",
@@ -39,12 +41,6 @@
     "babel-preset-minify": "^0.5.1",
     "clean-css-cli": "^5.3.3",
     "ejs-lint": "^1.1.0",
-    "standard": "^14.3.4"
-  },
-  "standard": {
-    "ignore": [
-      "index.js",
-      "lib/*"
-    ]
+    "eslint": "^8.7.0"
   }
 }

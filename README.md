@@ -4,7 +4,7 @@
 
 ## 介绍
 
-**为 Hexo 添加哔哩哔哩追番/追剧页面，参考自[hexo-douban](https://github.com/mythsman/hexo-douban)**.
+**为 Hexo 添加[哔哩哔哩](https://www.bilibili.com/)/[Bangumi](https://bangumi.tv/)追番/追剧页面，参考自[hexo-douban](https://github.com/mythsman/hexo-douban)**.
 
 [Demo](https://demo.hclonely.com/bangumis/)
 
@@ -23,6 +23,7 @@ $ npm install hexo-bilibili-bangumi --save
 ``` yaml
 bangumi: # 追番设置
   enable: true
+  source: bili
   path:
   vmid:
   title: '追番列表'
@@ -54,8 +55,9 @@ cinema: # 追剧设置
 ```
 
 - **enable**: 是否启用
+- **source**: 数据源，仅支持番剧。`bili`: [哔哩哔哩源](https://www.bilibili.com/), `bgm`: [Bangumi源](https://bangumi.tv/)
 - **path**: 页面路径，默认`bangumis/index.html`, `cinemas/index.html`
-- **vmid**: 哔哩哔哩的 `vmid(uid)`,[如何获取？](#获取uid)
+- **vmid**: 哔哩哔哩的 `vmid(uid)`[如何获取？](#获取uid)或Bangumi的用户id
 - **title**: 该页面的标题
 - **quote**: 写在页面开头的一段话，支持 html 语法，可留空。
 - **show**: 初始显示页面：`0: 想看`, `1: 在看`, `2: 看过`，默认为`1`

@@ -58,6 +58,17 @@ a.bangumi-tab {
     margin-top: 10px
 }
 
+.bangumi-comments > p {
+    word-break: break-all;
+    text-overflow: ellipsis;
+    overflow: hidden;
+
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+}
+
 .bangumi-pagination {
     margin-top: 15px;
     text-align: center;
@@ -124,6 +135,7 @@ a.bangumi-tab {
     padding-top: 11px;
     display: block;
     line-height: 12px;
+    font-weight: bold;
 }
 
 .bangumi-info-item-score {
@@ -157,7 +169,8 @@ a.bangumi-tab {
 }
 
 @media (max-width:520px) {
-    .bangumi-play {
+    .bangumi-play,
+    .bangumi-type {
         display: none;
     }
 
@@ -167,7 +180,8 @@ a.bangumi-tab {
 }
 
 @media (max-width:480px) {
-    .bangumi-follow {
+    .bangumi-follow,
+    .bangumi-wish {
         display: none;
     }
 
@@ -176,7 +190,8 @@ a.bangumi-tab {
     }
 }
 @media (max-width:400px) {
-    .bangumi-area {
+    .bangumi-area,
+    .bangumi-doing {
         display: none;
     }
 
