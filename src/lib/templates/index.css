@@ -152,7 +152,8 @@ a.bangumi-tab {
 }
 
 @media (max-width:650px) {
-    .bangumi-coin{
+    .bangumi-coin,
+    .bangumi-type {
         display:none;
     }
     .bangumi-info-item{
@@ -160,7 +161,8 @@ a.bangumi-tab {
     }
 }
 @media (max-width:590px) {
-    .bangumi-danmaku {
+    .bangumi-danmaku,
+    .bangumi-wish {
         display: none;
     }
     .bangumi-info-item {
@@ -170,7 +172,7 @@ a.bangumi-tab {
 
 @media (max-width:520px) {
     .bangumi-play,
-    .bangumi-type {
+    .bangumi-doing {
         display: none;
     }
 
@@ -181,7 +183,7 @@ a.bangumi-tab {
 
 @media (max-width:480px) {
     .bangumi-follow,
-    .bangumi-wish {
+    .bangumi-collect {
         display: none;
     }
 
@@ -190,8 +192,7 @@ a.bangumi-tab {
     }
 }
 @media (max-width:400px) {
-    .bangumi-area,
-    .bangumi-doing {
+    .bangumi-area {
         display: none;
     }
 
