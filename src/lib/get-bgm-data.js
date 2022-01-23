@@ -11,6 +11,7 @@ const bangumiData = require('bangumi-data');
 
 const getItemsId = async (vmid, status, showProgress) => {
   let items = [];
+  let bar;
   const response = await axios.get(`https://bangumi.tv/anime/list/${vmid}/${status}?page=1`);
   if (response?.data) {
     const $ = cheerio.load(response.data);
@@ -28,16 +29,19 @@ const getItemsId = async (vmid, status, showProgress) => {
     if (pageNum < 2) {
       return items;
     }
+    if (showProgress) {
+      // eslint-disable-next-line no-nested-ternary
+      bar = new ProgressBar(`正在获取 ${status === 'wish' ? '[想看]' : (status === 'do' ? '[在看]' : '[已看]')} 番剧 [:bar] :percent :elapseds`,
+        { total: pageNum, complete: '█' });
+      bar.tick();
+    }
 
-    let bar;
     // eslint-disable-next-line no-plusplus
     for (let i = 2; i <= pageNum; i++) {
-      if (showProgress) {
-        // eslint-disable-next-line no-nested-ternary
-        bar = new ProgressBar(`正在获取 ${status === 'wish' ? '[想看]' : (status === 'do' ? '[在看]' : '[已看]')} 番剧 [:bar] :percent :elapseds`,
-          { total: pageNum, complete: '█' });
-      }
-      const response = await axios.get(`https://bangumi.tv/anime/list/${vmid}/${status}?page=${i}`);
+      if (showProgress) bar.tick();
+      const response = await axios.get(`https://bangumi.tv/anime/list/${vmid}/${status}?page=${i}`, {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36 Edg/97.0.1072.69'
+      });
       const $ = cheerio.load(response.data);
       items = [...items, ...$('#browserItemList>li').map((index, el) => ({
         id: $(el).attr('id')
@@ -50,6 +54,7 @@ const getItemsId = async (vmid, status, showProgress) => {
         .get()];
     }
   }
+  log.info('正在获取番剧详细数据，耗时与追番数量成正比，请耐心等待...');
   return items;
 };
 
@@ -65,9 +70,27 @@ const TYPE = {
 const getBangumiData = async (items) => (await axios.all(
   items.map(
     (item) => axios.get(`https://cdn.jsdelivr.net/gh/czy0729/Bangumi-Subject@master/data/${
-      parseInt(parseInt(item.id, 10) / 100, 10)}/${item.id}.json`, { itemData: item, responseType: 'json' })
+      parseInt(parseInt(item.id, 10) / 100, 10)}/${item.id}.json`, { itemData: item,
+      responseType: 'json',
+      validateStatus(status) {
+        return (status >= 200 && status < 300) || status === 403; // default
+      } })
   )
-)).map(({ config, data }) => {
+)).map(({ config, data, status }) => {
+  if (status === 403) {
+    return {
+      id: config.itemData.id,
+      title: jp2cnName(config.itemData.name),
+      type: '未知',
+      cover: config.itemData.cover,
+      score: '-',
+      des: '-',
+      wish: '-',
+      doing: '-',
+      collect: '-',
+      totalCount: '-'
+    };
+  }
   if (typeof data === 'string') {
     try {
       // eslint-disable-next-line no-param-reassign
@@ -77,7 +100,7 @@ const getBangumiData = async (items) => (await axios.all(
       console.error(e);
     }
   }
-  return ({
+  return {
     id: data?.id || config.itemData.id,
     title: jp2cnName(data?.name || config.itemData.name),
     type: TYPE[data?.type] || '未知',
@@ -88,7 +111,7 @@ const getBangumiData = async (items) => (await axios.all(
     doing: data?.collection?.doing || '-',
     collect: data?.collection?.collect || '-',
     totalCount: data?.eps?.length ? `全${data?.eps?.length}话` : '-'
-  });
+  };
 });
 /*
 (async () => {
