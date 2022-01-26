@@ -55,9 +55,9 @@ cinema: # 追剧设置
 ```
 
 - **enable**: 是否启用
-- **source**: 数据源，仅支持番剧。`bili`: [哔哩哔哩源](https://www.bilibili.com/), `bgm`: [Bangumi源](https://bangumi.tv/)
+- **source**: 数据源，仅支持追番，追剧仅支持哔哩哔哩源。`bili`: [哔哩哔哩源](https://www.bilibili.com/), `bgm`: [Bangumi源](https://bangumi.tv/)
 - **path**: 页面路径，默认`bangumis/index.html`, `cinemas/index.html`
-- **vmid**: 哔哩哔哩的 `vmid(uid)`[如何获取？](#获取uid)或Bangumi的用户id
+- **vmid**: 哔哩哔哩的 `vmid(uid)`[如何获取？](#获取-bilibili-uid)或Bangumi的用户`id`[如何获取？](#获取-bangumi-id)
 - **title**: 该页面的标题
 - **quote**: 写在页面开头的一段话，支持 html 语法，可留空。
 - **show**: 初始显示页面：`0: 想看`, `1: 在看`, `2: 看过`，默认为`1`
@@ -65,7 +65,7 @@ cinema: # 追剧设置
 - **loading**: 图片加载完成前的 loading 图片，需启用图片懒加载
 - **metaColor**: meta 部分(简介上方)字体颜色
 - **color**: 简介字体颜色
-- **webp**: 番剧封面使用`webp`格式(此格式在`safari`浏览器下不显示，但是图片大小可以缩小 100 倍左右), 默认`true`
+- **webp**: 番剧封面使用`webp`格式(此格式在`safari`浏览器下不显示，但是图片大小可以缩小 100 倍左右，仅支持哔哩哔哩源), 默认`true`
 - **progress**: 获取番剧数据时是否显示进度条，默认`true`
 - **extra_options**: 此配置会扩展到Hexo`page`变量中
 
@@ -74,11 +74,16 @@ cinema: # 追剧设置
 1. 在`hexo generate`或`hexo deploy`之前使用`hexo bangumi -u`命令更新追番数据，使用`hexo cinema -u`命令更新追剧数据！
 2. 删除数据命令:`hexo bangumi -d`/`hexo cinema -d`
 
-## 获取 uid
+## 获取 Bilibili uid
 
 登录哔哩哔哩后前往[https://space.bilibili.com/](https://space.bilibili.com/)页面，网址最后的一串数字就是 `uid`
 
 ***需要将追番列表设置为公开！***
+
+## 获取 Bangumi id
+
+登录[Bangumi](https://bangumi.tv/)后打开控制台(`Ctrl`+`Shift`+`J`)，输入`CHOBITS_UID`回车，下面会输出`id`
+
 
 ## 示例
 
