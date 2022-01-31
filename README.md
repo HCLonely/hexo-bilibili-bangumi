@@ -35,6 +35,9 @@ bangumi: # 追番设置
   color:
   webp:
   progress:
+  proxy:
+    host: '代理host'
+    port: '代理端口'
   extra_options:
     key: value
 cinema: # 追剧设置
@@ -56,6 +59,7 @@ cinema: # 追剧设置
 
 - **enable**: 是否启用
 - **source**: 数据源，仅支持追番，追剧仅支持哔哩哔哩源。`bili`: [哔哩哔哩源](https://www.bilibili.com/), `bgm`: [Bangumi源](https://bangumi.tv/)
+- **proxy**: 代理设置，仅在使用支持`bgm`源追番时生效。默认`false`
 - **path**: 页面路径，默认`bangumis/index.html`, `cinemas/index.html`
 - **vmid**: 哔哩哔哩的 `vmid(uid)`[如何获取？](#获取-bilibili-uid)或Bangumi的用户`id`[如何获取？](#获取-bangumi-id)
 - **title**: 该页面的标题

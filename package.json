@@ -1,6 +1,6 @@
 {
   "name": "hexo-bilibili-bangumi",
-  "version": "1.7.2",
+  "version": "1.7.4",
   "description": "hexo bilibili番剧页",
   "main": "index.js",
   "scripts": {
@@ -20,14 +20,15 @@
   ],
   "dependencies": {
     "@babel/runtime": "^7.15.3",
+    "axios": "^0.25.0",
     "bangumi-data": "^0.3.81",
     "cheerio": "^1.0.0-rc.10",
-    "axios": "^0.25.0",
     "ejs": "3.1.6",
     "hexo-fs": "^3.1.0",
     "hexo-i18n": "^1.0.0",
     "hexo-log": "^3.0.0",
-    "progress": "^2.0.3"
+    "progress": "^2.0.3",
+    "tunnel": "^0.0.6"
   },
   "repository": {
     "type": "git",

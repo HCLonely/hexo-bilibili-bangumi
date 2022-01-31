@@ -72,7 +72,7 @@ hexo.extend.console.register('bangumi', 'Generate pages of bangumis for Hexo', o
     if (this.config.bangumi.source === 'bgm') {
       var _this$config$bangumi$;
 
-      getBgmData(this.config.bangumi.vmid, (_this$config$bangumi$ = this.config.bangumi.progress) !== null && _this$config$bangumi$ !== void 0 ? _this$config$bangumi$ : true, this.source_dir);
+      getBgmData(this.config.bangumi.vmid, (_this$config$bangumi$ = this.config.bangumi.progress) !== null && _this$config$bangumi$ !== void 0 ? _this$config$bangumi$ : true, this.source_dir, this.config.bangumi.proxy);
     } else {
       var _this$config$bangumi$2;
 
