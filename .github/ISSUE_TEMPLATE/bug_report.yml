@@ -1,0 +1,33 @@
+name: Bug Report
+description: 提交BUG
+labels: bug
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: 问题描述及如何重现此问题
+      description: Problem description and how to reproduce the problem.
+    validations:
+      required: true
+  - type: textarea
+    id: error-msg
+    attributes:
+      label: 报错信息（建议使用截图，请尽量截取全部把错误信息）
+      description: Error message (It is recommended to use screenshots, please try to capture all the error messages).
+    validations:
+      required: true
+  - type: input
+    id: plugin-version
+    attributes:
+      label: 插件版本
+      description: Plugin version
+    validations:
+      required: true
+  - type: textarea
+    id: info
+    attributes:
+      label: 环境信息（使用`hexo -v`命令查看）
+      description: Environment information (Use the "hexo -v" command to view).
+      render: shell
+    validations:
+      required: true

@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Other
+    url: https://github.com/HCLonely/hexo-bilibili-bangumi/issues/new
+    about: 其他问题
