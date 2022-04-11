@@ -1,6 +1,7 @@
 name: Bug Report
 description: 提交BUG
 labels: bug
+title: "[Bug]: "
 body:
   - type: textarea
     id: description
