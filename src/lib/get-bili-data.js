@@ -43,7 +43,7 @@ const getData = async (vmid, status, useWebp, typeNum, pn) => {
         view: count(bangumi?.stat?.view),
         danmaku: count(bangumi?.stat?.danmaku),
         coin: count(bangumi.stat.coin),
-        score: bangumi?.rating ? bangumi?.rating?.score : '暂无评分',
+        score: bangumi?.rating?.score ?? '-',
         des: bangumi?.evaluate
       });
     }
