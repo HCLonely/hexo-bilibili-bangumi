@@ -11,14 +11,21 @@ const cheerio = require('cheerio');
 const tunnel = require('tunnel');
 const bangumiData = require('bangumi-data');
 
-const getItemsId = async (vmid, status, showProgress) => {
-  let items = [];
+const getItemsId = async (vmid, status, showProgress, sourceDir, proxy) => {
+  const items = [];
   let bar;
   const response = await axios.get(`https://bangumi.tv/anime/list/${vmid}/${status}?page=1`);
+  const username = response.request.path.match(/anime\/list\/(.*?)\//)?.[1];
+  if (!username) {
+    return console.error('Failed to get "username"!');
+  }
   if (response?.data) {
     const $ = cheerio.load(response.data);
-    const pageNum = $('#multipage').find('a').length;
-    items = $('#browserItemList>li').map((index, el) => ({
+    const pageNum = Math.max(...$('#multipage').find('a')
+      .map((index, el) => parseInt($(el).attr('href')
+        ?.match(/\?page=([\d]+)/)?.[1] || '0', 10))
+      .get()) || $('#multipage').find('a').length;
+    items.push(...await getBangumiData($('#browserItemList>li').map((index, el) => ({
       id: $(el).attr('id')
         .replace('item_', ''),
       cover: $(el).find('img')
@@ -26,7 +33,7 @@ const getItemsId = async (vmid, status, showProgress) => {
       name: $(el).find('h3>a')
         .text()
     }))
-      .get();
+      .get(), sourceDir, proxy));
 
     if (showProgress) {
       // eslint-disable-next-line no-nested-ternary
@@ -35,18 +42,17 @@ const getItemsId = async (vmid, status, showProgress) => {
       bar.tick();
     }
     if (pageNum < 2) {
-      log.info('正在获取番剧详细数据，请耐心等待...');
       return items;
     }
 
     // eslint-disable-next-line no-plusplus
     for (let i = 2; i <= pageNum; i++) {
       if (showProgress) bar.tick();
-      const response = await axios.get(`https://bangumi.tv/anime/list/${vmid}/${status}?page=${i}`, {
+      const response = await axios.get(`https://bangumi.tv/anime/list/${username}/${status}?page=${i}`, {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36 Edg/97.0.1072.69'
       });
       const $ = cheerio.load(response.data);
-      items = [...items, ...$('#browserItemList>li').map((index, el) => ({
+      items.push(...await getBangumiData($('#browserItemList>li').map((index, el) => ({
         id: $(el).attr('id')
           .replace('item_', ''),
         cover: $(el).find('img')
@@ -54,10 +60,10 @@ const getItemsId = async (vmid, status, showProgress) => {
         name: $(el).find('h3>a')
           .text()
       }))
-        .get()];
+        .get(), sourceDir, proxy));
     }
   }
-  log.info('正在获取番剧详细数据，耗时与追番数量成正比，请耐心等待...');
+  // log.info('正在获取番剧详细数据，耗时与追番数量成正比，请耐心等待...');
   return items;
 };
 
@@ -70,9 +76,9 @@ const TYPE = {
   4: '游戏',
   6: '三次元'
 };
-const getBangumiData = async (items, sourceDir, proxy) => (await Promise.all(
+const getBangumiData = async (items, sourceDir, proxy) => (await Promise.allSettled(
   items.map(
-    (item) => {
+    async (item) => {
       const cachePath = path.join(sourceDir, '/_data/Bangumi-Subject-Cache');
       const subjectPath = path.join(cachePath, `${item.id}.json`);
       if (!fs.existsSync(cachePath)) {
@@ -87,7 +93,8 @@ const getBangumiData = async (items, sourceDir, proxy) => (await Promise.all(
         validateStatus(status) {
           return (status >= 200 && status < 300) || status === 403;
         },
-        proxy: false
+        proxy: false,
+        timeout: 30 * 1000
       };
       if (proxy?.host && proxy?.port) {
         options.httpsAgent = tunnel.httpsOverHttp({
@@ -97,7 +104,7 @@ const getBangumiData = async (items, sourceDir, proxy) => (await Promise.all(
           }
         });
       }
-      return axios.get(`https://cdn.jsdelivr.net/gh/czy0729/Bangumi-Subject@master/data/${
+      return await axios.get(`https://cdn.jsdelivr.net/gh/czy0729/Bangumi-Subject@master/data/${
         parseInt(parseInt(item.id, 10) / 100, 10)}/${item.id}.json`, options)
         .then((response) => response)
         .catch((error) => {
@@ -106,12 +113,17 @@ const getBangumiData = async (items, sourceDir, proxy) => (await Promise.all(
           } else {
             console.error('Error', error.stack);
           }
-          return error;
+          return {
+            config: { itemData: item },
+            error
+          };
         });
     }
   )
-)).map(({ config, data, status }) => {
-  if (status === 403 || !data) {
+)).map(({ value, reason }) => {
+  const { config, data, status } = value || reason;
+  let bangumiData = data;
+  if (reason || status === 403 || !data) {
     return {
       id: config.itemData.id,
       title: jp2cnName(config.itemData.name),
@@ -128,13 +140,13 @@ const getBangumiData = async (items, sourceDir, proxy) => (await Promise.all(
   if (typeof data === 'string') {
     try {
       // eslint-disable-next-line no-param-reassign
-      data = JSON.parse(data.replace(/(?<!":|\/|\\)("[^":,\]}][^"]*?[^":])"(?!,|]|}|:)/g, '\\$1\\"'));
+      bangumiData = JSON.parse(data.replace(/(?<!":|\/|\\)("[^":,\]}][^"]*?[^":])"(?!,|]|}|:)/g, '\\$1\\"'));
     } catch (e) {
       console.log(`Error Id: ${config.itemData.id}`);
       console.error(e);
     }
   }
-  const { id, name, type, image, rating: { score } = {}, summary, collection: { wish, doing, collect } = {}, eps, epsLength } = data;
+  const { id, name, type, image, rating: { score } = {}, summary, collection: { wish, doing, collect } = {}, eps, epsLength } = bangumiData;
   const totalCount = epsLength || eps?.length;
   const subjectPath = path.join(sourceDir, '/_data/Bangumi-Subject-Cache', `${config.itemData.id}.json`);
   if (!fs.existsSync(subjectPath)) {
@@ -159,9 +171,9 @@ const getBangumiData = async (items, sourceDir, proxy) => (await Promise.all(
 module.exports.getBgmData = async function getBgmData(vmid, showProgress, sourceDir, proxy) {
   log.info('Getting bangumis, please wait...');
   const startTime = new Date().getTime();
-  const wantWatch = await getBangumiData(await getItemsId(vmid, 'wish', showProgress), sourceDir, proxy);
-  const watching = await getBangumiData(await getItemsId(vmid, 'do', showProgress), sourceDir, proxy);
-  const watched = await getBangumiData(await getItemsId(vmid, 'collect', showProgress), sourceDir, proxy);
+  const wantWatch = await getItemsId(vmid, 'wish', showProgress, sourceDir, proxy);
+  const watching = await getItemsId(vmid, 'do', showProgress, sourceDir, proxy);
+  const watched = await getItemsId(vmid, 'collect', showProgress, sourceDir, proxy);
   const endTime = new Date().getTime();
   log.info(`${wantWatch.length + watching.length + watched.length} bangumis have been loaded in ${endTime - startTime} ms`);
   const bangumis = { wantWatch, watching, watched };

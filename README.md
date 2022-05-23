@@ -88,7 +88,6 @@ cinema: # 追剧设置
 
 登录[Bangumi](https://bangumi.tv/)后打开控制台(`Ctrl`+`Shift`+`J`)，输入`CHOBITS_UID`回车，下面会输出`id`
 
-
 ## 示例
 
 ![示例图片](https://github.com/HCLonely/hexo-bilibili-bangumi/raw/master/example.png)
