@@ -86,12 +86,15 @@ const getBangumiData = async (items, sourceDir, proxy) => (await Promise.all(
         responseType: 'json',
         validateStatus(status) {
           return (status >= 200 && status < 300) || status === 403;
-        }
+        },
+        proxy: false
       };
       if (proxy?.host && proxy?.port) {
         options.httpsAgent = tunnel.httpsOverHttp({
           proxy,
-          rejectUnauthorized: false
+          options: {
+            rejectUnauthorized: false
+          }
         });
       }
       return axios.get(`https://cdn.jsdelivr.net/gh/czy0729/Bangumi-Subject@master/data/${
