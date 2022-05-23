@@ -19,10 +19,10 @@
     "anime"
   ],
   "dependencies": {
-    "@babel/runtime": "^7.15.3",
-    "axios": "^0.27.0",
-    "bangumi-data": "^0.3.81",
-    "cheerio": "^1.0.0-rc.10",
+    "@babel/runtime": "^7.18.0",
+    "axios": "^0.27.2",
+    "bangumi-data": "^0.3.91",
+    "cheerio": "^1.0.0-rc.11",
     "ejs": "3.1.8",
     "hexo-fs": "^3.1.0",
     "hexo-i18n": "^1.0.0",
@@ -35,13 +35,13 @@
     "url": "git+https://github.com/HCLonely/hexo-bilibili-bangumi.git"
   },
   "devDependencies": {
-    "@babel/cli": "^7.8.4",
-    "@babel/core": "^7.15.0",
-    "@babel/plugin-transform-runtime": "^7.15.0",
-    "@babel/preset-env": "^7.15.0",
-    "babel-preset-minify": "^0.5.1",
-    "clean-css-cli": "^5.3.3",
-    "ejs-lint": "^1.1.0",
-    "eslint": "^8.7.0"
+    "@babel/cli": "^7.17.10",
+    "@babel/core": "^7.18.0",
+    "@babel/plugin-transform-runtime": "^7.18.0",
+    "@babel/preset-env": "^7.18.0",
+    "babel-preset-minify": "^0.5.2",
+    "clean-css-cli": "^5.6.0",
+    "ejs-lint": "^1.2.2",
+    "eslint": "^8.16.0"
   }
 }
