@@ -19,27 +19,38 @@ module.exports = async function (locals, type = 'bangumi') {
   if (root.endsWith('/')) {
     root = root.slice(0, root.length - 1);
   }
-  let wantWatch = []; let watching = []; let watched = [];
-  // console.log(path.join(this.source_dir, '/_data/bangumis.json'))
+  let wantWatch = [];
+  let watching = [];
+  let watched = [];
   if (!fs.existsSync(path.join(this.source_dir, `/_data/${type}s.json`))) {
     log.info(`Can't find bilibili ${type} data, please use 'hexo ${type} -u' command to get data`);
   } else {
     ({ wantWatch, watching, watched } = JSON.parse(fs.readFileSync(path.join(this.source_dir, `/_data/${type}s.json`))));
 
     // extra bangumis
-    // console.log(path.join(this.source_dir, '/_data/extra_' + type + 's.json'))
     if (fs.existsSync(path.join(this.source_dir, `/_data/extra_${type}s.json`))) {
       log.info(`Found extra ${type}s data`);
-      let wantWatchExtra = []; let watchingExtra = []; let watchedExtra = [];
-      ({ wantWatchExtra, watchingExtra, watchedExtra } = JSON.parse(fs.readFileSync(path.join(this.source_dir, `/_data/extra_${type}s.json`))));
+      const { wantWatchExtra, watchingExtra, watchedExtra } = JSON.parse(fs.readFileSync(path.join(this.source_dir, `/_data/extra_${type}s.json`)));
       if (wantWatchExtra) {
-        wantWatch = wantWatch.concat(wantWatchExtra);
+        if (config[type].extraOrder === 1) {
+          wantWatch = [...wantWatchExtra, ...wantWatch];
+        } else {
+          wantWatch = [...wantWatch, ...wantWatchExtra];
+        }
       }
       if (watchingExtra) {
-        watching = watching.concat(watchingExtra);
+        if (config[type].extraOrder === 1) {
+          watching = [...watchingExtra, ...watching];
+        } else {
+          watching = [...watching, ...watchingExtra];
+        }
       }
       if (watchedExtra) {
-        watched = watched.concat(watchedExtra);
+        if (config[type].extraOrder === 1) {
+          watched = [...watchedExtra, ...watched];
+        } else {
+          watched = [...watched, ...watchedExtra];
+        }
       }
     }
 
