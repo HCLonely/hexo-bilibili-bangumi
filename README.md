@@ -32,6 +32,7 @@ bangumi: # 追番设置
   lazyload: true
   loading:
   showMyComment: false
+  pagination: false
   metaColor:
   color:
   webp:
@@ -78,6 +79,7 @@ cinema: # 追剧设置
 - **progress**: 获取番剧数据时是否显示进度条，默认`true`
 - **extraOrder**: 手动添加的番剧/追剧数据是否优先显示，`1`为优先，其它为不优先
 - **showMyComment**: 使用`bgm`源时显示自己的评价及评论，默认`false`
+- **pagination**: 分页优化，只将第一页的数据渲染到`html`文件中，其余数据将通过异步请求加载，避免番剧过多时html文件过大导致页面加载缓慢，建议番剧较多时使用，默认`false`
 - **extra_options**: 此配置会扩展到Hexo`page`变量中
 
 ## 使用

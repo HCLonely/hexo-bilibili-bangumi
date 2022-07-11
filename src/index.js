@@ -49,9 +49,24 @@ hexo.extend.console.register('bangumi', 'Generate pages of bangumis for Hexo', o
       return;
     }
     if (this.config.bangumi.source === 'bgm') {
-      getBgmData(this.config.bangumi.vmid, this.config.bangumi.progress ?? true, this.source_dir, this.config.bangumi.proxy);
+      getBgmData({
+        vmid: this.config.bangumi.vmid,
+        showProgress: this.config.bangumi.progress ?? true,
+        sourceDir: this.source_dir,
+        extraOrder: this.config.bangumi.extraOrder,
+        pagination: this.config.bangumi.pagination,
+        proxy: this.config.bangumi.proxy
+      });
     } else {
-      getBiliData(this.config.bangumi.vmid, 'bangumi', this.config.bangumi.progress ?? true, this.source_dir, this.config.bangumi.webp);
+      getBiliData({
+        vmid: this.config.bangumi.vmid,
+        type: 'bangumi',
+        showProgress: this.config.bangumi.progress ?? true,
+        sourceDir: this.source_dir,
+        extraOrder: this.config.bangumi.extraOrder,
+        pagination: this.config.bangumi.pagination,
+        useWebp: this.config.bangumi.webp
+      });
     }
   } else {
     log.info('Unknown command, please use "hexo bangumi -h" to see the available commands');
@@ -75,7 +90,15 @@ hexo.extend.console.register('cinema', 'Generate pages of bilibili cinemas for H
       log.info('Please add vmid to _config.yml');
       return;
     }
-    getBiliData(this.config.cinema.vmid, 'cinema', this.config.cinema.progress ?? true, this.source_dir, this.config.cinema.webp);
+    getBiliData({
+      vmid: this.config.cinema.vmid,
+      type: 'cinema',
+      showProgress: this.config.cinema.progress ?? true,
+      sourceDir: this.source_dir,
+      extraOrder: this.config.cinema.extraOrder,
+      pagination: this.config.cinema.pagination,
+      useWebp: this.config.cinema.webp
+    });
   } else {
     log.info('Unknown command, please use "hexo cinema -h" to see the available commands');
   }

@@ -182,7 +182,7 @@ const getBangumiData = async (items, sourceDir, proxy) => (await Promise.allSett
   };
 });
 
-module.exports.getBgmData = async function getBgmData(vmid, showProgress, sourceDir, proxy) {
+module.exports.getBgmData = async function getBgmData({ vmid, showProgress, sourceDir, extraOrder, pagination, proxy }) {
   log.info('Getting bangumis, please wait...');
   const startTime = new Date().getTime();
   const wantWatch = await getItemsId(vmid, 'wish', showProgress, sourceDir, proxy);
@@ -196,10 +196,47 @@ module.exports.getBgmData = async function getBgmData(vmid, showProgress, source
   }
   fs.writeFile(path.join(sourceDir, '/_data/bangumis.json'), JSON.stringify(bangumis), (err) => {
     if (err) {
-      log.info('Failed to write data to bangumis.json');
+      log.info('Failed to write data to _data/bangumis.json');
       console.error(err);
     } else {
       log.info('Bangumi bangumis data has been saved');
     }
   });
+
+  if (pagination) {
+    const allBangumis = { ...bangumis };
+    // extra bangumis
+    if (fs.existsSync(path.join(sourceDir, '/_data/extra_bangumis.json'))) {
+      const { wantWatchExtra, watchingExtra, watchedExtra } = JSON.parse(fs.readFileSync(path.join(this.source_dir, `/_data/extra_${type}s.json`)));
+      if (wantWatchExtra) {
+        if (extraOrder === 1) {
+          allBangumis.wantWatch = [...wantWatchExtra, ...allBangumis.wantWatch];
+        } else {
+          allBangumis.wantWatch = [...allBangumis.wantWatch, ...wantWatchExtra];
+        }
+      }
+      if (watchingExtra) {
+        if (extraOrder === 1) {
+          allBangumis.watching = [...watchingExtra, ...allBangumis.watching];
+        } else {
+          allBangumis.watching = [...allBangumis.watching, ...watchingExtra];
+        }
+      }
+      if (watchedExtra) {
+        if (extraOrder === 1) {
+          allBangumis.watched = [...watchedExtra, ...allBangumis.watched];
+        } else {
+          allBangumis.watched = [...allBangumis.watched, ...watchedExtra];
+        }
+      }
+    }
+    fs.writeFile(path.join(sourceDir, '/bangumis.json'), JSON.stringify(allBangumis), (err) => {
+      if (err) {
+        log.info('Failed to write data to bangumis.json');
+        console.error(err);
+      } else {
+        log.info('Bangumi bangumis data has been saved');
+      }
+    });
+  }
 };

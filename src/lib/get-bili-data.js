@@ -76,7 +76,7 @@ const processData = async (vmid, status, useWebp, showProgress, typeNum) => {
   console.log(`Get ${typeNum === 1 ? 'bangumi' : 'cinema'} data error:`, page?.data);
   return [];
 };
-module.exports.getBiliData = async (vmid, type, showProgress, sourceDir, useWebp = true) => {
+module.exports.getBiliData = async ({ vmid, type, showProgress, sourceDir, extraOrder, pagination, useWebp = true }) => {
   const typeNum = type === 'cinema' ? 2 : 1;
   log.info(`Getting bilibili ${type}, please wait...`);
   const startTime = new Date().getTime();
@@ -91,10 +91,47 @@ module.exports.getBiliData = async (vmid, type, showProgress, sourceDir, useWebp
   }
   fs.writeFile(path.join(sourceDir, `/_data/${type}s.json`), JSON.stringify(bangumis), (err) => {
     if (err) {
-      log.info(`Failed to write data to ${type}s.json`);
+      log.info(`Failed to write data to _data/${type}s.json`);
       console.error(err);
     } else {
       log.info(`Bilibili ${type}s data has been saved`);
     }
   });
+
+  if (pagination) {
+    const allBangumis = { ...bangumis };
+    // extra bangumis
+    if (fs.existsSync(path.join(sourceDir, `/_data/extra_${type}s.json`))) {
+      const { wantWatchExtra, watchingExtra, watchedExtra } = JSON.parse(fs.readFileSync(path.join(this.source_dir, `/_data/extra_${type}s.json`)));
+      if (wantWatchExtra) {
+        if (extraOrder === 1) {
+          allBangumis.wantWatch = [...wantWatchExtra, ...allBangumis.wantWatch];
+        } else {
+          allBangumis.wantWatch = [...allBangumis.wantWatch, ...wantWatchExtra];
+        }
+      }
+      if (watchingExtra) {
+        if (extraOrder === 1) {
+          allBangumis.watching = [...watchingExtra, ...allBangumis.watching];
+        } else {
+          allBangumis.watching = [...allBangumis.watching, ...watchingExtra];
+        }
+      }
+      if (watchedExtra) {
+        if (extraOrder === 1) {
+          allBangumis.watched = [...watchedExtra, ...allBangumis.watched];
+        } else {
+          allBangumis.watched = [...allBangumis.watched, ...watchedExtra];
+        }
+      }
+    }
+    fs.writeFile(path.join(sourceDir, `/${type}s.json`), JSON.stringify(bangumis), (err) => {
+      if (err) {
+        log.info(`Failed to write data to ${type}s.json`);
+        console.error(err);
+      } else {
+        log.info(`Bilibili ${type}s data has been saved`);
+      }
+    });
+  }
 };

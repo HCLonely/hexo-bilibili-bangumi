@@ -67,8 +67,8 @@
     lastpages[i].onclick = lastBtn;
 
     // set page num
-    const size = pagenums[i].parentNode.siblings().length;
-    pagenums[i].innerText = `1 / ${Math.ceil(size / 10) === 0 ? 1 : Math.ceil(size / 10)}`;
+    const size = typeof pagenumsPre !== 'undefined' ? (pagenumsPre[i] ?? pagenums[i].parentNode.siblings().length) : pagenums[i].parentNode.siblings().length;
     firstpages[i].click();
+    pagenums[i].innerText = `1 / ${Math.ceil(size / 10) === 0 ? 1 : Math.ceil(size / 10)}`;
   }
 }());

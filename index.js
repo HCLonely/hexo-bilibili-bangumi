@@ -72,11 +72,26 @@ hexo.extend.console.register('bangumi', 'Generate pages of bangumis for Hexo', o
     if (this.config.bangumi.source === 'bgm') {
       var _this$config$bangumi$;
 
-      getBgmData(this.config.bangumi.vmid, (_this$config$bangumi$ = this.config.bangumi.progress) !== null && _this$config$bangumi$ !== void 0 ? _this$config$bangumi$ : true, this.source_dir, this.config.bangumi.proxy);
+      getBgmData({
+        vmid: this.config.bangumi.vmid,
+        showProgress: (_this$config$bangumi$ = this.config.bangumi.progress) !== null && _this$config$bangumi$ !== void 0 ? _this$config$bangumi$ : true,
+        sourceDir: this.source_dir,
+        extraOrder: this.config.bangumi.extraOrder,
+        pagination: this.config.bangumi.pagination,
+        proxy: this.config.bangumi.proxy
+      });
     } else {
       var _this$config$bangumi$2;
 
-      getBiliData(this.config.bangumi.vmid, 'bangumi', (_this$config$bangumi$2 = this.config.bangumi.progress) !== null && _this$config$bangumi$2 !== void 0 ? _this$config$bangumi$2 : true, this.source_dir, this.config.bangumi.webp);
+      getBiliData({
+        vmid: this.config.bangumi.vmid,
+        type: 'bangumi',
+        showProgress: (_this$config$bangumi$2 = this.config.bangumi.progress) !== null && _this$config$bangumi$2 !== void 0 ? _this$config$bangumi$2 : true,
+        sourceDir: this.source_dir,
+        extraOrder: this.config.bangumi.extraOrder,
+        pagination: this.config.bangumi.pagination,
+        useWebp: this.config.bangumi.webp
+      });
     }
   } else {
     log.info('Unknown command, please use "hexo bangumi -h" to see the available commands');
@@ -105,7 +120,15 @@ hexo.extend.console.register('cinema', 'Generate pages of bilibili cinemas for H
       return;
     }
 
-    getBiliData(this.config.cinema.vmid, 'cinema', (_this$config$cinema$p = this.config.cinema.progress) !== null && _this$config$cinema$p !== void 0 ? _this$config$cinema$p : true, this.source_dir, this.config.cinema.webp);
+    getBiliData({
+      vmid: this.config.cinema.vmid,
+      type: 'cinema',
+      showProgress: (_this$config$cinema$p = this.config.cinema.progress) !== null && _this$config$cinema$p !== void 0 ? _this$config$cinema$p : true,
+      sourceDir: this.source_dir,
+      extraOrder: this.config.cinema.extraOrder,
+      pagination: this.config.cinema.pagination,
+      useWebp: this.config.cinema.webp
+    });
   } else {
     log.info('Unknown command, please use "hexo cinema -h" to see the available commands');
   }

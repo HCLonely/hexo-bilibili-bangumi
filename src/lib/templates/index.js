@@ -34,4 +34,22 @@
     tabs[i].onclick = tabClick;
     tabs[i].onclick.apply(tabs[i]);
   }
+
+  if (typeof pagenumsPre !== 'undefined') {
+    axios.get(`${window.location.href}../bangumis.json`).then((response) => {
+      if (response.data) {
+        const html = {
+          wantWatch: response.data.wantWatch.slice(10).map((item) => ejs.render(ejsTemplate, { item, loading, metaColor, type }))
+            .join('\n'),
+          watching: response.data.watching.slice(10).map((item) => ejs.render(ejsTemplate, { item, loading, metaColor, type }))
+            .join('\n'),
+          watched: response.data.watched.slice(10).map((item) => ejs.render(ejsTemplate, { item, loading, metaColor, type }))
+            .join('\n')
+        };
+        document.querySelectorAll('#bangumi-item1>.bangumi-pagination')[0].insertAdjacentHTML('beforeBegin', html.wantWatch);
+        document.querySelectorAll('#bangumi-item2>.bangumi-pagination')[0].insertAdjacentHTML('beforeBegin', html.watching);
+        document.querySelectorAll('#bangumi-item3>.bangumi-pagination')[0].insertAdjacentHTML('beforeBegin', html.watched);
+      }
+    });
+  }
 }());

@@ -69,6 +69,9 @@ module.exports = async function (locals, type = 'bangumi') {
     lazyload: config[type].lazyload ?? true,
     source: config[type].source ?? 'bili',
     showMyComment: config[type].showMyComment ?? false,
+    pagination: config[type].pagination ?? false,
+    ejsTemplate: fs.readFileSync(path.join(__dirname, `templates/${config[type].source === 'bgm' ? 'bgm' : 'bili'}-template.ejs`)).toString()
+      .replace('class="bangumi-item"', 'class="bangumi-item bangumi-hide"'),
     wantWatch,
     watched,
     watching,
