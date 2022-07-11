@@ -31,7 +31,13 @@ const getItemsId = async (vmid, status, showProgress, sourceDir, proxy) => {
       cover: $(el).find('img')
         .attr('src'),
       name: $(el).find('h3>a')
+        .text(),
+      myStars: $(el).find('.starlight')
+        .attr('class')
+        ?.match(/stars([\d]+)/)?.[1],
+      myComment: $(el).find('#comment_box')
         .text()
+        .trim()
     }))
       .get(), sourceDir, proxy));
 
@@ -58,7 +64,13 @@ const getItemsId = async (vmid, status, showProgress, sourceDir, proxy) => {
         cover: $(el).find('img')
           .attr('src'),
         name: $(el).find('h3>a')
+          .text(),
+        myStars: $(el).find('.starlight')
+          .attr('class')
+          ?.match(/stars([\d]+)/)?.[1],
+        myComment: $(el).find('#comment_box')
           .text()
+          .trim()
       }))
         .get(), sourceDir, proxy));
     }
@@ -164,7 +176,9 @@ const getBangumiData = async (items, sourceDir, proxy) => (await Promise.allSett
     wish: wish || '-',
     doing: doing || '-',
     collect: collect || '-',
-    totalCount: totalCount ? `全${totalCount}话` : '-'
+    totalCount: totalCount ? `全${totalCount}话` : '-',
+    myStars: config.itemData.myStars,
+    myComment: config.itemData.myComment
   };
 });
 

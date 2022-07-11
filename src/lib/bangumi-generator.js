@@ -68,6 +68,7 @@ module.exports = async function (locals, type = 'bangumi') {
     color: config[type].color ? `style="color:${config[type].color}"` : '',
     lazyload: config[type].lazyload ?? true,
     source: config[type].source ?? 'bili',
+    showMyComment: config[type].showMyComment ?? false,
     wantWatch,
     watched,
     watching,

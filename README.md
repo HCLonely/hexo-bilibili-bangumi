@@ -31,6 +31,7 @@ bangumi: # 追番设置
   show: 1
   lazyload: true
   loading:
+  showMyComment: false
   metaColor:
   color:
   webp:
@@ -76,6 +77,7 @@ cinema: # 追剧设置
 - **webp**: 番剧封面使用`webp`格式(此格式在`safari`浏览器下不显示，但是图片大小可以缩小 100 倍左右，仅支持哔哩哔哩源), 默认`true`
 - **progress**: 获取番剧数据时是否显示进度条，默认`true`
 - **extraOrder**: 手动添加的番剧/追剧数据是否优先显示，`1`为优先，其它为不优先
+- **showMyComment**: 使用`bgm`源时显示自己的评价及评论，默认`false`
 - **extra_options**: 此配置会扩展到Hexo`page`变量中
 
 ## 使用
