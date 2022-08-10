@@ -14,6 +14,8 @@ module.exports = async function (locals, type = 'bangumi') {
   if (!config?.[type]?.enable) {
     return;
   }
+  // eslint-disable-next-line camelcase
+  const full_url_for = this.extend.helper.get('full_url_for').bind(this);
 
   let { root } = config;
   if (root.endsWith('/')) {
@@ -80,12 +82,13 @@ module.exports = async function (locals, type = 'bangumi') {
     root
   }, { async: false });
 
-  const customPath = config[type].path;
+  const customPath = config[type].path || (`${type}s/index.html`);
   return {
-    path: customPath || (`${type}s/index.html`),
+    path: customPath,
     data: {
       title: config[type].title,
       content: contents,
+      permalink: full_url_for(customPath),
       ...config?.[type]?.extra_options
     },
     layout: ['page', 'post']
