@@ -36,7 +36,7 @@
   }
 
   if (typeof pagenumsPre !== 'undefined') {
-    axios.get(`${window.location.href}../bangumis.json`).then((response) => {
+    axios.get(new URL('../bangumis.json', window.location.href)).then((response) => {
       if (response.data) {
         const html = {
           wantWatch: response.data.wantWatch.slice(10).map((item) => ejs.render(ejsTemplate, { item, loading, metaColor, type }))
