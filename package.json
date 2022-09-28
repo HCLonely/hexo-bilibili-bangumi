@@ -24,7 +24,7 @@
     "bangumi-data": "^0.3.91",
     "cheerio": "^1.0.0-rc.11",
     "ejs": "3.1.8",
-    "hexo-fs": "^3.1.0",
+    "hexo-fs": "^4.0.0",
     "hexo-i18n": "^1.0.0",
     "hexo-log": "^3.0.0",
     "progress": "^2.0.3",
