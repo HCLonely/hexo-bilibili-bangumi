@@ -78,7 +78,8 @@ hexo.extend.console.register('bangumi', 'Generate pages of bangumis for Hexo', o
         sourceDir: this.source_dir,
         extraOrder: this.config.bangumi.extraOrder,
         pagination: this.config.bangumi.pagination,
-        proxy: this.config.bangumi.proxy
+        proxy: this.config.bangumi.proxy,
+        infoApi: this.config.bangumi.bgmInfoApi
       });
     } else {
       var _this$config$bangumi$2;

@@ -11,7 +11,205 @@ const cheerio = require('cheerio');
 const tunnel = require('tunnel');
 const bangumiData = require('bangumi-data');
 
-const getItemsId = async (vmid, status, showProgress, sourceDir, proxy) => {
+const jp2cnName = (name) => bangumiData.items.find((item) => item.title === name)?.titleTranslate?.['zh-Hans']?.[0] || name;
+
+const TYPE = {
+  1: '书籍',
+  2: '动画',
+  3: '音乐',
+  4: '游戏',
+  6: '三次元'
+};
+
+const getBangumiDataFromBangumiSubject = async (items, sourceDir, proxy) => (await Promise.allSettled(
+  items.map(
+    async (item, index) => {
+      const cachePath = path.join(sourceDir, '/_data/Bangumi-Subject-Cache');
+      const subjectPath = path.join(cachePath, `${item.id}.json`);
+      if (!fs.existsSync(cachePath)) {
+        fs.mkdirsSync(cachePath);
+      }
+      if (fs.existsSync(subjectPath)) {
+        return { config: { itemData: item }, data: fs.readFileSync(subjectPath).toString(), status: 200 };
+      }
+      const options = {
+        itemData: item,
+        responseType: 'json',
+        validateStatus(status) {
+          return (status >= 200 && status < 300) || status === 403;
+        },
+        proxy: false,
+        timeout: 30 * 1000
+      };
+      if (proxy?.host && proxy?.port) {
+        options.httpsAgent = tunnel.httpsOverHttp({
+          proxy,
+          options: {
+            rejectUnauthorized: false
+          }
+        });
+      }
+      return await axios.get(`https://cdn.jsdelivr.net/gh/czy0729/Bangumi-Subject@master/data/${parseInt(parseInt(item.id, 10) / 100, 10)}/${item.id}.json`, options)
+        .then((response) => response)
+        .catch((error) => {
+          if (error.response) {
+            console.error('Error', error.response.status);
+          } else {
+            console.error('Error', error.stack);
+          }
+          return {
+            config: { itemData: item },
+            error
+          };
+        });
+    }
+  )
+)).map(({ value, reason }) => {
+  const { config, data, status } = value || reason;
+  let bangumiData = data;
+  if (reason || status === 403 || !data) {
+    return {
+      id: config?.itemData.id,
+      title: jp2cnName(config.itemData.name),
+      type: '未知',
+      cover: config.itemData.cover,
+      score: '-',
+      des: '-',
+      wish: '-',
+      doing: '-',
+      collect: '-',
+      totalCount: '-'
+    };
+  }
+  if (typeof data === 'string') {
+    try {
+      // eslint-disable-next-line no-param-reassign
+      bangumiData = JSON.parse(data.replace(/(?<!":|\/|\\)("[^":,\]}][^"]*?[^":])"(?!,|]|}|:)/g, '\\$1\\"'));
+    } catch (e) {
+      console.log(`Error Id: ${config.itemData.id}`);
+      console.error(e);
+    }
+  }
+  const { id, name, type, image, rating: { score } = {}, summary, collection: { wish, doing, collect } = {}, eps, epsLength } = bangumiData;
+  const totalCount = epsLength || eps?.length;
+  const subjectPath = path.join(sourceDir, '/_data/Bangumi-Subject-Cache', `${config.itemData.id}.json`);
+  if (!fs.existsSync(subjectPath)) {
+    if (id && name && type && image && score && summary && wish && doing && collect && eps?.length > 0) {
+      fs.writeFileSync(subjectPath, JSON.stringify({ id, name, type, image, rating: { score }, summary, collection: { wish, doing, collect }, epsLength: eps.length }));
+    }
+  }
+  return {
+    id: id || config.itemData.id,
+    title: jp2cnName(name || config.itemData.name),
+    type: TYPE[type] || '未知',
+    cover: image || config.itemData.cover,
+    score: score || '-',
+    des: summary?.replace(/\r?\n/g, '').trim() || '-',
+    wish: wish || '-',
+    doing: doing || '-',
+    collect: collect || '-',
+    totalCount: totalCount ? `全${totalCount}话` : '-',
+    myStars: config.itemData.myStars,
+    myComment: config.itemData.myComment
+  };
+});
+
+const getBangumiDataFromBangumiApi = async (items, sourceDir, proxy) => (await Promise.allSettled(
+  items.map(
+    async (item, index) => {
+      const cachePath = path.join(sourceDir, '/_data/Bangumi-Api-Cache');
+      const subjectPath = path.join(cachePath, `${item.id}.json`);
+      if (!fs.existsSync(cachePath)) {
+        fs.mkdirsSync(cachePath);
+      }
+      if (fs.existsSync(subjectPath)) {
+        return { config: { itemData: item }, data: JSON.parse(fs.readFileSync(subjectPath).toString()), status: 200 };
+      }
+      const options = {
+        itemData: item,
+        responseType: 'json',
+        validateStatus(status) {
+          return (status >= 200 && status < 300) || status === 403;
+        },
+        proxy: false,
+        timeout: 30 * 1000
+      };
+      if (proxy?.host && proxy?.port) {
+        options.httpsAgent = tunnel.httpsOverHttp({
+          proxy,
+          options: {
+            rejectUnauthorized: false
+          }
+        });
+      }
+      return await axios.get(`https://api.bgm.tv/v0/subjects/${item.id}`, {
+        ...options,
+        headers: {
+          'user-agent': 'HCLonely/hexo-bilibili-bangumi (https://github.com/HCLonely/hexo-bilibili-bangumi)'
+        }
+      })
+        .then((response) => response)
+        .catch((error) => {
+          if (error.response) {
+            console.error('Error', error.response.status);
+          } else {
+            console.error('Error', error.stack);
+          }
+          return {
+            config: { itemData: item },
+            error
+          };
+        });
+    }
+  )
+)).map(({ value, reason }) => {
+  const { config, data, status } = value || reason;
+  if (reason || status === 403 || !data) {
+    return {
+      id: config.itemData.id,
+      title: jp2cnName(config.itemData.name),
+      type: '未知',
+      cover: config.itemData.cover,
+      score: '-',
+      des: '-',
+      wish: '-',
+      doing: '-',
+      collect: '-',
+      totalCount: '-'
+    };
+  }
+  // eslint-disable-next-line camelcase
+  const { id, name, name_cn, type, images: { common: image }, rating: { score } = {}, summary, collection: { wish, doing, collect } = {}, eps, total_episodes } = data;
+  // eslint-disable-next-line camelcase
+  const totalCount = total_episodes || eps;
+  const subjectPath = path.join(sourceDir, '/_data/Bangumi-Api-Cache', `${config.itemData.id}.json`);
+  if (!fs.existsSync(subjectPath)) {
+    // eslint-disable-next-line camelcase
+    if (id && name && type && image && score && summary && wish && doing && collect && (total_episodes || eps)) {
+      // eslint-disable-next-line camelcase
+      fs.writeFileSync(subjectPath, JSON.stringify({ id, name, name_cn, type, images: { common: image }, rating: { score }, summary, collection: { wish, doing, collect }, eps, total_episodes }));
+    }
+  }
+  return {
+    id: id || config.itemData.id,
+    // eslint-disable-next-line camelcase
+    title: name_cn || jp2cnName(name || config.itemData.name),
+    type: TYPE[type] || '未知',
+    cover: image || config.itemData.cover,
+    score: score || '-',
+    des: summary?.replace(/\r?\n/g, '').trim() || '-',
+    wish: wish || '-',
+    doing: doing || '-',
+    collect: collect || '-',
+    totalCount: totalCount ? `全${totalCount}话` : '-',
+    myStars: config.itemData.myStars,
+    myComment: config.itemData.myComment
+  };
+});
+
+const getItemsId = async ({ vmid, status, showProgress, sourceDir, proxy, infoApi }) => {
+  const getBangumiData = infoApi === 'bgmSub' ? getBangumiDataFromBangumiSubject : getBangumiDataFromBangumiApi;
+
   const items = [];
   let bar;
   const response = await axios.get(`https://bangumi.tv/anime/list/${vmid}/${status}?page=1`);
@@ -79,115 +277,12 @@ const getItemsId = async (vmid, status, showProgress, sourceDir, proxy) => {
   return items;
 };
 
-const jp2cnName = (name) => bangumiData.items.find((item) => item.title === name)?.titleTranslate?.['zh-Hans']?.[0] || name;
-
-const TYPE = {
-  1: '书籍',
-  2: '动画',
-  3: '音乐',
-  4: '游戏',
-  6: '三次元'
-};
-const getBangumiData = async (items, sourceDir, proxy) => (await Promise.allSettled(
-  items.map(
-    async (item) => {
-      const cachePath = path.join(sourceDir, '/_data/Bangumi-Subject-Cache');
-      const subjectPath = path.join(cachePath, `${item.id}.json`);
-      if (!fs.existsSync(cachePath)) {
-        fs.mkdirsSync(cachePath);
-      }
-      if (fs.existsSync(subjectPath)) {
-        return { config: { itemData: item }, data: fs.readFileSync(subjectPath).toString(), status: 200 };
-      }
-      const options = {
-        itemData: item,
-        responseType: 'json',
-        validateStatus(status) {
-          return (status >= 200 && status < 300) || status === 403;
-        },
-        proxy: false,
-        timeout: 30 * 1000
-      };
-      if (proxy?.host && proxy?.port) {
-        options.httpsAgent = tunnel.httpsOverHttp({
-          proxy,
-          options: {
-            rejectUnauthorized: false
-          }
-        });
-      }
-      return await axios.get(`https://cdn.jsdelivr.net/gh/czy0729/Bangumi-Subject@master/data/${
-        parseInt(parseInt(item.id, 10) / 100, 10)}/${item.id}.json`, options)
-        .then((response) => response)
-        .catch((error) => {
-          if (error.response) {
-            console.error('Error', error.response.status);
-          } else {
-            console.error('Error', error.stack);
-          }
-          return {
-            config: { itemData: item },
-            error
-          };
-        });
-    }
-  )
-)).map(({ value, reason }) => {
-  const { config, data, status } = value || reason;
-  let bangumiData = data;
-  if (reason || status === 403 || !data) {
-    return {
-      id: config.itemData.id,
-      title: jp2cnName(config.itemData.name),
-      type: '未知',
-      cover: config.itemData.cover,
-      score: '-',
-      des: '-',
-      wish: '-',
-      doing: '-',
-      collect: '-',
-      totalCount: '-'
-    };
-  }
-  if (typeof data === 'string') {
-    try {
-      // eslint-disable-next-line no-param-reassign
-      bangumiData = JSON.parse(data.replace(/(?<!":|\/|\\)("[^":,\]}][^"]*?[^":])"(?!,|]|}|:)/g, '\\$1\\"'));
-    } catch (e) {
-      console.log(`Error Id: ${config.itemData.id}`);
-      console.error(e);
-    }
-  }
-  const { id, name, type, image, rating: { score } = {}, summary, collection: { wish, doing, collect } = {}, eps, epsLength } = bangumiData;
-  const totalCount = epsLength || eps?.length;
-  const subjectPath = path.join(sourceDir, '/_data/Bangumi-Subject-Cache', `${config.itemData.id}.json`);
-  if (!fs.existsSync(subjectPath)) {
-    if (id && name && type && image && score && summary && wish && doing && collect && eps?.length > 0) {
-      fs.writeFileSync(subjectPath, JSON.stringify({ id, name, type, image, rating: { score }, summary, collection: { wish, doing, collect }, epsLength: eps.length }));
-    }
-  }
-  return {
-    id: id || config.itemData.id,
-    title: jp2cnName(name || config.itemData.name),
-    type: TYPE[type] || '未知',
-    cover: image || config.itemData.cover,
-    score: score || '-',
-    des: summary?.replace(/\r?\n/g, '').trim() || '-',
-    wish: wish || '-',
-    doing: doing || '-',
-    collect: collect || '-',
-    totalCount: totalCount ? `全${totalCount}话` : '-',
-    myStars: config.itemData.myStars,
-    myComment: config.itemData.myComment
-  };
-});
-
-module.exports.getBgmData = async function getBgmData({ vmid, showProgress, sourceDir, extraOrder, pagination, proxy }) {
+module.exports.getBgmData = async function getBgmData({ vmid, showProgress, sourceDir, extraOrder, pagination, proxy, infoApi }) {
   log.info('Getting bangumis, please wait...');
   const startTime = new Date().getTime();
-  const wantWatch = await getItemsId(vmid, 'wish', showProgress, sourceDir, proxy);
-  const watching = await getItemsId(vmid, 'do', showProgress, sourceDir, proxy);
-  const watched = await getItemsId(vmid, 'collect', showProgress, sourceDir, proxy);
+  const wantWatch = await getItemsId({ vmid, status: 'wish', showProgress, sourceDir, proxy, infoApi });
+  const watching = await getItemsId({ vmid, status: 'do', showProgress, sourceDir, proxy, infoApi });
+  const watched = await getItemsId({ vmid, status: 'collect', showProgress, sourceDir, proxy, infoApi });
   const endTime = new Date().getTime();
   log.info(`${wantWatch.length + watching.length + watched.length} bangumis have been loaded in ${endTime - startTime} ms`);
   const bangumis = { wantWatch, watching, watched };

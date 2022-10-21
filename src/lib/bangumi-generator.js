@@ -69,6 +69,8 @@ module.exports = async function (locals, type = 'bangumi') {
     metaColor: config[type].metaColor ? `style="color:${config[type].metaColor}"` : '',
     color: config[type].color ? `style="color:${config[type].color}"` : '',
     lazyload: config[type].lazyload ?? true,
+    lazyloadAttrName: config[type].lazyloadAttrName,
+    srcValue: config[type].srcValue || '__image__',
     source: config[type].source ?? 'bili',
     showMyComment: config[type].showMyComment ?? false,
     pagination: config[type].pagination ?? false,

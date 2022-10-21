@@ -52,7 +52,9 @@
       if (Math.floor(i / 10) === num) {
         arr[i].classList.remove('bangumi-hide');
         const [img] = arr[i].getElementsByTagName('img');
-        img.src = img.getAttribute('data-src');
+        if (bangumiLazyload) {
+          img.src = img.getAttribute('data-src');
+        }
       } else {
         arr[i].classList.add('bangumi-hide');
       }

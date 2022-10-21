@@ -24,12 +24,15 @@ $ npm install hexo-bilibili-bangumi --save
 bangumi: # 追番设置
   enable: true
   source: bili
+  bgmInfoSource: 'bgmApi'
   path:
   vmid:
   title: '追番列表'
   quote: '生命不息，追番不止！'
   show: 1
   lazyload: true
+  srcValue: '__image__'
+  lazyloadAttrName: 'data-src=__image__'
   loading:
   showMyComment: false
   pagination: false
@@ -51,6 +54,8 @@ cinema: # 追剧设置
   quote: '生命不息，追剧不止！'
   show: 1
   lazyload: true
+  srcValue: '__image__'
+  lazyloadAttrName: 'data-src=__image__'
   loading:
   metaColor:
   color:
@@ -63,15 +68,18 @@ cinema: # 追剧设置
 
 > 带*为必填选项！
 
-- **enable\***: 是否启用
+- **enable**: 是否启用
 - **source**: 数据源，仅支持追番，追剧仅支持哔哩哔哩源。`bili`: [哔哩哔哩源](https://www.bilibili.com/), `bgm`: [Bangumi源](https://bangumi.tv/)
+- **bgmInfoApi**: 获取Bangumi番剧信息时使用的Api，仅使用Bangumi源时此选项生效。`bgmApi`: [Bangumi Api](https://github.com/bangumi/api/), `bgmSub`: [Bangumi-Subject](https://github.com/czy0729/Bangumi-Subject)
 - **proxy**: 代理设置，仅在使用支持`bgm`源追番时生效。默认`false`
 - **path**: 页面路径，默认`bangumis/index.html`, `cinemas/index.html`
-- **vmid\***: 哔哩哔哩的 `vmid(uid)`[如何获取？](#获取-bilibili-uid)或Bangumi的用户`id`[如何获取？](#获取-bangumi-id)
+- **vmid**: 哔哩哔哩的 `vmid(uid)`[如何获取？](#获取-bilibili-uid)或Bangumi的用户`id`[如何获取？](#获取-bangumi-id)
 - **title**: 该页面的标题
 - **quote**: 写在页面开头的一段话，支持 html 语法，可留空。
 - **show**: 初始显示页面：`0: 想看`, `1: 在看`, `2: 看过`，默认为`1`
 - **lazyload**: 是否启用图片懒加载，如果与主题的懒加载冲突请关闭，默认`true`
+- **srcValue**: 设置封面图的默认`src`值, `__image__`为封面链接, `__loading__`为loading图片链接, `lazyload`选项为`false`时此选项生效
+- **lazyloadAttrName**: 设置封面图的属性与属性值, 例`lazyloadAttrName: 'data-src=__image__'`代表为`img`元素添加`data-src`属性, 其值为图片链接, `lazyload`选项为`false`时此选项生效
 - **loading**: 图片加载完成前的 loading 图片，需启用图片懒加载
 - **metaColor**: meta 部分(简介上方)字体颜色
 - **color**: 简介字体颜色
