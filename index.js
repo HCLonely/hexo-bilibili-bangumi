@@ -69,7 +69,7 @@ hexo.extend.console.register('bangumi', 'Generate pages of bangumis for Hexo', o
       return;
     }
 
-    if (this.config.bangumi.source === 'bgm') {
+    if (['bgm', 'bangumi'].includes(this.config.bangumi.source)) {
       var _this$config$bangumi$;
 
       getBgmData({
@@ -79,7 +79,8 @@ hexo.extend.console.register('bangumi', 'Generate pages of bangumis for Hexo', o
         extraOrder: this.config.bangumi.extraOrder,
         pagination: this.config.bangumi.pagination,
         proxy: this.config.bangumi.proxy,
-        infoApi: this.config.bangumi.bgmInfoApi
+        infoApi: this.config.bangumi.bgmInfoApi,
+        host: "".concat(this.config.bangumi.source, ".tv")
       });
     } else {
       var _this$config$bangumi$2;

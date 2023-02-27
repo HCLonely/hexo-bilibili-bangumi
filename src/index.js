@@ -48,7 +48,7 @@ hexo.extend.console.register('bangumi', 'Generate pages of bangumis for Hexo', o
       log.info('Please add vmid to _config.yml');
       return;
     }
-    if (this.config.bangumi.source === 'bgm') {
+    if (['bgm', 'bangumi'].includes(this.config.bangumi.source)) {
       getBgmData({
         vmid: this.config.bangumi.vmid,
         showProgress: this.config.bangumi.progress ?? true,
@@ -56,7 +56,8 @@ hexo.extend.console.register('bangumi', 'Generate pages of bangumis for Hexo', o
         extraOrder: this.config.bangumi.extraOrder,
         pagination: this.config.bangumi.pagination,
         proxy: this.config.bangumi.proxy,
-        infoApi: this.config.bangumi.bgmInfoApi
+        infoApi: this.config.bangumi.bgmInfoApi,
+        host: `${this.config.bangumi.source}.tv`
       });
     } else {
       getBiliData({

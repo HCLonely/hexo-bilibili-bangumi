@@ -207,12 +207,26 @@ const getBangumiDataFromBangumiApi = async (items, sourceDir, proxy) => (await P
   };
 });
 
-const getItemsId = async ({ vmid, status, showProgress, sourceDir, proxy, infoApi }) => {
+const getItemsId = async ({ vmid, status, showProgress, sourceDir, proxy, infoApi, host }) => {
   const getBangumiData = infoApi === 'bgmSub' ? getBangumiDataFromBangumiSubject : getBangumiDataFromBangumiApi;
 
   const items = [];
   let bar;
-  const response = await axios.get(`https://bangumi.tv/anime/list/${vmid}/${status}?page=1`);
+
+  const options = {
+    proxy: false,
+    timeout: 30 * 1000
+  };
+  if (proxy?.host && proxy?.port) {
+    options.httpsAgent = tunnel.httpsOverHttp({
+      proxy,
+      options: {
+        rejectUnauthorized: false
+      }
+    });
+  }
+
+  const response = await axios.get(`https://${host}/anime/list/${vmid}/${status}?page=1`, options);
   const username = response.request.path.match(/anime\/list\/(.*?)\//)?.[1];
   if (!username) {
     return console.error('Failed to get "username"!');
@@ -252,7 +266,8 @@ const getItemsId = async ({ vmid, status, showProgress, sourceDir, proxy, infoAp
     // eslint-disable-next-line no-plusplus
     for (let i = 2; i <= pageNum; i++) {
       if (showProgress) bar.tick();
-      const response = await axios.get(`https://bangumi.tv/anime/list/${username}/${status}?page=${i}`, {
+      const response = await axios.get(`https://${host}/anime/list/${username}/${status}?page=${i}`, {
+        ...options,
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36 Edg/97.0.1072.69'
       });
       const $ = cheerio.load(response.data);
@@ -277,12 +292,12 @@ const getItemsId = async ({ vmid, status, showProgress, sourceDir, proxy, infoAp
   return items;
 };
 
-module.exports.getBgmData = async function getBgmData({ vmid, showProgress, sourceDir, extraOrder, pagination, proxy, infoApi }) {
+module.exports.getBgmData = async function getBgmData({ vmid, showProgress, sourceDir, extraOrder, pagination, proxy, infoApi, host }) {
   log.info('Getting bangumis, please wait...');
   const startTime = new Date().getTime();
-  const wantWatch = await getItemsId({ vmid, status: 'wish', showProgress, sourceDir, proxy, infoApi });
-  const watching = await getItemsId({ vmid, status: 'do', showProgress, sourceDir, proxy, infoApi });
-  const watched = await getItemsId({ vmid, status: 'collect', showProgress, sourceDir, proxy, infoApi });
+  const wantWatch = await getItemsId({ vmid, status: 'wish', showProgress, sourceDir, proxy, infoApi, host });
+  const watching = await getItemsId({ vmid, status: 'do', showProgress, sourceDir, proxy, infoApi, host });
+  const watched = await getItemsId({ vmid, status: 'collect', showProgress, sourceDir, proxy, infoApi, host });
   const endTime = new Date().getTime();
   log.info(`${wantWatch.length + watching.length + watched.length} bangumis have been loaded in ${endTime - startTime} ms`);
   const bangumis = { wantWatch, watching, watched };
