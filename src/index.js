@@ -2,7 +2,11 @@
 'use strict';
 const fs = require('hexo-fs');
 const path = require('path');
-const log = require('hexo-log')({
+const hexoLog = require('hexo-log');
+const log = typeof hexoLog.default === 'function' ? hexoLog.default({
+  debug: false,
+  silent: false
+}) : hexoLog({
   debug: false,
   silent: false
 });
