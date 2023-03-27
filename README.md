@@ -146,6 +146,15 @@ cinema: # 追剧设置
 
 需要注意，在两个数组之间需要用 `,` 分隔。
 
+## 多主题兼容
+
+1. [Fork](https://github.com/HCLonely/hexo-bilibili-bangumi/fork)此项目并克隆到本地；
+2. 进入项目目录并安装依赖`npm install`;
+3. 在`src/lib/templates/theme/`目录内添加`主题.css`文件（例：`butterfly.css`）；
+4. 在`主题.css`文件内添加主题兼容样式表；
+5. 运行命令`npm run build`;
+6. 提交PR.
+
 ## Lisense
 
 [Apache Licence 2.0](https://github.com/HCLonely/hexo-bilibili-bangumi/blob/master/LICENSE)
