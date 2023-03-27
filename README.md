@@ -81,7 +81,7 @@ cinema: # 追剧设置
 - **srcValue**: 设置封面图的默认`src`值, `__image__`为封面链接, `__loading__`为loading图片链接, `lazyload`选项为`false`时此选项生效
 - **lazyloadAttrName**: 设置封面图的属性与属性值, 例`lazyloadAttrName: 'data-src=__image__'`代表为`img`元素添加`data-src`属性, 其值为图片链接, `lazyload`选项为`false`时此选项生效
 - **loading**: 图片加载完成前的 loading 图片，需启用图片懒加载
-- **metaColor**: meta 部分(简介上方)字体颜色
+- **metaColor**: meta 部分(简介上方)字体颜色（十六进制的颜色代码需要添加引号：`metaColor: '#FFFFFF'`）
 - **color**: 简介字体颜色
 - **webp**: 番剧封面使用`webp`格式(此格式在`safari`浏览器下不显示，但是图片大小可以缩小 100 倍左右，仅支持哔哩哔哩源), 默认`true`
 - **progress**: 获取番剧数据时是否显示进度条，默认`true`
