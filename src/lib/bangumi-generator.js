@@ -78,7 +78,7 @@ module.exports = async function (locals, type = 'bangumi') {
     source: config[type].source ?? 'bili',
     showMyComment: config[type].showMyComment ?? false,
     pagination: config[type].pagination ?? false,
-    theme: fs.existsSync(path.join(__dirname, `${config.theme}.css`)) ? config.theme : null,
+    theme: fs.existsSync(path.join(__dirname, `templates/theme/${config.theme}.min.css`)) ? config.theme : null,
     ejsTemplate: fs.readFileSync(path.join(__dirname, `templates/${config[type].source === 'bgm' ? 'bgm' : 'bili'}-template.ejs`)).toString()
       .replace('class="bangumi-item"', 'class="bangumi-item bangumi-hide"'),
     wantWatch,
