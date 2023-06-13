@@ -1,6 +1,6 @@
 {
   "name": "hexo-bilibili-bangumi",
-  "version": "1.8.7",
+  "version": "1.8.8",
   "description": "hexo bilibili番剧页",
   "main": "index.js",
   "scripts": {
