@@ -61,7 +61,8 @@ hexo.extend.console.register('bangumi', 'Generate pages of bangumis for Hexo', o
         pagination: this.config.bangumi.pagination,
         proxy: this.config.bangumi.proxy,
         infoApi: this.config.bangumi.bgmInfoApi,
-        host: `${this.config.bangumi.source}.tv`
+        host: `${this.config.bangumi.source}.tv`,
+        coverMirror: this.config.bangumi.coverMirror ?? ''
       });
     } else {
       getBiliData({
@@ -71,7 +72,8 @@ hexo.extend.console.register('bangumi', 'Generate pages of bangumis for Hexo', o
         sourceDir: this.source_dir,
         extraOrder: this.config.bangumi.extraOrder,
         pagination: this.config.bangumi.pagination,
-        useWebp: this.config.bangumi.webp
+        useWebp: this.config.bangumi.webp,
+        coverMirror: this.config.bangumi.coverMirror ?? ''
       });
     }
   } else {
@@ -103,7 +105,8 @@ hexo.extend.console.register('cinema', 'Generate pages of bilibili cinemas for H
       sourceDir: this.source_dir,
       extraOrder: this.config.cinema.extraOrder,
       pagination: this.config.cinema.pagination,
-      useWebp: this.config.cinema.webp
+      useWebp: this.config.cinema.webp,
+      coverMirror: this.config.bangumi.coverMirror ?? ''
     });
   } else {
     log.info('Unknown command, please use "hexo cinema -h" to see the available commands');

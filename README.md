@@ -66,6 +66,7 @@ cinema: # 追剧设置
   order:
   extra_options:
     key: value
+  coverMirror:
 ```
 
 > 带*为必填选项！
@@ -92,6 +93,18 @@ cinema: # 追剧设置
 - **pagination**: 分页优化，只将第一页的数据渲染到`html`文件中，其余数据将通过异步请求加载，避免番剧过多时html文件过大导致页面加载缓慢，建议番剧较多时使用，默认`false`
 - **order**: 排序，支持`latest`(默认，按添加时间排序), `score`(评分升序), `-score`(评分降序)
 - **extra_options**: 此配置会扩展到Hexo`page`变量中
+- **coverMirror**: 封面镜像缓存配置，默认为空。可以将有防盗链的图片引用到网页，并成功显示。可以将 http 图片引用到 https 页面而不出现证书问题。可以将 xxx 的图片，成功加载。可以将比较慢的图片资源，加快显示。可以使用自建或者是第三方的图片镜像服务，例如`https://image.baidu.com/search/down?url=`百度的接口，但是图片大小不能超过5M。其他镜像地址收集之网络，未全部测试。
+
+  ```
+  # 图片镜像服务
+  https://cdn.cdnjson.com/pic.html?url=
+  https://img.noobzone.ru/getimg.php?url=
+  https://images.weserv.nl/?url=
+  https://collect34.longsunhd.com/source/plugin/yzs1013_pldr/getimg.php?url=
+  https://ip.webmasterapi.com/api/imageproxy/
+  https://pic1.xuehuaimg.com/proxy/
+  https://search.pstatic.net/common?src=
+  ```
 
 ## 使用
 
