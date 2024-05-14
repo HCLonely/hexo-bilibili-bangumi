@@ -98,7 +98,7 @@ hexo.extend.console.register('cinema', 'Generate pages of bilibili cinemas for H
       log.info('Cinemas data has been deleted');
     }
   } else if (args.u) {
-    var _this$config4, _this$config$cinema$p, _this$config$bangumi$5;
+    var _this$config4, _this$config$cinema$p, _this$config$cinema$c;
     if (!(this !== null && this !== void 0 && (_this$config4 = this.config) !== null && _this$config4 !== void 0 && _this$config4.cinema)) {
       log.info('Please add config to _config.yml');
       return;
@@ -112,13 +112,13 @@ hexo.extend.console.register('cinema', 'Generate pages of bilibili cinemas for H
     }
     getBiliData({
       vmid: this.config.cinema.vmid,
-      type: 'cinema',
+      type: "cinema",
       showProgress: (_this$config$cinema$p = this.config.cinema.progress) !== null && _this$config$cinema$p !== void 0 ? _this$config$cinema$p : true,
       sourceDir: this.source_dir,
       extraOrder: this.config.cinema.extraOrder,
       pagination: this.config.cinema.pagination,
       useWebp: this.config.cinema.webp,
-      coverMirror: (_this$config$bangumi$5 = this.config.bangumi.coverMirror) !== null && _this$config$bangumi$5 !== void 0 ? _this$config$bangumi$5 : ''
+      coverMirror: (_this$config$cinema$c = this.config.cinema.coverMirror) !== null && _this$config$cinema$c !== void 0 ? _this$config$cinema$c : ""
     });
   } else {
     log.info('Unknown command, please use "hexo cinema -h" to see the available commands');
