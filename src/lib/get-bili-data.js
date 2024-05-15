@@ -22,7 +22,7 @@ const getDataPage = async (vmid, status, typeNum) => {
   }
   return { success: false, data: response };
 };
-const getData = async (vmid, status, useWebp, typeNum, pn) => {
+const getData = async (vmid, status, useWebp, typeNum, pn, coverMirror) => {
   const response = await axios.get(`https://api.bilibili.com/x/space/bangumi/follow/list?type=${typeNum}&follow_status=${status}&vmid=${vmid}&ps=30&pn=${pn}`);
   const $data = [];
   if (response?.data?.code === 0) {
@@ -34,7 +34,7 @@ const getData = async (vmid, status, useWebp, typeNum, pn) => {
         const href = new URL(cover);
         href.protocol = 'https';
         if (useWebp) href.pathname += '@220w_280h.webp';
-        cover = href.href;
+        cover = `${coverMirror}${href.href}`;
       }
       $data.push({
         title: bangumi?.title,
@@ -60,7 +60,7 @@ const count = (e) =>  (e ? (e > 10000 && e < 100000000 ? `${(e / 10000).toFixed(
 // eslint-disable-next-line no-nested-ternary
 const total = (e, typeNum) => (e ? (e === -1 ? '未完结' : `全${e}${typeNum === 1 ? '话' : '集'}`) : '-');
 
-const processData = async (vmid, status, useWebp, showProgress, typeNum) => {
+const processData = async (vmid, status, useWebp, showProgress, typeNum, coverMirror) => {
   const page = await getDataPage(vmid, status, typeNum);
   if (page?.success) {
     const list = [];
@@ -72,7 +72,7 @@ const processData = async (vmid, status, useWebp, showProgress, typeNum) => {
     // eslint-disable-next-line no-plusplus
     for (let i = 1; i < page.data; i++) {
       if (showProgress) bar.tick();
-      const data = await getData(vmid, status, useWebp, typeNum, i);
+      const data = await getData(vmid, status, useWebp, typeNum, i, coverMirror);
       list.push(...data);
     }
     return list;
@@ -80,13 +80,13 @@ const processData = async (vmid, status, useWebp, showProgress, typeNum) => {
   console.log(`Get ${typeNum === 1 ? 'bangumi' : 'cinema'} data error:`, page?.data);
   return [];
 };
-module.exports.getBiliData = async ({ vmid, type, showProgress, sourceDir, extraOrder, pagination, useWebp = true }) => {
+module.exports.getBiliData = async ({ vmid, type, showProgress, sourceDir, extraOrder, pagination, useWebp = true, coverMirror }) => {
   const typeNum = type === 'cinema' ? 2 : 1;
   log.info(`Getting bilibili ${type}, please wait...`);
   const startTime = new Date().getTime();
-  const wantWatch = await processData(vmid, 1, useWebp, showProgress, typeNum);
-  const watching = await processData(vmid, 2, useWebp, showProgress, typeNum);
-  const watched = await processData(vmid, 3, useWebp, showProgress, typeNum);
+  const wantWatch = await processData(vmid, 1, useWebp, showProgress, typeNum, coverMirror);
+  const watching = await processData(vmid, 2, useWebp, showProgress, typeNum, coverMirror);
+  const watched = await processData(vmid, 3, useWebp, showProgress, typeNum, coverMirror);
   const endTime = new Date().getTime();
   log.info(`${wantWatch.length + watching.length + watched.length} ${type}s have been loaded in ${endTime - startTime} ms`);
   const bangumis = { wantWatch, watching, watched };

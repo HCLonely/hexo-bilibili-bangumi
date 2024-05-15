@@ -25,7 +25,7 @@ const TYPE = {
   6: '三次元'
 };
 
-const getBangumiDataFromBangumiSubject = async (items, sourceDir, proxy) => (await Promise.allSettled(
+const getBangumiDataFromBangumiSubject = async (items, sourceDir, proxy, coverMirror) => (await Promise.allSettled(
   items.map(
     async (item, index) => {
       const cachePath = path.join(sourceDir, '/_data/Bangumi-Subject-Cache');
@@ -106,7 +106,7 @@ const getBangumiDataFromBangumiSubject = async (items, sourceDir, proxy) => (awa
     id: id || config.itemData.id,
     title: jp2cnName(name || config.itemData.name),
     type: TYPE[type] || '未知',
-    cover: image || config.itemData.cover,
+    cover: coverMirror + image || config.itemData.cover,
     score: score || '-',
     des: summary?.replace(/\r?\n/g, '').trim() || '-',
     wish: wish || '-',
@@ -118,7 +118,7 @@ const getBangumiDataFromBangumiSubject = async (items, sourceDir, proxy) => (awa
   };
 });
 
-const getBangumiDataFromBangumiApi = async (items, sourceDir, proxy) => (await Promise.allSettled(
+const getBangumiDataFromBangumiApi = async (items, sourceDir, proxy, coverMirror) => (await Promise.allSettled(
   items.map(
     async (item, index) => {
       const cachePath = path.join(sourceDir, '/_data/Bangumi-Api-Cache');
@@ -199,7 +199,7 @@ const getBangumiDataFromBangumiApi = async (items, sourceDir, proxy) => (await P
     // eslint-disable-next-line camelcase
     title: name_cn || jp2cnName(name || config.itemData.name),
     type: TYPE[type] || '未知',
-    cover: image || config.itemData.cover,
+    cover: coverMirror + image || config.itemData.cover,
     score: score || '-',
     des: summary?.replace(/\r?\n/g, '').trim() || '-',
     wish: wish || '-',
@@ -211,7 +211,7 @@ const getBangumiDataFromBangumiApi = async (items, sourceDir, proxy) => (await P
   };
 });
 
-const getItemsId = async ({ vmid, status, showProgress, sourceDir, proxy, infoApi, host }) => {
+const getItemsId = async ({ vmid, status, showProgress, sourceDir, proxy, infoApi, host, coverMirror }) => {
   const getBangumiData = infoApi === 'bgmSub' ? getBangumiDataFromBangumiSubject : getBangumiDataFromBangumiApi;
 
   const items = [];
@@ -255,7 +255,7 @@ const getItemsId = async ({ vmid, status, showProgress, sourceDir, proxy, infoAp
         .text()
         .trim()
     }))
-      .get(), sourceDir, proxy));
+      .get(), sourceDir, proxy, coverMirror));
 
     if (showProgress) {
       // eslint-disable-next-line no-nested-ternary
@@ -289,19 +289,19 @@ const getItemsId = async ({ vmid, status, showProgress, sourceDir, proxy, infoAp
           .text()
           .trim()
       }))
-        .get(), sourceDir, proxy));
+        .get(), sourceDir, proxy, coverMirror));
     }
   }
   // log.info('正在获取番剧详细数据，耗时与追番数量成正比，请耐心等待...');
   return items;
 };
 
-module.exports.getBgmData = async function getBgmData({ vmid, showProgress, sourceDir, extraOrder, pagination, proxy, infoApi, host }) {
+module.exports.getBgmData = async function getBgmData({ vmid, showProgress, sourceDir, extraOrder, pagination, proxy, infoApi, host, coverMirror }) {
   log.info('Getting bangumis, please wait...');
   const startTime = new Date().getTime();
-  const wantWatch = await getItemsId({ vmid, status: 'wish', showProgress, sourceDir, proxy, infoApi, host });
-  const watching = await getItemsId({ vmid, status: 'do', showProgress, sourceDir, proxy, infoApi, host });
-  const watched = await getItemsId({ vmid, status: 'collect', showProgress, sourceDir, proxy, infoApi, host });
+  const wantWatch = await getItemsId({ vmid, status: 'wish', showProgress, sourceDir, proxy, infoApi, host, coverMirror });
+  const watching = await getItemsId({ vmid, status: 'do', showProgress, sourceDir, proxy, infoApi, host, coverMirror });
+  const watched = await getItemsId({ vmid, status: 'collect', showProgress, sourceDir, proxy, infoApi, host, coverMirror });
   const endTime = new Date().getTime();
   log.info(`${wantWatch.length + watching.length + watched.length} bangumis have been loaded in ${endTime - startTime} ms`);
   const bangumis = { wantWatch, watching, watched };

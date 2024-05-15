@@ -29,15 +29,15 @@ var options = {
   }]
 };
 hexo.extend.generator.register('bangumis', function (locals) {
-  var _this$config, _this$config$bangumi;
-  if (!(this !== null && this !== void 0 && (_this$config = this.config) !== null && _this$config !== void 0 && (_this$config$bangumi = _this$config.bangumi) !== null && _this$config$bangumi !== void 0 && _this$config$bangumi.enable)) {
+  var _this$config;
+  if (!(this !== null && this !== void 0 && (_this$config = this.config) !== null && _this$config !== void 0 && (_this$config = _this$config.bangumi) !== null && _this$config !== void 0 && _this$config.enable)) {
     return;
   }
   return require('./lib/bangumi-generator').call(this, locals, 'bangumi');
 });
 hexo.extend.generator.register('cinemas', function (locals) {
-  var _this$config2, _this$config2$cinema;
-  if (!(this !== null && this !== void 0 && (_this$config2 = this.config) !== null && _this$config2 !== void 0 && (_this$config2$cinema = _this$config2.cinema) !== null && _this$config2$cinema !== void 0 && _this$config2$cinema.enable)) {
+  var _this$config2;
+  if (!(this !== null && this !== void 0 && (_this$config2 = this.config) !== null && _this$config2 !== void 0 && (_this$config2 = _this$config2.cinema) !== null && _this$config2 !== void 0 && _this$config2.enable)) {
     return;
   }
   return require('./lib/bangumi-generator').call(this, locals, 'cinema');
@@ -62,7 +62,7 @@ hexo.extend.console.register('bangumi', 'Generate pages of bangumis for Hexo', o
       return;
     }
     if (['bgm', 'bangumi'].includes(this.config.bangumi.source)) {
-      var _this$config$bangumi$;
+      var _this$config$bangumi$, _this$config$bangumi$2;
       getBgmData({
         vmid: this.config.bangumi.vmid,
         showProgress: (_this$config$bangumi$ = this.config.bangumi.progress) !== null && _this$config$bangumi$ !== void 0 ? _this$config$bangumi$ : true,
@@ -71,18 +71,20 @@ hexo.extend.console.register('bangumi', 'Generate pages of bangumis for Hexo', o
         pagination: this.config.bangumi.pagination,
         proxy: this.config.bangumi.proxy,
         infoApi: this.config.bangumi.bgmInfoApi,
-        host: "".concat(this.config.bangumi.source, ".tv")
+        host: "".concat(this.config.bangumi.source, ".tv"),
+        coverMirror: (_this$config$bangumi$2 = this.config.bangumi.coverMirror) !== null && _this$config$bangumi$2 !== void 0 ? _this$config$bangumi$2 : ''
       });
     } else {
-      var _this$config$bangumi$2;
+      var _this$config$bangumi$3, _this$config$bangumi$4;
       getBiliData({
         vmid: this.config.bangumi.vmid,
         type: 'bangumi',
-        showProgress: (_this$config$bangumi$2 = this.config.bangumi.progress) !== null && _this$config$bangumi$2 !== void 0 ? _this$config$bangumi$2 : true,
+        showProgress: (_this$config$bangumi$3 = this.config.bangumi.progress) !== null && _this$config$bangumi$3 !== void 0 ? _this$config$bangumi$3 : true,
         sourceDir: this.source_dir,
         extraOrder: this.config.bangumi.extraOrder,
         pagination: this.config.bangumi.pagination,
-        useWebp: this.config.bangumi.webp
+        useWebp: this.config.bangumi.webp,
+        coverMirror: (_this$config$bangumi$4 = this.config.bangumi.coverMirror) !== null && _this$config$bangumi$4 !== void 0 ? _this$config$bangumi$4 : ''
       });
     }
   } else {
@@ -96,7 +98,7 @@ hexo.extend.console.register('cinema', 'Generate pages of bilibili cinemas for H
       log.info('Cinemas data has been deleted');
     }
   } else if (args.u) {
-    var _this$config4, _this$config$cinema$p;
+    var _this$config4, _this$config$cinema$p, _this$config$cinema$c;
     if (!(this !== null && this !== void 0 && (_this$config4 = this.config) !== null && _this$config4 !== void 0 && _this$config4.cinema)) {
       log.info('Please add config to _config.yml');
       return;
@@ -110,12 +112,13 @@ hexo.extend.console.register('cinema', 'Generate pages of bilibili cinemas for H
     }
     getBiliData({
       vmid: this.config.cinema.vmid,
-      type: 'cinema',
+      type: "cinema",
       showProgress: (_this$config$cinema$p = this.config.cinema.progress) !== null && _this$config$cinema$p !== void 0 ? _this$config$cinema$p : true,
       sourceDir: this.source_dir,
       extraOrder: this.config.cinema.extraOrder,
       pagination: this.config.cinema.pagination,
-      useWebp: this.config.cinema.webp
+      useWebp: this.config.cinema.webp,
+      coverMirror: (_this$config$cinema$c = this.config.cinema.coverMirror) !== null && _this$config$cinema$c !== void 0 ? _this$config$cinema$c : ""
     });
   } else {
     log.info('Unknown command, please use "hexo cinema -h" to see the available commands');
