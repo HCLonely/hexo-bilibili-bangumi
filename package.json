@@ -1,11 +1,11 @@
 {
   "name": "hexo-bilibili-bangumi",
-  "version": "1.9.0",
+  "version": "1.10.0",
   "description": "hexo bilibili番剧页",
   "main": "index.js",
   "scripts": {
     "test": "standard --fix && ejslint lib/templates/*.ejs",
-    "build": "babel src/index.js --out-file index.js && babel src/lib/util.js --out-file lib/util.js && babel src/lib/get-bili-data.js --out-file lib/get-bili-data.js && babel src/lib/get-bgm-data.js --out-file lib/get-bgm-data.js && babel src/lib/bangumi-generator.js --out-file lib/bangumi-generator.js && babel src/lib/templates/index.js --out-file lib/templates/index.js --presets minify && babel --no-babelrc src/lib/templates/pagination.js --out-file lib/templates/pagination.js --presets minify && cleancss src/lib/templates/index.css -O2 -o lib/templates/index.css && cleancss --batch src/lib/templates/theme/*.css  --batch-suffix .min -O2 -o lib/templates/theme/",
+    "build": "babel src/index.js --out-file index.js && babel src/lib/util.js --out-file lib/util.js && babel src/lib/get-bili-data.js --out-file lib/get-bili-data.js && babel src/lib/get-bgm-data.js --out-file lib/get-bgm-data.js && babel src/lib/get-bgmv0-data.js --out-file lib/get-bgmv0-data.js && babel src/lib/bangumi-generator.js --out-file lib/bangumi-generator.js && babel src/lib/templates/index.js --out-file lib/templates/index.js --presets minify && babel --no-babelrc src/lib/templates/pagination.js --out-file lib/templates/pagination.js --presets minify && cleancss src/lib/templates/index.css -O2 -o lib/templates/index.css && cleancss --batch src/lib/templates/theme/*.css  --batch-suffix .min -O2 -o lib/templates/theme/",
     "ejslint": "ejslint lib/templates/*.ejs"
   },
   "author": "HCLonely <h1606051253@gmail.com>",

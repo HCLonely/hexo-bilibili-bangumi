@@ -211,7 +211,7 @@ const getBangumiDataFromBangumiApi = async (items, sourceDir, proxy, coverMirror
   };
 });
 
-const getItemsId = async ({ vmid, status, showProgress, sourceDir, proxy, infoApi, host, coverMirror }) => {
+const getItemsId = async ({ vmid, type, status, showProgress, sourceDir, proxy, infoApi, host, coverMirror }) => {
   const getBangumiData = infoApi === 'bgmSub' ? getBangumiDataFromBangumiSubject : getBangumiDataFromBangumiApi;
 
   const items = [];
@@ -230,8 +230,8 @@ const getItemsId = async ({ vmid, status, showProgress, sourceDir, proxy, infoAp
     });
   }
 
-  const response = await axios.get(`https://${host}/anime/list/${vmid}/${status}?page=1`, options);
-  const username = response.request.path.match(/anime\/list\/(.*?)\//)?.[1];
+  const response = await axios.get(`https://${host}/${type}/list/${vmid}/${status}?page=1`, options);
+  const username = response.request.path.match(/(anime|game)\/list\/(.*?)\//)?.[1];
   if (!username) {
     return console.error('Failed to get "username"!');
   }
@@ -259,7 +259,7 @@ const getItemsId = async ({ vmid, status, showProgress, sourceDir, proxy, infoAp
 
     if (showProgress) {
       // eslint-disable-next-line no-nested-ternary
-      bar = new ProgressBar(`正在获取 ${status === 'wish' ? '[想看]' : (status === 'do' ? '[在看]' : '[已看]')} 番剧 [:bar] :percent :elapseds`,
+      bar = new ProgressBar(`正在获取 ${status === 'wish' ? '[想看]' : (status === 'do' ? '[在看]' : '[已看]')} ${type === 'game' ? '游戏' : '番剧'} [:bar] :percent :elapseds`,
         { total: pageNum < 2 ? 1 : pageNum, complete: '█' });
       bar.tick();
     }
@@ -270,7 +270,7 @@ const getItemsId = async ({ vmid, status, showProgress, sourceDir, proxy, infoAp
     // eslint-disable-next-line no-plusplus
     for (let i = 2; i <= pageNum; i++) {
       if (showProgress) bar.tick();
-      const response = await axios.get(`https://${host}/anime/list/${username}/${status}?page=${i}`, {
+      const response = await axios.get(`https://${host}/${type}/list/${username}/${status}?page=${i}`, {
         ...options,
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36 Edg/97.0.1072.69'
       });
@@ -296,31 +296,35 @@ const getItemsId = async ({ vmid, status, showProgress, sourceDir, proxy, infoAp
   return items;
 };
 
-module.exports.getBgmData = async function getBgmData({ vmid, showProgress, sourceDir, extraOrder, pagination, proxy, infoApi, host, coverMirror }) {
+module.exports.getBgmData = async function getBgmData({ vmid, type, showProgress, sourceDir, extraOrder, pagination, proxy, infoApi, host, coverMirror }) {
   log.info('Getting bangumis, please wait...');
+  const typePathMap = {
+    bangumi: 'anime',
+    game: 'game'
+  };
   const startTime = new Date().getTime();
-  const wantWatch = await getItemsId({ vmid, status: 'wish', showProgress, sourceDir, proxy, infoApi, host, coverMirror });
-  const watching = await getItemsId({ vmid, status: 'do', showProgress, sourceDir, proxy, infoApi, host, coverMirror });
-  const watched = await getItemsId({ vmid, status: 'collect', showProgress, sourceDir, proxy, infoApi, host, coverMirror });
+  const wantWatch = await getItemsId({ vmid, type: typePathMap[type], status: 'wish', showProgress, sourceDir, proxy, infoApi, host, coverMirror });
+  const watching = await getItemsId({ vmid, type: typePathMap[type], status: 'do', showProgress, sourceDir, proxy, infoApi, host, coverMirror });
+  const watched = await getItemsId({ vmid, type: typePathMap[type], status: 'collect', showProgress, sourceDir, proxy, infoApi, host, coverMirror });
   const endTime = new Date().getTime();
-  log.info(`${wantWatch.length + watching.length + watched.length} bangumis have been loaded in ${endTime - startTime} ms`);
+  log.info(`${wantWatch.length + watching.length + watched.length} ${type}s have been loaded in ${endTime - startTime} ms`);
   const bangumis = { wantWatch, watching, watched };
   if (!fs.existsSync(path.join(sourceDir, '/_data/'))) {
     fs.mkdirsSync(path.join(sourceDir, '/_data/'));
   }
-  fs.writeFile(path.join(sourceDir, '/_data/bangumis.json'), JSON.stringify(bangumis), (err) => {
+  fs.writeFile(path.join(sourceDir, `/_data/${type}s.json`), JSON.stringify(bangumis), (err) => {
     if (err) {
-      log.info('Failed to write data to _data/bangumis.json');
+      log.info(`Failed to write data to _data/${type}s.json`);
       console.error(err);
     } else {
-      log.info('Bangumi bangumis data has been saved');
+      log.info(`Bangumi ${type}s data has been saved`);
     }
   });
 
   if (pagination) {
     const allBangumis = { ...bangumis };
     // extra bangumis
-    if (fs.existsSync(path.join(sourceDir, '/_data/extra_bangumis.json'))) {
+    if (fs.existsSync(path.join(sourceDir, `/_data/extra_${type}s.json`))) {
       const { wantWatchExtra, watchingExtra, watchedExtra } = JSON.parse(fs.readFileSync(path.join(this.source_dir, `/_data/extra_${type}s.json`)));
       if (wantWatchExtra) {
         if (extraOrder === 1) {
@@ -344,12 +348,12 @@ module.exports.getBgmData = async function getBgmData({ vmid, showProgress, sour
         }
       }
     }
-    fs.writeFile(path.join(sourceDir, '/bangumis.json'), JSON.stringify(allBangumis), (err) => {
+    fs.writeFile(path.join(sourceDir, `/${type}s.json`), JSON.stringify(allBangumis), (err) => {
       if (err) {
-        log.info('Failed to write data to bangumis.json');
+        log.info(`Failed to write data to ${type}s.json`);
         console.error(err);
       } else {
-        log.info('Bangumi bangumis data has been saved');
+        log.info(`Bangumi ${type}s data has been saved`);
       }
     });
   }

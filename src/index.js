@@ -12,6 +12,7 @@ const log = typeof hexoLog.default === 'function' ? hexoLog.default({
 });
 const { getBiliData } = require('./lib/get-bili-data');
 const { getBgmData } = require('./lib/get-bgm-data');
+const { getBgmv0Data } = require('./lib/get-bgmv0-data');
 
 // eslint-disable-next-line no-var
 if (typeof URL !== 'function') var { URL } = require('url');
@@ -34,6 +35,14 @@ hexo.extend.generator.register('cinemas', function (locals) {
   }
   return require('./lib/bangumi-generator').call(this, locals, 'cinema');
 });
+
+hexo.extend.generator.register('games', function (locals) {
+  if (!this?.config?.game?.enable) {
+    return;
+  }
+  return require('./lib/bangumi-generator').call(this, locals, 'game');
+});
+
 hexo.extend.console.register('bangumi', 'Generate pages of bangumis for Hexo', options, function (args) {
   if (args.d) {
     if (fs.existsSync(path.join(this.source_dir, '/_data/bangumis.json'))) {
@@ -55,6 +64,7 @@ hexo.extend.console.register('bangumi', 'Generate pages of bangumis for Hexo', o
     if (['bgm', 'bangumi'].includes(this.config.bangumi.source)) {
       getBgmData({
         vmid: this.config.bangumi.vmid,
+        type: "bangumi",
         showProgress: this.config.bangumi.progress ?? true,
         sourceDir: this.source_dir,
         extraOrder: this.config.bangumi.extraOrder,
@@ -62,6 +72,17 @@ hexo.extend.console.register('bangumi', 'Generate pages of bangumis for Hexo', o
         proxy: this.config.bangumi.proxy,
         infoApi: this.config.bangumi.bgmInfoApi,
         host: `${this.config.bangumi.source}.tv`,
+        coverMirror: this.config.bangumi.coverMirror ?? ''
+      });
+    } else if (this.config.bangumi.source === 'bgmv0') {
+      getBgmv0Data({
+        vmid: this.config.bangumi.vmid,
+        type: 2,
+        showProgress: this.config.bangumi.progress ?? true,
+        sourceDir: this.source_dir,
+        extraOrder: this.config.bangumi.extraOrder,
+        pagination: this.config.bangumi.pagination,
+        proxy: this.config.bangumi.proxy,
         coverMirror: this.config.bangumi.coverMirror ?? ''
       });
     } else {
@@ -73,7 +94,8 @@ hexo.extend.console.register('bangumi', 'Generate pages of bangumis for Hexo', o
         extraOrder: this.config.bangumi.extraOrder,
         pagination: this.config.bangumi.pagination,
         useWebp: this.config.bangumi.webp,
-        coverMirror: this.config.bangumi.coverMirror ?? ''
+        coverMirror: this.config.bangumi.coverMirror ?? '',
+        SESSDATA: typeof args.u === 'string' ? args.u : null
       });
     }
   } else {
@@ -110,5 +132,42 @@ hexo.extend.console.register('cinema', 'Generate pages of bilibili cinemas for H
     });
   } else {
     log.info('Unknown command, please use "hexo cinema -h" to see the available commands');
+  }
+});
+
+hexo.extend.console.register('game', 'Generate pages of games for Hexo', options, function (args) {
+  if (args.d) {
+    if (fs.existsSync(path.join(this.source_dir, '/_data/games.json'))) {
+      fs.unlinkSync(path.join(this.source_dir, '/_data/games.json'));
+      log.info('Games data has been deleted');
+    }
+  } else if (args.u) {
+    if (!this?.config?.game) {
+      log.info('Please add config to _config.yml');
+      return;
+    }
+    if (!this.config.game.enable) {
+      return;
+    }
+    if (!this.config.game.vmid) {
+      log.info('Please add vmid to _config.yml');
+      return;
+    }
+    if (this.config.game.source !== 'bgmv0') {
+      log.info(`${this.config.bangumi.source} not support`);
+      return;
+    }
+    getBgmv0Data({
+      vmid: this.config.game.vmid,
+      type: 4,
+      showProgress: this.config.game.progress ?? true,
+      sourceDir: this.source_dir,
+      extraOrder: this.config.game.extraOrder,
+      pagination: this.config.game.pagination,
+      proxy: this.config.game.proxy,
+      coverMirror: this.config.game.coverMirror ?? ''
+    });
+  } else {
+    log.info('Unknown command, please use "hexo game -h" to see the available commands');
   }
 });

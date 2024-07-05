@@ -24,7 +24,7 @@ $ npm install hexo-bilibili-bangumi --save
 bangumi: # 追番设置
   enable: true
   source: bili
-  bgmInfoSource: 'bgmApi'
+  bgmInfoSource: 'bgmv0'
   path:
   vmid:
   title: '追番列表'
@@ -68,16 +68,37 @@ cinema: # 追剧设置
   extra_options:
     key: value
   coverMirror:
+game: # 游戏设置，仅支持source: bgmv0
+  enable: true
+  path:
+  source: bgmv0
+  vmid:
+  title: '游戏列表'
+  quote: '生命不息，游戏不止！'
+  show: 1
+  lazyload: true
+  srcValue: '__image__'
+  lazyloadAttrName: 'data-src=__image__'
+  loading:
+  metaColor:
+  color:
+  webp:
+  progress:
+  extraOrder:
+  order:
+  extra_options:
+    key: value
+  coverMirror:
 ```
 
 > 带*为必填选项！
 
 - **enable**: 是否启用
-- **source**: 数据源，仅支持追番，追剧仅支持哔哩哔哩源。`bili`: [哔哩哔哩源](https://www.bilibili.com/), `bangumi`: [Bangumi源(bangumi.tv)](https://bangumi.tv/), `bgm`: [Bangumi源(bgm.tv)](https://bgm.tv/)
+- **source**: 数据源，仅支持追番，追剧仅支持哔哩哔哩源。`bili`: [哔哩哔哩源](https://www.bilibili.com/), `bgmv0`: **建议**[Bgm Api源(api.bgm.tv)](https://bgm.tv/), `bangumi`: [Bangumi源(bangumi.tv)](https://bangumi.tv/), `bgm`: [Bangumi源(bgm.tv)](https://bgm.tv/)
 - **bgmInfoApi**: 获取Bangumi番剧信息时使用的Api，仅使用Bangumi源时此选项生效。`bgmApi`: [Bangumi Api](https://github.com/bangumi/api/), `bgmSub`: [Bangumi-Subject](https://github.com/czy0729/Bangumi-Subject)
 - **proxy**: 代理设置，仅在使用支持`bgm`源追番时生效。默认`false`
 - **path**: 页面路径，默认`bangumis/index.html`, `cinemas/index.html`
-- **vmid**: 哔哩哔哩的 `vmid(uid)`[如何获取？](#获取-bilibili-uid)或Bangumi的用户`id`[如何获取？](#获取-bangumi-id)
+- **vmid**: 哔哩哔哩的 `vmid(uid)`[如何获取？](#获取-bilibili-uid)/Bangumi的用户`用户名`(source为`bgmv0`时使用)[如何获取？](#获取-bangumi-用户名)/Bangumi的用户`id`(source为`bgm`或`bangumi`时使用)[如何获取？](#获取-bangumi-id)
 - **title**: 该页面的标题
 - **quote**: 写在页面开头的一段话，支持 html 语法，可留空。
 - **show**: 初始显示页面：`0: 想看`, `1: 在看`, `2: 看过`，默认为`1`
@@ -108,7 +129,12 @@ cinema: # 追剧设置
 
 ## 使用
 
+> 仅`bili`和`bgmv0`源支持在追番页面显示追番进度。
+
 1. 在`hexo generate`或`hexo deploy`之前使用`hexo bangumi -u`命令更新追番数据，使用`hexo cinema -u`命令更新追剧数据！
+
+    - 使用bili源时，如果要在追番页面显示追番进度，需使用`hexo bangumi -u 'SESSDATA'`, `SESSDATA`替换为哔哩哔哩cookie中的`SESSDATA`值。例`hexo bangumi -u 'df***EC'`
+
 2. 删除数据命令:`hexo bangumi -d`/`hexo cinema -d`
 
 ## 获取 Bilibili uid
@@ -116,6 +142,10 @@ cinema: # 追剧设置
 登录哔哩哔哩后前往[https://space.bilibili.com/](https://space.bilibili.com/)页面，网址最后的一串数字就是 `uid`
 
 ***需要将追番列表设置为公开！***
+
+## 获取 Bangumi 用户名
+
+登录[Bangumi](https://bangumi.tv/)后打开控制台(`Ctrl`+`Shift`+`J`)，输入`document.getElementById('header').getElementsByTagName('a')[0].getAttribute('href').split('/').at(-1)`回车，下面会输出`用户名`
 
 ## 获取 Bangumi id
 
