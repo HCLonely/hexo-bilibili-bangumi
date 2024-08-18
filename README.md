@@ -40,6 +40,7 @@ bangumi: # 追番设置
   color:
   webp:
   progress:
+  progressBar:
   extraOrder:
   order: latest
   proxy:
@@ -63,6 +64,7 @@ cinema: # 追剧设置
   color:
   webp:
   progress:
+  progressBar:
   extraOrder:
   order:
   extra_options:
@@ -84,6 +86,7 @@ game: # 游戏设置，仅支持source: bgmv0
   color:
   webp:
   progress:
+  progressBar:
   extraOrder:
   order:
   extra_options:
@@ -110,6 +113,7 @@ game: # 游戏设置，仅支持source: bgmv0
 - **color**: 简介字体颜色
 - **webp**: 番剧封面使用`webp`格式(此格式在`safari`浏览器下不显示，但是图片大小可以缩小 100 倍左右，仅支持哔哩哔哩源), 默认`true`
 - **progress**: 获取番剧数据时是否显示进度条，默认`true`
+- **progressBar**: 追番页面是否显示进度条，默认`true`。仅支持`bili`和`bgmv0`数据源
 - **extraOrder**: 手动添加的番剧/追剧数据是否优先显示，`1`为优先，其它为不优先
 - **showMyComment**: 使用`bgm`源时显示自己的评价及评论，默认`false`
 - **pagination**: 分页优化，只将第一页的数据渲染到`html`文件中，其余数据将通过异步请求加载，避免番剧过多时html文件过大导致页面加载缓慢，建议番剧较多时使用，默认`false`

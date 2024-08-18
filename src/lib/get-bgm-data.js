@@ -231,7 +231,7 @@ const getItemsId = async ({ vmid, type, status, showProgress, sourceDir, proxy, 
   }
 
   const response = await axios.get(`https://${host}/${type}/list/${vmid}/${status}?page=1`, options);
-  const username = response.request.path.match(/(anime|game)\/list\/(.*?)\//)?.[1];
+  const username = response.request.path.match(/(anime|game)\/list\/(.*?)\//)?.[2];
   if (!username) {
     return console.error('Failed to get "username"!');
   }
