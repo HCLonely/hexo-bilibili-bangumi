@@ -53,12 +53,12 @@ a.bangumi-tab {
   height: 45px;
 }
 
-.bangumi-comments {
+.bangumi-summary {
   font-size: 12px;
-  margin-top: 10px
+  margin-top: 10px;
 }
 
-.bangumi-comments>p {
+.bangumi-summary>p {
   word-break: break-all;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -67,6 +67,10 @@ a.bangumi-tab {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
+}
+
+.bangumi-comments {
+  font-size: 12px;
 }
 
 .bangumi-pagination {
@@ -214,7 +218,6 @@ a.bangumi-tab {
   border: 1px dashed #8f8f8f;
   padding: 3px;
   border-radius: 5px;
-  margin-left: -120px;
 }
 
 .bangumi-starstop {
