@@ -45,6 +45,7 @@ a.bangumi-tab {
 .bangumi-info {
   padding-left: 120px;
   margin-top: 10px;
+  min-height: 160px;
 }
 
 .bangumi-meta {

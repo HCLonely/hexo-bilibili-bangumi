@@ -2,7 +2,7 @@
  margin-bottom:15px;
  margin-top:15px;
  display: flex;
- justify-content: center; 
+ justify-content: center;
 }
 
 .bangumi-item {
@@ -31,12 +31,12 @@
  line-height:1;
  display: flex;
  width:100%;
- justify-content: center; 
+ justify-content: center;
 }
 
 .bangumi-comments {
  font-size:12px;
- margin-top:30px
+ margin-top:10px
 }
 
 .bangumi-picture {

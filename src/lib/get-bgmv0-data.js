@@ -49,7 +49,7 @@ const getData = async (vmid, status, typeNum, pn, coverMirror) => {
         des: `${bangumi?.subject?.short_summary?.trim()}...` || '-',
         collect: bangumi?.subject?.collection_total || '-',
         myStars: bangumi.rate || null,
-        myComment: bangumi.comment || '-',
+        myComment: bangumi.comment || null,
         progress: Math.round(((bangumi?.ep_status || 0) / (bangumi?.subject?.eps || 1)) * 100),
         tags: bangumi?.subject?.tags?.[0]?.name || '-',
         ep_status: bangumi?.ep_status || 0
