@@ -23,20 +23,20 @@ const options = {
     { name: '-d, --delete', desc: 'Delete data' }
   ]
 };
-hexo.extend.generator.register('bangumis', function (locals) {
+hexo.extend.generator.register('bangumis-bangumi', function (locals) {
   if (!this?.config?.bangumi?.enable) {
     return;
   }
   return require('./lib/bangumi-generator').call(this, locals, 'bangumi');
 });
-hexo.extend.generator.register('cinemas', function (locals) {
+hexo.extend.generator.register('bangumis-cinema', function (locals) {
   if (!this?.config?.cinema?.enable) {
     return;
   }
   return require('./lib/bangumi-generator').call(this, locals, 'cinema');
 });
 
-hexo.extend.generator.register('games', function (locals) {
+hexo.extend.generator.register('bangumis-game', function (locals) {
   if (!this?.config?.game?.enable) {
     return;
   }

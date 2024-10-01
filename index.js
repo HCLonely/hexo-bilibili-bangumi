@@ -30,21 +30,21 @@ var options = {
     desc: 'Delete data'
   }]
 };
-hexo.extend.generator.register('bangumis', function (locals) {
+hexo.extend.generator.register('bangumis-bangumi', function (locals) {
   var _this$config;
   if (!(this !== null && this !== void 0 && (_this$config = this.config) !== null && _this$config !== void 0 && (_this$config = _this$config.bangumi) !== null && _this$config !== void 0 && _this$config.enable)) {
     return;
   }
   return require('./lib/bangumi-generator').call(this, locals, 'bangumi');
 });
-hexo.extend.generator.register('cinemas', function (locals) {
+hexo.extend.generator.register('bangumis-cinema', function (locals) {
   var _this$config2;
   if (!(this !== null && this !== void 0 && (_this$config2 = this.config) !== null && _this$config2 !== void 0 && (_this$config2 = _this$config2.cinema) !== null && _this$config2 !== void 0 && _this$config2.enable)) {
     return;
   }
   return require('./lib/bangumi-generator').call(this, locals, 'cinema');
 });
-hexo.extend.generator.register('games', function (locals) {
+hexo.extend.generator.register('bangumis-game', function (locals) {
   var _this$config3;
   if (!(this !== null && this !== void 0 && (_this$config3 = this.config) !== null && _this$config3 !== void 0 && (_this$config3 = _this$config3.game) !== null && _this$config3 !== void 0 && _this$config3.enable)) {
     return;
