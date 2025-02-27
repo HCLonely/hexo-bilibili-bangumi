@@ -96,6 +96,7 @@ module.exports = async function (locals, type = 'bangumi') {
     data: {
       title: config[type].title,
       content: contents,
+      type: 'page',
       permalink: full_url_for(customPath),
       ...config?.[type]?.extra_options
     },
