@@ -98,7 +98,7 @@ module.exports.getBiliData = async ({ vmid, type, showProgress, sourceDir, extra
   log.info(`${wantWatch.length + watching.length + watched.length} ${type}s have been loaded in ${endTime - startTime} ms`);
   const bangumis = { wantWatch, watching, watched };
   if (!fs.existsSync(path.join(sourceDir, '/_data/'))) {
-    fs.mkdirsSync(path.join(sourceDir, '/_data/'));
+    fs.mkdirSync(path.join(sourceDir, '/_data/'));
   }
   fs.writeFile(path.join(sourceDir, `/_data/${type}s.json`), JSON.stringify(bangumis), (err) => {
     if (err) {

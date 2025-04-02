@@ -121,7 +121,7 @@ hexo.extend.console.register('cinema', 'Generate pages of bilibili cinemas for H
       log.info('Cinemas data has been deleted');
     }
   } else if (args.u) {
-    var _this$config5, _this$config$cinema$p, _this$config$cinema$c;
+    var _this$config5;
     if (!(this !== null && this !== void 0 && (_this$config5 = this.config) !== null && _this$config5 !== void 0 && _this$config5.cinema)) {
       log.info('Please add config to _config.yml');
       return;
@@ -133,16 +133,46 @@ hexo.extend.console.register('cinema', 'Generate pages of bilibili cinemas for H
       log.info('Please add vmid to _config.yml');
       return;
     }
-    getBiliData({
-      vmid: this.config.cinema.vmid,
-      type: "cinema",
-      showProgress: (_this$config$cinema$p = this.config.cinema.progress) !== null && _this$config$cinema$p !== void 0 ? _this$config$cinema$p : true,
-      sourceDir: this.source_dir,
-      extraOrder: this.config.cinema.extraOrder,
-      pagination: this.config.cinema.pagination,
-      useWebp: this.config.cinema.webp,
-      coverMirror: (_this$config$cinema$c = this.config.cinema.coverMirror) !== null && _this$config$cinema$c !== void 0 ? _this$config$cinema$c : ""
-    });
+    if (['bgm', 'bangumi'].includes(this.config.cinema.source)) {
+      var _this$config$cinema$p, _this$config$cinema$c;
+      getBgmData({
+        vmid: this.config.cinema.vmid,
+        type: "cinema",
+        showProgress: (_this$config$cinema$p = this.config.cinema.progress) !== null && _this$config$cinema$p !== void 0 ? _this$config$cinema$p : true,
+        sourceDir: this.source_dir,
+        extraOrder: this.config.cinema.extraOrder,
+        pagination: this.config.cinema.pagination,
+        proxy: this.config.cinema.proxy,
+        infoApi: this.config.cinema.bgmInfoApi,
+        host: "".concat(this.config.cinema.source, ".tv"),
+        coverMirror: (_this$config$cinema$c = this.config.cinema.coverMirror) !== null && _this$config$cinema$c !== void 0 ? _this$config$cinema$c : ''
+      });
+    } else if (this.config.cinema.source === 'bgmv0') {
+      var _this$config$cinema$p2, _this$config$cinema$c2;
+      getBgmv0Data({
+        vmid: this.config.cinema.vmid,
+        type: 6,
+        showProgress: (_this$config$cinema$p2 = this.config.cinema.progress) !== null && _this$config$cinema$p2 !== void 0 ? _this$config$cinema$p2 : true,
+        sourceDir: this.source_dir,
+        extraOrder: this.config.cinema.extraOrder,
+        pagination: this.config.cinema.pagination,
+        proxy: this.config.cinema.proxy,
+        coverMirror: (_this$config$cinema$c2 = this.config.cinema.coverMirror) !== null && _this$config$cinema$c2 !== void 0 ? _this$config$cinema$c2 : ''
+      });
+    } else {
+      var _this$config$cinema$p3, _this$config$cinema$c3;
+      getBiliData({
+        vmid: this.config.cinema.vmid,
+        type: "cinema",
+        showProgress: (_this$config$cinema$p3 = this.config.cinema.progress) !== null && _this$config$cinema$p3 !== void 0 ? _this$config$cinema$p3 : true,
+        sourceDir: this.source_dir,
+        extraOrder: this.config.cinema.extraOrder,
+        pagination: this.config.cinema.pagination,
+        useWebp: this.config.cinema.webp,
+        coverMirror: (_this$config$cinema$c3 = this.config.cinema.coverMirror) !== null && _this$config$cinema$c3 !== void 0 ? _this$config$cinema$c3 : "",
+        SESSDATA: typeof args.u === 'string' ? args.u : null
+      });
+    }
   } else {
     log.info('Unknown command, please use "hexo cinema -h" to see the available commands');
   }

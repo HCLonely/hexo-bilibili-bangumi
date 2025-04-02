@@ -120,16 +120,43 @@ hexo.extend.console.register('cinema', 'Generate pages of bilibili cinemas for H
       log.info('Please add vmid to _config.yml');
       return;
     }
-    getBiliData({
-      vmid: this.config.cinema.vmid,
-      type: "cinema",
-      showProgress: this.config.cinema.progress ?? true,
-      sourceDir: this.source_dir,
-      extraOrder: this.config.cinema.extraOrder,
-      pagination: this.config.cinema.pagination,
-      useWebp: this.config.cinema.webp,
-      coverMirror: this.config.cinema.coverMirror ?? "",
-    });
+    if (['bgm', 'bangumi'].includes(this.config.cinema.source)) {
+      getBgmData({
+        vmid: this.config.cinema.vmid,
+        type: "cinema",
+        showProgress: this.config.cinema.progress ?? true,
+        sourceDir: this.source_dir,
+        extraOrder: this.config.cinema.extraOrder,
+        pagination: this.config.cinema.pagination,
+        proxy: this.config.cinema.proxy,
+        infoApi: this.config.cinema.bgmInfoApi,
+        host: `${this.config.cinema.source}.tv`,
+        coverMirror: this.config.cinema.coverMirror ?? ''
+      });
+    } else if (this.config.cinema.source === 'bgmv0') {
+      getBgmv0Data({
+        vmid: this.config.cinema.vmid,
+        type: 6,
+        showProgress: this.config.cinema.progress ?? true,
+        sourceDir: this.source_dir,
+        extraOrder: this.config.cinema.extraOrder,
+        pagination: this.config.cinema.pagination,
+        proxy: this.config.cinema.proxy,
+        coverMirror: this.config.cinema.coverMirror ?? ''
+      });
+    } else {
+      getBiliData({
+        vmid: this.config.cinema.vmid,
+        type: "cinema",
+        showProgress: this.config.cinema.progress ?? true,
+        sourceDir: this.source_dir,
+        extraOrder: this.config.cinema.extraOrder,
+        pagination: this.config.cinema.pagination,
+        useWebp: this.config.cinema.webp,
+        coverMirror: this.config.cinema.coverMirror ?? "",
+        SESSDATA: typeof args.u === 'string' ? args.u : null
+      });
+    }
   } else {
     log.info('Unknown command, please use "hexo cinema -h" to see the available commands');
   }

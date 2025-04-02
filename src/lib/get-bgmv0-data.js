@@ -18,6 +18,20 @@ const TYPE = {
   4: '游戏',
   6: '三次元'
 };
+const TYPE_EN = {
+  1: 'book',
+  2: 'bangumi',
+  3: 'music',
+  4: 'game',
+  6: 'cinema'
+};
+const TYPE_STATUS = {
+  1: ['[想看]', '[已看]', '[在看]'],
+  2: ['[想看]', '[已看]', '[在看]'],
+  3: 'music',
+  4: ['[想玩]', '[已玩]', '[在玩]'],
+  6: ['[想看]', '[已看]', '[在看]']
+};
 const getDataPage = async (vmid, status, typeNum) => {
   const response = await axios.get(`http://api.bgm.tv/v0/users/${vmid}/collections?subject_type=${typeNum}&type=${status}&limit=1&offset=0`, {headers: {
     'User-Agent': 'HCLonely/hexo-bilibili-bangumi'
@@ -65,9 +79,7 @@ const processData = async (vmid, status, showProgress, typeNum, coverMirror) => 
     let bar = null;
     if (showProgress) {
       // eslint-disable-next-line no-nested-ternary
-      bar = new ProgressBar(`正在获取 ${status === 1 ? `${typeNum === 4 ? '[想玩]' : '[想看]'}` :
-          status === 2 ? `${typeNum === 4 ? '[已玩]' : '[已看]'}` :
-            `${typeNum === 4 ? '[在玩]' : '[在看]'}`} ${TYPE[typeNum]} [:bar] :percent :elapseds`, { total: page.data - 1, complete: '█' });
+      bar = new ProgressBar(`正在获取 ${TYPE_STATUS[typeNum][status-1]} ${TYPE[typeNum]} [:bar] :percent :elapseds`, { total: page.data - 1, complete: '█' });
     }
     // eslint-disable-next-line no-plusplus
     for (let i = 1; i < page.data; i++) {
@@ -77,35 +89,35 @@ const processData = async (vmid, status, showProgress, typeNum, coverMirror) => 
     }
     return list;
   }
-  console.log(`Get ${typeNum === 2 ? 'bangumi' : 'game'} data error:`, page?.data);
+  console.log(`Get ${TYPE_EN[typeNum]} data error:`, page?.data);
   return [];
 };
 module.exports.getBgmv0Data = async ({ vmid, type, showProgress, sourceDir, extraOrder, pagination, coverMirror }) => {
-  log.info(`Getting bgm ${type === 2 ? 'bangumi' : 'game'} data, please wait...`);
+  log.info(`Getting bgm ${TYPE_EN[type]} data, please wait...`);
   const startTime = new Date().getTime();
   const wantWatch = await processData(vmid, 1, showProgress, type, coverMirror);
   const watching = await processData(vmid, 3, showProgress, type, coverMirror);
   const watched = await processData(vmid, 2, showProgress, type, coverMirror);
   const endTime = new Date().getTime();
-  log.info(`${wantWatch.length + watching.length + watched.length} ${type}s have been loaded in ${endTime - startTime} ms`);
+  log.info(`${wantWatch.length + watching.length + watched.length} ${TYPE_EN[type]}s have been loaded in ${endTime - startTime} ms`);
   const bangumis = { wantWatch, watching, watched };
   if (!fs.existsSync(path.join(sourceDir, '/_data/'))) {
-    fs.mkdirsSync(path.join(sourceDir, '/_data/'));
+    fs.mkdirSync(path.join(sourceDir, '/_data/'));
   }
-  fs.writeFile(path.join(sourceDir, `/_data/${type === 2 ? 'bangumi' : 'game'}s.json`), JSON.stringify(bangumis), (err) => {
+  fs.writeFile(path.join(sourceDir, `/_data/${TYPE_EN[type]}s.json`), JSON.stringify(bangumis), (err) => {
     if (err) {
-      log.info(`Failed to write data to _data/${type === 2 ? 'bangumi' : 'game'}s.json`);
+      log.info(`Failed to write data to _data/${TYPE_EN[type]}s.json`);
       console.error(err);
     } else {
-      log.info(`Bgm ${type === 2 ? 'bangumi' : 'game'}s data has been saved`);
+      log.info(`Bgm ${TYPE_EN[type]}s data has been saved`);
     }
   });
 
   if (pagination) {
     const allBangumis = { ...bangumis };
     // extra bangumis
-    if (fs.existsSync(path.join(sourceDir, `/_data/extra_${type === 2 ? 'bangumi' : 'game'}s.json`))) {
-      const { wantWatchExtra, watchingExtra, watchedExtra } = JSON.parse(fs.readFileSync(path.join(this.source_dir, `/_data/extra_${type === 2 ? 'bangumi' : 'game'}s.json`)));
+    if (fs.existsSync(path.join(sourceDir, `/_data/extra_${TYPE_EN[type]}s.json`))) {
+      const { wantWatchExtra, watchingExtra, watchedExtra } = JSON.parse(fs.readFileSync(path.join(this.source_dir, `/_data/extra_${TYPE_EN[type]}s.json`)));
       if (wantWatchExtra) {
         if (extraOrder === 1) {
           allBangumis.wantWatch = [...wantWatchExtra, ...allBangumis.wantWatch];
@@ -128,12 +140,12 @@ module.exports.getBgmv0Data = async ({ vmid, type, showProgress, sourceDir, extr
         }
       }
     }
-    fs.writeFile(path.join(sourceDir, `/${type === 2 ? 'bangumi' : 'game'}s.json`), JSON.stringify(bangumis), (err) => {
+    fs.writeFile(path.join(sourceDir, `/${TYPE_EN[type]}s.json`), JSON.stringify(bangumis), (err) => {
       if (err) {
-        log.info(`Failed to write data to ${type === 2 ? 'bangumi' : 'game'}s.json`);
+        log.info(`Failed to write data to ${TYPE_EN[type]}s.json`);
         console.error(err);
       } else {
-        log.info(`Bgm ${type === 2 ? 'bangumi' : 'game'}s data has been saved`);
+        log.info(`Bgm ${TYPE_EN[type]}s data has been saved`);
       }
     });
   }

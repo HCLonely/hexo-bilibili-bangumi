@@ -31,7 +31,7 @@ const getBangumiDataFromBangumiSubject = async (items, sourceDir, proxy, coverMi
       const cachePath = path.join(sourceDir, '/_data/Bangumi-Subject-Cache');
       const subjectPath = path.join(cachePath, `${item.id}.json`);
       if (!fs.existsSync(cachePath)) {
-        fs.mkdirsSync(cachePath);
+        fs.mkdirSync(cachePath);
       }
       if (fs.existsSync(subjectPath)) {
         return { config: { itemData: item }, data: fs.readFileSync(subjectPath).toString(), status: 200 };
@@ -112,7 +112,7 @@ const getBangumiDataFromBangumiSubject = async (items, sourceDir, proxy, coverMi
     wish: wish || '-',
     doing: doing || '-',
     collect: collect || '-',
-    totalCount: totalCount ? `全${totalCount}话` : '-',
+    totalCount: totalCount ? `全${totalCount}${type === 6 ? '集' : '话'}` : '-',
     myStars: config.itemData.myStars,
     myComment: config.itemData.myComment
   };
@@ -124,7 +124,7 @@ const getBangumiDataFromBangumiApi = async (items, sourceDir, proxy, coverMirror
       const cachePath = path.join(sourceDir, '/_data/Bangumi-Api-Cache');
       const subjectPath = path.join(cachePath, `${item.id}.json`);
       if (!fs.existsSync(cachePath)) {
-        fs.mkdirsSync(cachePath);
+        fs.mkdirSync(cachePath);
       }
       if (fs.existsSync(subjectPath)) {
         return { config: { itemData: item }, data: JSON.parse(fs.readFileSync(subjectPath).toString()), status: 200 };
@@ -205,7 +205,7 @@ const getBangumiDataFromBangumiApi = async (items, sourceDir, proxy, coverMirror
     wish: wish || '-',
     doing: doing || '-',
     collect: collect || '-',
-    totalCount: totalCount ? `全${totalCount}话` : '-',
+    totalCount: totalCount ? `全${totalCount}${type === 6 ? '集' : '话'}` : '-',
     myStars: config.itemData.myStars,
     myComment: config.itemData.myComment
   };
@@ -231,7 +231,7 @@ const getItemsId = async ({ vmid, type, status, showProgress, sourceDir, proxy, 
   }
 
   const response = await axios.get(`https://${host}/${type}/list/${vmid}/${status}?page=1`, options);
-  const username = response.request.path.match(/(anime|game)\/list\/(.*?)\//)?.[2];
+  const username = response.request.path.match(/(anime|game|real)\/list\/(.*?)\//)?.[2];
   if (!username) {
     return console.error('Failed to get "username"!');
   }
@@ -259,7 +259,7 @@ const getItemsId = async ({ vmid, type, status, showProgress, sourceDir, proxy, 
 
     if (showProgress) {
       // eslint-disable-next-line no-nested-ternary
-      bar = new ProgressBar(`正在获取 ${status === 'wish' ? '[想看]' : (status === 'do' ? '[在看]' : '[已看]')} ${type === 'game' ? '游戏' : '番剧'} [:bar] :percent :elapseds`,
+      bar = new ProgressBar(`正在获取 ${status === 'wish' ? '[想看]' : (status === 'do' ? '[在看]' : '[已看]')} ${type === 'game' ? '游戏' : type === 'real' ? '追剧' : '番剧'} [:bar] :percent :elapseds`,
         { total: pageNum < 2 ? 1 : pageNum, complete: '█' });
       bar.tick();
     }
@@ -300,7 +300,8 @@ module.exports.getBgmData = async function getBgmData({ vmid, type, showProgress
   log.info('Getting bangumis, please wait...');
   const typePathMap = {
     bangumi: 'anime',
-    game: 'game'
+    game: 'game',
+    cinema: 'real'
   };
   const startTime = new Date().getTime();
   const wantWatch = await getItemsId({ vmid, type: typePathMap[type], status: 'wish', showProgress, sourceDir, proxy, infoApi, host, coverMirror });
@@ -310,7 +311,7 @@ module.exports.getBgmData = async function getBgmData({ vmid, type, showProgress
   log.info(`${wantWatch.length + watching.length + watched.length} ${type}s have been loaded in ${endTime - startTime} ms`);
   const bangumis = { wantWatch, watching, watched };
   if (!fs.existsSync(path.join(sourceDir, '/_data/'))) {
-    fs.mkdirsSync(path.join(sourceDir, '/_data/'));
+    fs.mkdirSync(path.join(sourceDir, '/_data/'));
   }
   fs.writeFile(path.join(sourceDir, `/_data/${type}s.json`), JSON.stringify(bangumis), (err) => {
     if (err) {
