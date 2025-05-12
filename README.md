@@ -11,7 +11,7 @@
 ## 安装
 
 ```bash
-$ npm install hexo-bilibili-bangumi --save
+npm install hexo-bilibili-bangumi --save
 ```
 
 ------------
@@ -121,15 +121,15 @@ game: # 游戏设置，仅支持source: bgmv0
 - **extra_options**: 此配置会扩展到Hexo`page`变量中
 - **coverMirror**: 封面镜像缓存配置，默认为空。追番，追剧需分别配置。可以将有防盗链的图片引用到网页，并成功显示。可以将 http 图片引用到 https 页面而不出现证书问题。可以将 xxx 的图片，成功加载。可以将比较慢的图片资源，加快显示。可以使用自建或者是第三方的图片镜像服务，例如`https://image.baidu.com/search/down?url=`百度的接口，但是图片大小不能超过5M(据说不稳定，个人目前使用没啥问题)。其他镜像地址收集之网络，未全部测试。推荐在出现403错误时或者图片加载特别慢时使用。
 
-  ```
-  # 图片镜像服务
-  https://image.baidu.com/search/down?url=
-  https://img.noobzone.ru/getimg.php?url=
-  https://images.weserv.nl/?url=
-  https://collect34.longsunhd.com/source/plugin/yzs1013_pldr/getimg.php?url=
-  https://pic1.xuehuaimg.com/proxy/
-  https://search.pstatic.net/common?src=
-  ```
+```text
+# 图片镜像服务
+https://image.baidu.com/search/down?url=
+https://img.noobzone.ru/getimg.php?url=
+https://images.weserv.nl/?url=
+https://collect34.longsunhd.com/source/plugin/yzs1013_pldr/getimg.php?url=
+https://pic1.xuehuaimg.com/proxy/
+https://search.pstatic.net/common?src=
+```
 
 ## 使用
 
@@ -162,7 +162,8 @@ game: # 游戏设置，仅支持source: bgmv0
 ## 手动添加番剧/追剧数据
 因为某些番剧在哔哩哔哩上没有，但是又想在hexo中展示，怎么办呢？现在支持手动添加番剧数据了！
 
-在 `sources/_data/` 目录下新建文件，命名为 `extra_bangumis.json`(追番数据)或`extra_cinemas.json`(追剧数据) ，并添加以如下内容:
+在 `sources/_data/` 目录下新建文件，命名为 `extra_bangumis.json`(追番数据)或`extra_cinemas.json`(追剧数据) ，并添加如下内容:
+
 ```json
 {
   "watchedExtra": [
@@ -173,6 +174,7 @@ game: # 游戏设置，仅支持source: bgmv0
       "cover": "https://cdn.jsdelivr.net/gh/mmdjiji/bangumis@main/Yosuga-no-Sora/cover.jpg",
       "totalCount": "全12话",
       "id": 0,
+      "link": "https://example.com/xxx",
       "follow": "不可用",
       "view": "不可用",
       "danmaku": "不可用",
@@ -205,6 +207,6 @@ game: # 游戏设置，仅支持source: bgmv0
 5. 运行命令`npm run build`;
 6. 提交PR.
 
-## Lisense
+## License
 
 [Apache Licence 2.0](https://github.com/HCLonely/hexo-bilibili-bangumi/blob/master/LICENSE)
