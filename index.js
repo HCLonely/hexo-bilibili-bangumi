@@ -1,13 +1,32 @@
-/* global hexo */
-'use strict';
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
+var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
+var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
+var _slicedToArray2 = _interopRequireDefault(require("@babel/runtime/helpers/slicedToArray"));
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { (0, _defineProperty2["default"])(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+/*
+ * @Author       : HCLonely
+ * @Date         : 2024-09-11 15:40:57
+ * @LastEditTime : 2025-07-10 14:01:12
+ * @LastEditors  : HCLonely
+ * @FilePath     : /hexo-bilibili-bangumi/src/index.js
+ * @Description  : Hexo插件主入口文件，提供了bangumi、cinema和game三个命令，
+ *                 用于生成和管理番剧、影视和游戏页面。支持从多个数据源获取数据，
+ *                 包括bilibili、bangumi.tv和AniList等，并提供数据更新和删除功能。
+ */
 
 var fs = require('hexo-fs');
 var path = require('path');
 var hexoLog = require('hexo-log');
-var log = typeof hexoLog["default"] === 'function' ? hexoLog["default"]({
-  debug: false,
-  silent: false
-}) : hexoLog({
+
+/**
+ * @constant {Object} log - 统一的日志记录器实例
+ * @description 配置了统一的日志输出工具
+ */
+var log = (typeof hexoLog["default"] === 'function' ? hexoLog["default"] : hexoLog)({
   debug: false,
   silent: false
 });
@@ -17,11 +36,21 @@ var _require2 = require('./lib/get-bgm-data'),
   getBgmData = _require2.getBgmData;
 var _require3 = require('./lib/get-bgmv0-data'),
   getBgmv0Data = _require3.getBgmv0Data;
+var _require4 = require('./lib/get-anilist-data'),
+  getAnilistData = _require4.getAnilistData;
+var _require5 = require('./lib/get-simkl-data'),
+  getSimklData = _require5.getSimklData;
+if (typeof URL !== 'function') {
+  var _require6 = require('url'),
+    _URL = _require6.URL;
+  global.URL = _URL;
+}
 
-// eslint-disable-next-line no-var
-if (typeof URL !== 'function') var _require4 = require('url'),
-  URL = _require4.URL;
-var options = {
+/**
+ * @constant {Object} COMMAND_OPTIONS - 命令行选项配置
+ * @property {Array<Object>} options - 可用的命令行选项列表
+ */
+var COMMAND_OPTIONS = {
   options: [{
     name: '-u, --update',
     desc: 'Update data'
@@ -30,187 +59,180 @@ var options = {
     desc: 'Delete data'
   }]
 };
-hexo.extend.generator.register('bangumis-bangumi', function (locals) {
-  var _this$config;
-  if (!(this !== null && this !== void 0 && (_this$config = this.config) !== null && _this$config !== void 0 && (_this$config = _this$config.bangumi) !== null && _this$config !== void 0 && _this$config.enable)) {
-    return;
+
+/**
+ * @constant {Object} DATA_TYPES - 数据类型配置对象
+ * @property {Object} bangumi - 番剧相关配置
+ * @property {Object} cinema - 影视相关配置
+ * @property {Object} game - 游戏相关配置
+ */
+var DATA_TYPES = {
+  bangumi: {
+    jsonFile: 'bangumis.json',
+    configKey: 'bangumi'
+  },
+  cinema: {
+    jsonFile: 'cinemas.json',
+    configKey: 'cinema'
+  },
+  game: {
+    jsonFile: 'games.json',
+    configKey: 'game'
   }
-  return require('./lib/bangumi-generator').call(this, locals, 'bangumi');
-});
-hexo.extend.generator.register('bangumis-cinema', function (locals) {
-  var _this$config2;
-  if (!(this !== null && this !== void 0 && (_this$config2 = this.config) !== null && _this$config2 !== void 0 && (_this$config2 = _this$config2.cinema) !== null && _this$config2 !== void 0 && _this$config2.enable)) {
-    return;
-  }
-  return require('./lib/bangumi-generator').call(this, locals, 'cinema');
-});
-hexo.extend.generator.register('bangumis-game', function (locals) {
-  var _this$config3;
-  if (!(this !== null && this !== void 0 && (_this$config3 = this.config) !== null && _this$config3 !== void 0 && (_this$config3 = _this$config3.game) !== null && _this$config3 !== void 0 && _this$config3.enable)) {
-    return;
-  }
-  return require('./lib/bangumi-generator').call(this, locals, 'game');
-});
-hexo.extend.console.register('bangumi', 'Generate pages of bangumis for Hexo', options, function (args) {
-  if (args.d) {
-    if (fs.existsSync(path.join(this.source_dir, '/_data/bangumis.json'))) {
-      fs.unlinkSync(path.join(this.source_dir, '/_data/bangumis.json'));
-      log.info('Bangumis data has been deleted');
-    }
-  } else if (args.u) {
-    var _this$config4;
-    if (!(this !== null && this !== void 0 && (_this$config4 = this.config) !== null && _this$config4 !== void 0 && _this$config4.bangumi)) {
-      log.info('Please add config to _config.yml');
+};
+
+/**
+ * @description 注册页面生成器
+ * 为每种数据类型（bangumi、cinema、game）注册对应的页面生成器
+ */
+Object.entries(DATA_TYPES).forEach(function (_ref) {
+  var _ref2 = (0, _slicedToArray2["default"])(_ref, 2),
+    type = _ref2[0],
+    config = _ref2[1];
+  hexo.extend.generator.register("bangumis-".concat(type), function (locals) {
+    var _this$config;
+    if (!(this !== null && this !== void 0 && (_this$config = this.config) !== null && _this$config !== void 0 && (_this$config = _this$config[config.configKey]) !== null && _this$config !== void 0 && _this$config.enable)) {
       return;
     }
-    if (!this.config.bangumi.enable) {
-      return;
-    }
-    if (!this.config.bangumi.vmid) {
-      log.info('Please add vmid to _config.yml');
-      return;
-    }
-    if (['bgm', 'bangumi'].includes(this.config.bangumi.source)) {
-      var _this$config$bangumi$, _this$config$bangumi$2;
-      getBgmData({
-        vmid: this.config.bangumi.vmid,
-        type: "bangumi",
-        showProgress: (_this$config$bangumi$ = this.config.bangumi.progress) !== null && _this$config$bangumi$ !== void 0 ? _this$config$bangumi$ : true,
-        sourceDir: this.source_dir,
-        extraOrder: this.config.bangumi.extraOrder,
-        pagination: this.config.bangumi.pagination,
-        proxy: this.config.bangumi.proxy,
-        infoApi: this.config.bangumi.bgmInfoApi,
-        host: "".concat(this.config.bangumi.source, ".tv"),
-        coverMirror: (_this$config$bangumi$2 = this.config.bangumi.coverMirror) !== null && _this$config$bangumi$2 !== void 0 ? _this$config$bangumi$2 : ''
-      });
-    } else if (this.config.bangumi.source === 'bgmv0') {
-      var _this$config$bangumi$3, _this$config$bangumi$4;
-      getBgmv0Data({
-        vmid: this.config.bangumi.vmid,
-        type: 2,
-        showProgress: (_this$config$bangumi$3 = this.config.bangumi.progress) !== null && _this$config$bangumi$3 !== void 0 ? _this$config$bangumi$3 : true,
-        sourceDir: this.source_dir,
-        extraOrder: this.config.bangumi.extraOrder,
-        pagination: this.config.bangumi.pagination,
-        proxy: this.config.bangumi.proxy,
-        coverMirror: (_this$config$bangumi$4 = this.config.bangumi.coverMirror) !== null && _this$config$bangumi$4 !== void 0 ? _this$config$bangumi$4 : ''
-      });
+    return require('./lib/bangumi-generator').call(this, locals, type);
+  });
+});
+
+/**
+ * @function validateConfig
+ * @param {Object} config - 配置对象
+ * @returns {boolean} 配置是否有效
+ * @description 验证配置对象是否包含必要的字段和值
+ */
+var validateConfig = function validateConfig(config) {
+  if (!config) {
+    log.info('Please add config to _config.yml');
+    return false;
+  }
+  if (!config.enable) {
+    return false;
+  }
+  if (!config.vmid) {
+    log.info('Please add vmid to _config.yml');
+    return false;
+  }
+  return true;
+};
+
+/**
+ * @function handleDataDelete
+ * @param {string} sourceDir - 源目录路径
+ * @param {string} type - 数据类型（bangumi/cinema/game）
+ * @description 处理数据删除操作，删除指定类型的JSON数据文件
+ */
+var handleDataDelete = function handleDataDelete(sourceDir, type) {
+  var jsonPath = path.join(sourceDir, "/_data/".concat(DATA_TYPES[type].jsonFile));
+  if (fs.existsSync(jsonPath)) {
+    fs.unlinkSync(jsonPath);
+    log.info("".concat(type, " data has been deleted"));
+  }
+};
+
+/**
+ * @function handleDataUpdate
+ * @async
+ * @param {Object} config - 更新配置
+ * @param {string} type - 数据类型
+ * @param {string} sourceDir - 源目录路径
+ * @param {Object} args - 命令行参数
+ * @returns {Promise} 更新操作的Promise
+ * @description 根据不同的数据源处理数据更新操作
+ */
+var handleDataUpdate = /*#__PURE__*/function () {
+  var _ref3 = (0, _asyncToGenerator2["default"])(/*#__PURE__*/_regenerator["default"].mark(function _callee(config, type, sourceDir, args) {
+    var _config$progress, _config$coverMirror;
+    var baseConfig, typeMapping, _t;
+    return _regenerator["default"].wrap(function (_context) {
+      while (1) switch (_context.prev = _context.next) {
+        case 0:
+          baseConfig = {
+            vmid: config.vmid,
+            showProgress: (_config$progress = config.progress) !== null && _config$progress !== void 0 ? _config$progress : true,
+            sourceDir: sourceDir,
+            extraOrder: config.extraOrder,
+            pagination: config.pagination,
+            coverMirror: (_config$coverMirror = config.coverMirror) !== null && _config$coverMirror !== void 0 ? _config$coverMirror : ''
+          };
+          _t = config.source;
+          _context.next = _t === 'bgm' ? 1 : _t === 'bangumi' ? 1 : _t === 'bgmv0' ? 2 : _t === 'anilist' ? 3 : _t === 'simkl' ? 5 : 6;
+          break;
+        case 1:
+          return _context.abrupt("return", getBgmData(_objectSpread(_objectSpread({}, baseConfig), {}, {
+            type: type,
+            proxy: config.proxy,
+            infoApi: config.bgmInfoApi,
+            host: "".concat(config.source, ".tv")
+          })));
+        case 2:
+          typeMapping = {
+            bangumi: 2,
+            cinema: 6,
+            game: 4
+          };
+          return _context.abrupt("return", getBgmv0Data(_objectSpread(_objectSpread({}, baseConfig), {}, {
+            type: typeMapping[type],
+            proxy: config.proxy
+          })));
+        case 3:
+          if (!(type === 'bangumi')) {
+            _context.next = 4;
+            break;
+          }
+          return _context.abrupt("return", getAnilistData(_objectSpread(_objectSpread({}, baseConfig), {}, {
+            type: 'ANIME'
+          })));
+        case 4:
+          log.info("".concat(config.source, " not support for ").concat(type));
+          return _context.abrupt("return");
+        case 5:
+          return _context.abrupt("return", getSimklData(_objectSpread(_objectSpread({}, baseConfig), {}, {
+            type: type
+          })));
+        case 6:
+          return _context.abrupt("return", getBiliData(_objectSpread(_objectSpread({}, baseConfig), {}, {
+            type: type,
+            useWebp: config.webp,
+            SESSDATA: typeof args.u === 'string' ? args.u : null
+          })));
+        case 7:
+        case "end":
+          return _context.stop();
+      }
+    }, _callee);
+  }));
+  return function handleDataUpdate(_x, _x2, _x3, _x4) {
+    return _ref3.apply(this, arguments);
+  };
+}();
+
+/**
+ * @description 注册命令
+ * 为每种数据类型注册对应的命令，支持更新(-u)和删除(-d)操作
+ */
+Object.entries(DATA_TYPES).forEach(function (_ref4) {
+  var _ref5 = (0, _slicedToArray2["default"])(_ref4, 2),
+    type = _ref5[0],
+    config = _ref5[1];
+  hexo.extend.console.register(type, "Generate pages of ".concat(type, " for Hexo"), COMMAND_OPTIONS, function (args) {
+    if (args.d) {
+      handleDataDelete(this.source_dir, type);
+    } else if (args.u) {
+      var typeConfig = this.config[config.configKey];
+      if (!validateConfig(typeConfig)) {
+        return;
+      }
+      if (type === 'game' && typeConfig.source !== 'bgmv0') {
+        log.info("".concat(typeConfig.source, " not support for game"));
+        return;
+      }
+      handleDataUpdate(typeConfig, type, this.source_dir, args);
     } else {
-      var _this$config$bangumi$5, _this$config$bangumi$6;
-      getBiliData({
-        vmid: this.config.bangumi.vmid,
-        type: 'bangumi',
-        showProgress: (_this$config$bangumi$5 = this.config.bangumi.progress) !== null && _this$config$bangumi$5 !== void 0 ? _this$config$bangumi$5 : true,
-        sourceDir: this.source_dir,
-        extraOrder: this.config.bangumi.extraOrder,
-        pagination: this.config.bangumi.pagination,
-        useWebp: this.config.bangumi.webp,
-        coverMirror: (_this$config$bangumi$6 = this.config.bangumi.coverMirror) !== null && _this$config$bangumi$6 !== void 0 ? _this$config$bangumi$6 : '',
-        SESSDATA: typeof args.u === 'string' ? args.u : null
-      });
+      log.info("Unknown command, please use \"hexo ".concat(type, " -h\" to see the available commands"));
     }
-  } else {
-    log.info('Unknown command, please use "hexo bangumi -h" to see the available commands');
-  }
-});
-hexo.extend.console.register('cinema', 'Generate pages of bilibili cinemas for Hexo', options, function (args) {
-  if (args.d) {
-    if (fs.existsSync(path.join(this.source_dir, '/_data/cinemas.json'))) {
-      fs.unlinkSync(path.join(this.source_dir, '/_data/cinemas.json'));
-      log.info('Cinemas data has been deleted');
-    }
-  } else if (args.u) {
-    var _this$config5;
-    if (!(this !== null && this !== void 0 && (_this$config5 = this.config) !== null && _this$config5 !== void 0 && _this$config5.cinema)) {
-      log.info('Please add config to _config.yml');
-      return;
-    }
-    if (!this.config.cinema.enable) {
-      return;
-    }
-    if (!this.config.cinema.vmid) {
-      log.info('Please add vmid to _config.yml');
-      return;
-    }
-    if (['bgm', 'bangumi'].includes(this.config.cinema.source)) {
-      var _this$config$cinema$p, _this$config$cinema$c;
-      getBgmData({
-        vmid: this.config.cinema.vmid,
-        type: "cinema",
-        showProgress: (_this$config$cinema$p = this.config.cinema.progress) !== null && _this$config$cinema$p !== void 0 ? _this$config$cinema$p : true,
-        sourceDir: this.source_dir,
-        extraOrder: this.config.cinema.extraOrder,
-        pagination: this.config.cinema.pagination,
-        proxy: this.config.cinema.proxy,
-        infoApi: this.config.cinema.bgmInfoApi,
-        host: "".concat(this.config.cinema.source, ".tv"),
-        coverMirror: (_this$config$cinema$c = this.config.cinema.coverMirror) !== null && _this$config$cinema$c !== void 0 ? _this$config$cinema$c : ''
-      });
-    } else if (this.config.cinema.source === 'bgmv0') {
-      var _this$config$cinema$p2, _this$config$cinema$c2;
-      getBgmv0Data({
-        vmid: this.config.cinema.vmid,
-        type: 6,
-        showProgress: (_this$config$cinema$p2 = this.config.cinema.progress) !== null && _this$config$cinema$p2 !== void 0 ? _this$config$cinema$p2 : true,
-        sourceDir: this.source_dir,
-        extraOrder: this.config.cinema.extraOrder,
-        pagination: this.config.cinema.pagination,
-        proxy: this.config.cinema.proxy,
-        coverMirror: (_this$config$cinema$c2 = this.config.cinema.coverMirror) !== null && _this$config$cinema$c2 !== void 0 ? _this$config$cinema$c2 : ''
-      });
-    } else {
-      var _this$config$cinema$p3, _this$config$cinema$c3;
-      getBiliData({
-        vmid: this.config.cinema.vmid,
-        type: "cinema",
-        showProgress: (_this$config$cinema$p3 = this.config.cinema.progress) !== null && _this$config$cinema$p3 !== void 0 ? _this$config$cinema$p3 : true,
-        sourceDir: this.source_dir,
-        extraOrder: this.config.cinema.extraOrder,
-        pagination: this.config.cinema.pagination,
-        useWebp: this.config.cinema.webp,
-        coverMirror: (_this$config$cinema$c3 = this.config.cinema.coverMirror) !== null && _this$config$cinema$c3 !== void 0 ? _this$config$cinema$c3 : "",
-        SESSDATA: typeof args.u === 'string' ? args.u : null
-      });
-    }
-  } else {
-    log.info('Unknown command, please use "hexo cinema -h" to see the available commands');
-  }
-});
-hexo.extend.console.register('game', 'Generate pages of games for Hexo', options, function (args) {
-  if (args.d) {
-    if (fs.existsSync(path.join(this.source_dir, '/_data/games.json'))) {
-      fs.unlinkSync(path.join(this.source_dir, '/_data/games.json'));
-      log.info('Games data has been deleted');
-    }
-  } else if (args.u) {
-    var _this$config6, _this$config$game$pro, _this$config$game$cov;
-    if (!(this !== null && this !== void 0 && (_this$config6 = this.config) !== null && _this$config6 !== void 0 && _this$config6.game)) {
-      log.info('Please add config to _config.yml');
-      return;
-    }
-    if (!this.config.game.enable) {
-      return;
-    }
-    if (!this.config.game.vmid) {
-      log.info('Please add vmid to _config.yml');
-      return;
-    }
-    if (this.config.game.source !== 'bgmv0') {
-      log.info("".concat(this.config.bangumi.source, " not support"));
-      return;
-    }
-    getBgmv0Data({
-      vmid: this.config.game.vmid,
-      type: 4,
-      showProgress: (_this$config$game$pro = this.config.game.progress) !== null && _this$config$game$pro !== void 0 ? _this$config$game$pro : true,
-      sourceDir: this.source_dir,
-      extraOrder: this.config.game.extraOrder,
-      pagination: this.config.game.pagination,
-      proxy: this.config.game.proxy,
-      coverMirror: (_this$config$game$cov = this.config.game.coverMirror) !== null && _this$config$game$cov !== void 0 ? _this$config$game$cov : ''
-    });
-  } else {
-    log.info('Unknown command, please use "hexo game -h" to see the available commands');
-  }
+  });
 });

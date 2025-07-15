@@ -1,0 +1,154 @@
+if quote
+    blockquote
+        p!= quote
+
+if pagination
+    script(src="https://pugjs.org/js/pug.js")
+    script(src="https://cdn.jsdelivr.net/npm/axios@0.27.2/dist/axios.min.js")
+
+style
+    include index.css
+    if theme
+        case theme
+            when 'fluid'
+                include theme/fluid.min.css
+            when 'nexmoe'
+                include theme/nexmoe.min.css
+
+.bangumi-tabs
+    a#bangumi-tab1.bangumi-tab(href="javascript:;" rel="external" target="_self" onclick="return false")
+        | #{__(type === 'game' ? 'wantPlay' : 'wantWatch')}
+        | (#{wantWatch.length})
+    a#bangumi-tab2.bangumi-tab(href="javascript:;" rel="external" target="_self" onclick="return false")
+        | #{__(type === 'game' ? 'playing' : 'watching')}
+        | (#{watching.length})
+    a#bangumi-tab3.bangumi-tab(href="javascript:;" rel="external" target="_self" onclick="return false")
+        | #{__(type === 'game' ? 'played' : 'watched')}
+        | (#{watched.length})
+
+div
+    #bangumi-item1
+        if pagination
+            each item in wantWatch.slice(0, 10)
+                case source
+                    when 'bili'
+                        include bili-template.pug
+                    when 'bgmv0'
+                        include bgmv0-template.pug
+                    when 'bgm'
+                        include bgm-template.pug
+                    when 'bangumi'
+                        include bangumi-template.pug
+                    when 'anilist'
+                        include anilist-template.pug
+                    when 'simkl'
+                        include simkl-template.pug
+            include pagination.pug
+        else
+            each item in wantWatch
+                case source
+                    when 'bili'
+                        include bili-template.pug
+                    when 'bgmv0'
+                        include bgmv0-template.pug
+                    when 'bgm'
+                        include bgm-template.pug
+                    when 'bangumi'
+                        include bangumi-template.pug
+                    when 'anilist'
+                        include anilist-template.pug
+                    when 'simkl'
+                        include simkl-template.pug
+            include pagination.pug
+
+    #bangumi-item2
+        if pagination
+            each item in watching.slice(0, 10)
+                case source
+                    when 'bili'
+                        include bili-template.pug
+                    when 'bgmv0'
+                        include bgmv0-template.pug
+                    when 'bgm'
+                        include bgm-template.pug
+                    when 'bangumi'
+                        include bangumi-template.pug
+                    when 'anilist'
+                        include anilist-template.pug
+                    when 'simkl'
+                        include simkl-template.pug
+            include pagination.pug
+        else
+            each item in watching
+                case source
+                    when 'bili'
+                        include bili-template.pug
+                    when 'bgmv0'
+                        include bgmv0-template.pug
+                    when 'bgm'
+                        include bgm-template.pug
+                    when 'bangumi'
+                        include bangumi-template.pug
+                    when 'anilist'
+                        include anilist-template.pug
+                    when 'simkl'
+                        include simkl-template.pug
+            include pagination.pug
+
+    #bangumi-item3
+        if pagination
+            each item in watched.slice(0, 10)
+                case source
+                    when 'bili'
+                        include bili-template.pug
+                    when 'bgmv0'
+                        include bgmv0-template.pug
+                    when 'bgm'
+                        include bgm-template.pug
+                    when 'bangumi'
+                        include bangumi-template.pug
+                    when 'anilist'
+                        include anilist-template.pug
+                    when 'simkl'
+                        include simkl-template.pug
+            include pagination.pug
+        else
+            each item in watched
+                case source
+                    when 'bili'
+                        include bili-template.pug
+                    when 'bgmv0'
+                        include bgmv0-template.pug
+                    when 'bgm'
+                        include bgm-template.pug
+                    when 'bangumi'
+                        include bangumi-template.pug
+                    when 'anilist'
+                        include anilist-template.pug
+                    when 'simkl'
+                        include simkl-template.pug
+            include pagination.pug
+
+script.
+    window.hexoBilibiliBangumiOptions = {
+        bangumiLazyload: #{!!lazyload},
+        show: #{show}
+    }
+    if (#{pagination}) {
+        hexoBilibiliBangumiOptions.pugTemplate = `!{pugTemplate}`;
+        hexoBilibiliBangumiOptions.pugOptions = {
+            loading: '#{loading}',
+            metaColor: '#{metaColor}',
+            type: '#{type}',
+            color: '#{color}',
+            lazyload: #{!!lazyload},
+            showMyComment: #{showMyComment},
+            lazyloadAttrName: '#{lazyloadAttrName || ''}',
+            srcValue: '#{srcValue}'
+        }
+        hexoBilibiliBangumiOptions.pagenumsPre = #{JSON.stringify([wantWatch.length, watching.length, watched.length])};
+        hexoBilibiliBangumiOptions.pug = require('pug');
+    }
+script
+    include index.js
+    include pagination.js

@@ -1,6 +1,15 @@
-'use strict';
+/*
+ * @Author       : HCLonely
+ * @Date         : 2024-09-11 15:40:57
+ * @LastEditTime : 2025-07-10 17:50:02
+ * @LastEditors  : HCLonely
+ * @FilePath     : /hexo-bilibili-bangumi/src/lib/bangumi-generator.js
+ * @Description  : Hexo页面生成器模块，负责生成番剧、影视和游戏的展示页面。
+ *                 支持多种数据源模板（B站、Bangumi、AniList），可配置主题样式、
+ *                 分页、排序、懒加载等功能，并支持额外数据的混合展示。
+ */
 
-const ejs = require('ejs');
+const pug = require('pug');
 const path = require('path');
 const { i18n } = require('./util');
 const fs = require('hexo-fs');
@@ -18,7 +27,7 @@ module.exports = async function (locals, type = 'bangumi') {
   if (!config?.[type]?.enable) {
     return;
   }
-  // eslint-disable-next-line camelcase
+
   const full_url_for = this.extend.helper.get('full_url_for').bind(this);
 
   let { root } = config;
@@ -66,12 +75,20 @@ module.exports = async function (locals, type = 'bangumi') {
   // eslint-disable-next-line no-underscore-dangle
   const __ = i18n.__(config.language);
 
-  const contents = await ejs.renderFile(path.join(__dirname, 'templates/bangumi.ejs'), {
+  const TEMPLATE_MAP = {
+    bili: 'bili-template.pug',
+    bgmv0: 'bgmv0-template.pug',
+    bgm: 'bgm-template.pug',
+    bangumi: 'bgm-template.pug',
+    anilist: 'anilist-template.pug',
+    simkl: 'simkl-template.pug'
+  };
+  const contents = await pug.renderFile(path.join(__dirname, 'templates/bangumi.pug'), {
     quote: config[type].quote,
     show: config[type].show || 1,
     loading: config[type].loading,
     metaColor: config[type].metaColor,
-    color: config[type].color ,
+    color: config[type].color,
     lazyload: config[type].lazyload ?? true,
     lazyloadAttrName: config[type].lazyloadAttrName,
     srcValue: config[type].srcValue || '__image__',
@@ -80,14 +97,17 @@ module.exports = async function (locals, type = 'bangumi') {
     pagination: config[type].pagination ?? false,
     progressBar: config[type].progressBar ?? true,
     theme: fs.existsSync(path.join(__dirname, `templates/theme/${config.theme}.min.css`)) ? config.theme : null,
-    ejsTemplate: fs.readFileSync(path.join(__dirname, `templates/${config[type].source === 'bili' ? 'bili' : (config[type].source === 'bgmv0' ? 'bgmv0' : 'bgm')}-template.ejs`)).toString()
-      .replace('class="bangumi-item"', 'class="bangumi-item bangumi-hide"'),
+    pugTemplate: config[type].pagination ? fs.readFileSync(path.join(__dirname, `templates/${TEMPLATE_MAP[config[type].source]}`)).toString()
+      .replace('.bangumi-item', '.bangumi-item.bangumi-hide')
+      // .replace(/=\s*?__\('(.+?)'\)/g, (match, key) => ` ${__(key)}`)
+      .replace(/__\('(.+?)'\)/g, (match, key) => `('${__(key)}')`) : '',
     wantWatch: ['score', '-score'].includes(config[type].order) ? wantWatch.sort((a, b) => (config[type].order === 'score' ? (a.score - b.score) : (b.score - a.score))) : wantWatch,
     watched: ['score', '-score'].includes(config[type].order) ? watched.sort((a, b) => (config[type].order === 'score' ? (a.score - b.score) : (b.score - a.score))) : watched,
     watching: ['score', '-score'].includes(config[type].order) ? watching.sort((a, b) => (config[type].order === 'score' ? (a.score - b.score) : (b.score - a.score))) : watching,
     type,
     __,
-    root
+    root,
+    basedir: process.cwd()
   }, { async: false });
 
   const customPath = config[type].path || (`${type}s/index.html`);

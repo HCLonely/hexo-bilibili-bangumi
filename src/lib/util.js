@@ -1,9 +1,19 @@
+/*
+ * @Author       : HCLonely
+ * @Date         : 2024-09-11 15:40:57
+ * @LastEditTime : 2025-07-10 15:01:36
+ * @LastEditors  : HCLonely
+ * @FilePath     : /hexo-bilibili-bangumi/src/lib/util.js
+ * @Description  : 工具函数模块，提供多语言支持功能。包含中文（简体、繁体）和英文的
+ *                 界面文本翻译，支持番剧、影视和游戏相关的状态、分页和详情页面文本。
+ */
+
 'use strict';
 
 const I18N = require('hexo-i18n');
 
 const i18n = new I18N({
-  languages: ['zh-CN', 'zh-TW', 'en']
+  languages: ['zh-CN', 'zh-TW', 'zh-Hans', 'en']
 });
 
 i18n.set('en', {
@@ -28,7 +38,9 @@ i18n.set('en', {
   view: 'Views',
   coin: 'Coins',
   danmaku: 'Danmaku',
-  myScore: 'My Score' // Added myScore translation
+  myScore: 'My Score',
+  area: 'Area',
+  year: 'Year'
 });
 
 i18n.set('zh-TW', {
@@ -53,7 +65,9 @@ i18n.set('zh-TW', {
   view: '總播放',
   coin: '硬幣',
   danmaku: '彈幕',
-  myScore: '我的評分' // Added myScore translation
+  myScore: '我的評分',
+  area: '地區',
+  year: '年份'
 });
 
 i18n.set('zh-Hans', {
@@ -78,7 +92,9 @@ i18n.set('zh-Hans', {
   view: '总播放',
   coin: '硬币',
   danmaku: '弹幕',
-  myScore: '我的评分' // Added myScore translation
+  myScore: '我的评分',
+  area: '地区',
+  year: '年份'
 });
 
 i18n.set('zh-CN', {
@@ -103,7 +119,9 @@ i18n.set('zh-CN', {
   view: '总播放',
   coin: '硬币',
   danmaku: '弹幕',
-  myScore: '我的评分' // Added myScore translation
+  myScore: '我的评分',
+  area: '地区',
+  year: '年份'
 });
 
 module.exports.i18n = i18n;

@@ -1,4 +1,14 @@
-/* eslint-disable no-plusplus, func-style */
+/*
+ * @Author       : HCLonely
+ * @Date         : 2024-09-11 15:40:57
+ * @LastEditTime : 2025-07-09 20:36:29
+ * @LastEditors  : HCLonely
+ * @FilePath     : /hexo-bilibili-bangumi/src/lib/templates/pagination.js
+ * @Description  : 分页功能实现脚本，提供首页、上一页、下一页、末页等导航功能。
+ *                 实现了页码显示、页面内容切换、图片懒加载等功能，每页显示10条数据，
+ *                 支持自定义预加载数据量配置。
+ */
+
 (function () {
   const firstpages = document.getElementsByClassName('bangumi-firstpage');
   const previouspages = document.getElementsByClassName('bangumi-previouspage');
@@ -52,7 +62,7 @@
       if (Math.floor(i / 10) === num) {
         arr[i].classList.remove('bangumi-hide');
         const [img] = arr[i].getElementsByTagName('img');
-        if (bangumiLazyload) {
+        if (hexoBilibiliBangumiOptions.bangumiLazyload) {
           img.src = img.getAttribute('data-src');
         }
       } else {
@@ -69,7 +79,7 @@
     lastpages[i].onclick = lastBtn;
 
     // set page num
-    const size = typeof pagenumsPre !== 'undefined' ? (pagenumsPre[i] ?? pagenums[i].parentNode.siblings().length) : pagenums[i].parentNode.siblings().length;
+    const size = typeof hexoBilibiliBangumiOptions.pagenumsPre !== 'undefined' ? (hexoBilibiliBangumiOptions.pagenumsPre[i] ?? pagenums[i].parentNode.siblings().length) : pagenums[i].parentNode.siblings().length;
     firstpages[i].click();
     pagenums[i].innerText = `1 / ${Math.ceil(size / 10) === 0 ? 1 : Math.ceil(size / 10)}`;
   }

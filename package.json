@@ -1,12 +1,15 @@
 {
   "name": "hexo-bilibili-bangumi",
-  "version": "1.11.1",
+  "version": "2.0.0",
   "description": "hexo bilibili番剧页",
   "main": "index.js",
   "scripts": {
-    "test": "standard --fix && ejslint lib/templates/*.ejs",
-    "build": "babel src/index.js --out-file index.js && babel src/lib/util.js --out-file lib/util.js && babel src/lib/get-bili-data.js --out-file lib/get-bili-data.js && babel src/lib/get-bgm-data.js --out-file lib/get-bgm-data.js && babel src/lib/get-bgmv0-data.js --out-file lib/get-bgmv0-data.js && babel src/lib/bangumi-generator.js --out-file lib/bangumi-generator.js && babel src/lib/templates/index.js --out-file lib/templates/index.js --presets minify && babel --no-babelrc src/lib/templates/pagination.js --out-file lib/templates/pagination.js --presets minify && cleancss src/lib/templates/index.css -O2 -o lib/templates/index.css && cleancss --batch src/lib/templates/theme/*.css  --batch-suffix .min -O2 -o lib/templates/theme/",
-    "ejslint": "ejslint lib/templates/*.ejs"
+    "test": "eslint --fix && npm run puglint",
+    "build": "node scripts/babel.js && node scripts/cleancss.js && node scripts/copy-pug.js",
+    "puglint": "glob-exec \"./src/lib/templates/*.pug\" -- \"pug-lint {{files.join(' ')}}\"",
+    "cpPug": "node scripts/copy-pug.js",
+    "babel": "node scripts/babel.js",
+    "cleancss": "node scripts/cleancss.js"
   },
   "author": "HCLonely <h1606051253@gmail.com>",
   "license": "Apache Licence 2.0",
@@ -23,11 +26,11 @@
     "axios": "^1.0.0",
     "bangumi-data": "^0.3.91",
     "cheerio": "^1.0.0-rc.11",
-    "ejs": "3.1.10",
     "hexo-fs": "^5.0.0",
     "hexo-i18n": "^2.0.0",
     "hexo-log": "^4.0.1",
     "progress": "^2.0.3",
+    "pug": "^3.0.3",
     "tunnel": "^0.0.6"
   },
   "repository": {
@@ -35,13 +38,16 @@
     "url": "git+https://github.com/HCLonely/hexo-bilibili-bangumi.git"
   },
   "devDependencies": {
-    "@babel/cli": "^7.17.10",
     "@babel/core": "^7.18.0",
     "@babel/plugin-transform-runtime": "^7.18.0",
     "@babel/preset-env": "^7.18.0",
+    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/js": "^9.30.1",
     "babel-preset-minify": "^0.5.2",
-    "clean-css-cli": "^5.6.0",
-    "ejs-lint": "^2.0.0",
-    "eslint": "^9.0.0"
+    "clean-css": "^5.3.3",
+    "eslint": "^9.0.0",
+    "glob-exec": "^0.1.1",
+    "globals": "^16.3.0",
+    "pug-lint": "^2.7.0"
   }
 }

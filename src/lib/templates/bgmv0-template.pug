@@ -1,0 +1,50 @@
+.bangumi-item
+  .bangumi-picture
+    img(
+      src=lazyload ? (loading || "https://cdn.jsdelivr.net/npm/hexo-bilibili-bangumi@1.2.0/lib/img/loading.gif") : (srcValue === '__loading__' ? (loading || "https://cdn.jsdelivr.net/npm/hexo-bilibili-bangumi@1.2.0/lib/img/loading.gif") : 'https:' + item.cover.replace(/^https:/, ''))
+      data-src=lazyload ? item.cover : null
+      referrerpolicy="no-referrer"
+      width="110"
+      style="width:110px;margin:20px auto;"
+    )
+  .bangumi-info
+    .bangumi-title
+      a(target="_blank" href='https://bangumi.tv/subject/' + item.id)= item.title || __('unknown')
+    .bangumi-meta
+      span.bangumi-info-items(style=metaColor ? 'color:' + metaColor + ';' : '')
+        if item.totalCount && item.type !== '游戏'
+          span.bangumi-info-item
+            span.bangumi-info-total= item.totalCount ? '全' + item.totalCount + '话' : '-'
+            em.bangumi-info-label-em 0
+        span.bangumi-info-item.bangumi-type
+          span.bangumi-info-label= __('type')
+          em= item.type
+        span.bangumi-info-item.bangumi-tag
+          span.bangumi-info-label= __('tag')
+          em= item.tags
+        span.bangumi-info-item.bangumi-info-item-follow
+          span.bangumi-info-label= __('follow')
+          em= item.collect || "-"
+        span.bangumi-info-item.bangumi-info-item-score
+          span.bangumi-info-label= __('score')
+          em= item.score || "-"
+
+    if item.type !== '游戏' && progressBar !== false
+      .bangumi-progress(style="margin-top:10px;")
+        .bangumi-progress-text 追#{type === 'bangumi' ? '番' : '剧'}进度：#{item.ep_status}/#{item.totalCount}
+        .progress-bar(style='width: ' + (item.progress > 100 ? 100 : item.progress) + '%;')
+
+    .bangumi-summary(style=color ? 'color:' + color + ';' : '')
+      p(class=progressBar ? 'has-bangumi-progress' : '')= __('summary') + '：' + (item.des || __('noSummary'))
+
+  if showMyComment && (item.myComment || item.myStars)
+    .bangumi-comments(style=color ? 'color:' + color + ';' : '')
+      .bangumi-my-comments
+        | #{__('myScore')}：
+        if item.myStars
+          span.bangumi-starstop
+            span(class='bangumi-starlight stars' + item.myStars)
+        else
+          | 暂无
+        br
+        | #{__('comment')}：#{item.myComment || '暂无'}

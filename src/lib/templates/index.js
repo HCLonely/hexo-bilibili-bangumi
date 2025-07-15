@@ -1,4 +1,14 @@
-/* eslint-disable no-plusplus */
+/*
+ * @Author       : HCLonely
+ * @Date         : 2024-09-11 15:40:57
+ * @LastEditTime : 2025-07-09 20:36:01
+ * @LastEditors  : HCLonely
+ * @FilePath     : /hexo-bilibili-bangumi/src/lib/templates/index.js
+ * @Description  : 前端页面交互脚本，实现标签页切换和分页加载功能。
+ *                 包含自定义DOM操作方法、标签页点击事件处理，以及
+ *                 通过AJAX异步加载更多数据的分页功能。
+ */
+
 (function () {
   Element.prototype.siblings = function () {
     const siblingElement = [];
@@ -10,7 +20,7 @@
     }
     return siblingElement;
   };
-  // eslint-disable-next-line func-style
+
   function tabClick() {
     // 修改标签样式
     this.classList.add('bangumi-active');
@@ -35,15 +45,24 @@
     tabs[i].onclick.apply(tabs[i]);
   }
 
-  if (typeof pagenumsPre !== 'undefined') {
+  if (typeof hexoBilibiliBangumiOptions.pagenumsPre !== 'undefined') {
     axios.get(new URL('../bangumis.json', window.location.href)).then((response) => {
       if (response.data) {
         const html = {
-          wantWatch: response.data.wantWatch.slice(10).map((item) => ejs.render(ejsTemplate, { item, loading, metaColor, type }))
+          wantWatch: response.data.wantWatch.slice(10).map((item) => hexoBilibiliBangumiOptions.pug.render(hexoBilibiliBangumiOptions.pugTemplate, {
+            item,
+            ...hexoBilibiliBangumiOptions.pugOptions
+          }))
             .join('\n'),
-          watching: response.data.watching.slice(10).map((item) => ejs.render(ejsTemplate, { item, loading, metaColor, type }))
+          watching: response.data.watching.slice(10).map((item) => hexoBilibiliBangumiOptions.pug.render(hexoBilibiliBangumiOptions.pugTemplate, {
+            item,
+            ...hexoBilibiliBangumiOptions.pugOptions
+          }))
             .join('\n'),
-          watched: response.data.watched.slice(10).map((item) => ejs.render(ejsTemplate, { item, loading, metaColor, type }))
+          watched: response.data.watched.slice(10).map((item) => hexoBilibiliBangumiOptions.pug.render(hexoBilibiliBangumiOptions.pugTemplate, {
+            item,
+            ...hexoBilibiliBangumiOptions.pugOptions
+          }))
             .join('\n')
         };
         document.querySelectorAll('#bangumi-item1>.bangumi-pagination')[0].insertAdjacentHTML('beforeBegin', html.wantWatch);
@@ -52,4 +71,6 @@
       }
     });
   }
+
+  document.getElementsByClassName('bangumi-tab')[hexoBilibiliBangumiOptions.show].click();
 }());

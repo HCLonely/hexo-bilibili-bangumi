@@ -63,11 +63,18 @@ a.bangumi-tab {
   word-break: break-all;
   text-overflow: ellipsis;
   overflow: hidden;
-
+  height: 72px;
   white-space: normal;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
+  line-clamp: 3;
+}
+
+.bangumi-summary>p.has-bangumi-progress {
+  height: 48px;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
 }
 
 .bangumi-comments {

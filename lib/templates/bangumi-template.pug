@@ -1,0 +1,46 @@
+.bangumi-item
+    .bangumi-picture
+        img(
+            src=lazyload ? (loading || "https://cdn.jsdelivr.net/npm/hexo-bilibili-bangumi@1.2.0/lib/img/loading.gif") : (srcValue === '__loading__' ? (loading || "https://cdn.jsdelivr.net/npm/hexo-bilibili-bangumi@1.2.0/lib/img/loading.gif") : 'https:' + item.cover.replace(/^https:/, ''))
+            data-src=lazyload ? item.cover : null
+            referrerpolicy="no-referrer"
+            width="110"
+            style="width:110px;margin:20px auto;"
+        )&attributes(lazyload ? {} : (lazyloadAttrName ? {[lazyloadAttrName.split('=')[0]]: lazyloadAttrName.split('=')[1] === '__loading__' ? (loading || "https://cdn.jsdelivr.net/npm/hexo-bilibili-bangumi@1.2.0/lib/img/loading.gif") : (lazyloadAttrName.split('=')[1] === '__image__' ? 'https:' + item.cover.replace(/^https:/, '') : (lazyloadAttrName.split('=')[1] || ''))} : {}))
+    .bangumi-info
+        .bangumi-title
+            a(target="_blank" href='https://bangumi.tv/subject/' + item.id)= item.title || __('unknown')
+        .bangumi-meta
+            span.bangumi-info-items(style=metaColor ? 'color:' + metaColor + ';' : '')
+                if item.totalCount
+                    span.bangumi-info-item
+                        span.bangumi-info-total= item.totalCount
+                        em.bangumi-info-label-em 0
+                span.bangumi-info-item.bangumi-type
+                    span.bangumi-info-label= __('type')
+                    em= item.type
+                span.bangumi-info-item.bangumi-wish
+                    span.bangumi-info-label= __('wantWatch')
+                    em= item.wish
+                span.bangumi-info-item.bangumi-doing
+                    span.bangumi-info-label= __('watching')
+                    em= item.doing || "-"
+                span.bangumi-info-item.bangumi-collect
+                    span.bangumi-info-label= __('watched')
+                    em= item.collect || "-"
+                span.bangumi-info-item.bangumi-info-item-score
+                    span.bangumi-info-label= __('score')
+                    em= item.score || "-"
+        .bangumi-summary(style=color ? 'color:' + color + ';' : '')
+            p #{__('summary')}：#{item.des || __('noSummary')}
+    if showMyComment && (item.myComment || item.myStars)
+        .bangumi-comments(style=color ? 'color:' + color + ';' : '')
+            .bangumi-my-comments
+                | #{__('myScore')}：
+                if item.myStars
+                    span.bangumi-starstop
+                        span(class='bangumi-starlight stars' + item.myStars)
+                else
+                    | 暂无
+                br
+                | #{__('comment')}：#{item.myComment || '暂无'}

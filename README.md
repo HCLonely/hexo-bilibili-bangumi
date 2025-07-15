@@ -1,24 +1,65 @@
 # hexo-bilibili-bangumi
 
-![](https://nodei.co/npm/hexo-bilibili-bangumi.png?downloads=true&downloadRank=true&stars=true)
+[![npm](https://nodei.co/npm/hexo-bilibili-bangumi.png?downloads=true&downloadRank=true&stars=true)](https://www.npmjs.com/package/hexo-bilibili-bangumi)
+[![NPM version](https://img.shields.io/npm/v/hexo-bilibili-bangumi.svg)](https://www.npmjs.com/package/hexo-bilibili-bangumi)
+[![NPM Downloads](https://img.shields.io/npm/dm/hexo-bilibili-bangumi.svg)](https://www.npmjs.com/package/hexo-bilibili-bangumi)
+[![GitHub license](https://img.shields.io/github/license/HCLonely/hexo-bilibili-bangumi)](https://github.com/HCLonely/hexo-bilibili-bangumi/blob/master/LICENSE)
 
-## 介绍
+## 💡 介绍
 
-**为 Hexo 添加[哔哩哔哩](https://www.bilibili.com/)/[Bangumi](https://bangumi.tv/)追番/追剧页面，参考自[hexo-douban](https://github.com/mythsman/hexo-douban)**.
+为 Hexo 博客添加追番/追剧页面。
 
-[Demo](https://demo.hclonely.com/bangumis/)
+- ✨ 支持多个数据源（哔哩哔哩、Bangumi、AniList、Simkl）
+- 🎨 支持自定义样式
+- 🚀 支持图片懒加载
+- 📊 支持进度展示
+- 🔄 支持数据自动更新
+- 📱 响应式设计
+- 🖼️ 支持图片镜像缓存
+- 📄 支持手动添加数据
 
-## 安装
+[效果预览](https://demo.hclonely.com/bangumis/)
+
+## 📦 安装
 
 ```bash
 npm install hexo-bilibili-bangumi --save
 ```
 
-------------
+## ⚙️ 配置
 
-## 配置
+### 基础配置
 
-将下面的配置写入站点的配置文件 `_config.yml` 里(不是主题的配置文件).
+将以下配置写入站点的配置文件 `_config.yml` 中（不是主题的配置文件）：
+
+```yaml
+bangumi: # 追番设置
+  enable: true           # 是否启用
+  source: bili          # 数据源
+  path: bangumis/index.html  # 页面路径
+  vmid:                 # 用户ID
+  title: '追番列表'      # 页面标题
+  quote: '生命不息，追番不止！' # 页面引言
+  show: 1              # 初始显示页面: 0=想看, 1=在看, 2=看过
+  lazyload: true       # 是否启用图片懒加载
+  loading:             # 加载动画
+  metaColor:           # meta 信息字体颜色
+  color:               # 简介字体颜色
+  webp: true          # 是否使用 webp 格式图片
+  progress: true      # 是否显示进度条
+  ...
+cinema: # 追剧设置
+  enable: true           # 是否启用
+  source: bili
+  ...
+game: # 游戏设置，仅支持source: bgmv0
+  enable: true           # 是否启用
+  source: bgmv0
+  ...
+```
+
+<details>
+<summary>详细配置</summary>
 
 ``` yaml
 bangumi: # 追番设置
@@ -94,119 +135,231 @@ game: # 游戏设置，仅支持source: bgmv0
   coverMirror:
 ```
 
-> 带*为必填选项！
+</details>
 
-- **enable**: 是否启用
-- **source**: 数据源，仅支持追番，追剧仅支持哔哩哔哩源。`bili`: [哔哩哔哩源](https://www.bilibili.com/), `bgmv0`: **建议**[Bgm Api源(api.bgm.tv)](https://bgm.tv/), `bangumi`: [Bangumi源(bangumi.tv)](https://bangumi.tv/), `bgm`: [Bangumi源(bgm.tv)](https://bgm.tv/)
-- **bgmInfoApi**: 获取Bangumi番剧信息时使用的Api，仅使用Bangumi源时此选项生效。`bgmApi`: [Bangumi Api](https://github.com/bangumi/api/), `bgmSub`: [Bangumi-Subject](https://github.com/czy0729/Bangumi-Subject)
-- **proxy**: 代理设置，仅在使用支持`bgm`源追番时生效。默认`false`
-- **path**: 页面路径，默认`bangumis/index.html`, `cinemas/index.html`
-- **vmid**: 哔哩哔哩的 `vmid(uid)`[如何获取？](#获取-bilibili-uid)/Bangumi的用户`用户名`(source为`bgmv0`时使用)[如何获取？](#获取-bangumi-用户名)/Bangumi的用户`id`(source为`bgm`或`bangumi`时使用)[如何获取？](#获取-bangumi-id)
-- **title**: 该页面的标题
-- **quote**: 写在页面开头的一段话，支持 html 语法，可留空。
-- **show**: 初始显示页面：`0: 想看`, `1: 在看`, `2: 看过`，默认为`1`
-- **lazyload**: 是否启用图片懒加载，如果与主题的懒加载冲突请关闭，默认`true`
-- **srcValue**: 设置封面图的默认`src`值, `__image__`为封面链接, `__loading__`为loading图片链接, `lazyload`选项为`false`时此选项生效
-- **lazyloadAttrName**: 设置封面图的属性与属性值, 例`lazyloadAttrName: 'data-src=__image__'`代表为`img`元素添加`data-src`属性, 其值为图片链接, `lazyload`选项为`false`时此选项生效
-- **loading**: 图片加载完成前的 loading 图片，需启用图片懒加载
-- **metaColor**: meta 部分(简介上方)字体颜色（十六进制的颜色代码需要添加引号：`metaColor: '#FFFFFF'`）
-- **color**: 简介字体颜色
-- **webp**: 番剧封面使用`webp`格式(此格式在`safari`浏览器下不显示，但是图片大小可以缩小 100 倍左右，仅支持哔哩哔哩源), 默认`true`
-- **progress**: 获取番剧数据时是否显示进度条，默认`true`
-- **progressBar**: 追番页面是否显示进度条，默认`true`。仅支持`bili`和`bgmv0`数据源
-- **extraOrder**: 手动添加的番剧/追剧数据是否优先显示，`1`为优先，其它为不优先
-- **showMyComment**: 使用`bgm`源时显示自己的评价及评论，默认`false`
-- **pagination**: 分页优化，只将第一页的数据渲染到`html`文件中，其余数据将通过异步请求加载，避免番剧过多时html文件过大导致页面加载缓慢，建议番剧较多时使用，默认`false`
-- **order**: 排序，支持`latest`(默认，按添加时间排序), `score`(评分升序), `-score`(评分降序)
-- **extra_options**: 此配置会扩展到Hexo`page`变量中
-- **coverMirror**: 封面镜像缓存配置，默认为空。追番，追剧需分别配置。可以将有防盗链的图片引用到网页，并成功显示。可以将 http 图片引用到 https 页面而不出现证书问题。可以将 xxx 的图片，成功加载。可以将比较慢的图片资源，加快显示。可以使用自建或者是第三方的图片镜像服务，例如`https://image.baidu.com/search/down?url=`百度的接口，但是图片大小不能超过5M(据说不稳定，个人目前使用没啥问题)。其他镜像地址收集之网络，未全部测试。推荐在出现403错误时或者图片加载特别慢时使用。
+### 详细参数说明
 
-```text
-# 图片镜像服务
-https://image.baidu.com/search/down?url=
-https://img.noobzone.ru/getimg.php?url=
-https://images.weserv.nl/?url=
-https://collect34.longsunhd.com/source/plugin/yzs1013_pldr/getimg.php?url=
-https://pic1.xuehuaimg.com/proxy/
-https://search.pstatic.net/common?src=
+#### 基础参数
+
+| 参数名 | 类型 | 默认值 | 说明 |
+|-------|------|--------|------|
+| enable | boolean | false | 是否启用该功能 |
+| source | string | 'bili' | 数据源选择。`bili`: [哔哩哔哩源](https://www.bilibili.com/), `bgmv0`: [Bgm Api源(api.bgm.tv)](https://bgm.tv/), `bangumi`: [Bangumi源(bangumi.tv)](https://bangumi.tv/), `bgm`: [Bangumi源(bgm.tv)](https://bgm.tv/), `anilist`: [AniList源](https://anilist.co/), `simkl`: [Simkl源](https://simkl.com/) |
+| path | string | 'bangumis/index.html' | 生成页面的路径 |
+| vmid | string/number | - | 用户Id。[如何获取](#-获取用户-id) |
+| title | string | '追番列表' | 页面标题 |
+| quote | string | '生命不息，追番不止！' | 页面顶部的引言，支持HTML |
+
+#### 显示控制
+
+| 参数名 | 类型 | 默认值 | 说明 |
+|-------|------|--------|------|
+| show | number | 1 | 初始显示的内容类型：0=想看，1=在看，2=看过 |
+| lazyload | boolean | true | 是否启用图片懒加载，可避免首次加载时间过长 |
+| srcValue | string | '\_\_image\_\_' | 设置封面图的默认src值，`__image__`为封面链接，`__loading__`为loading图片链接 |
+| lazyloadAttrName | string | 'data-src=\_\_image\_\_' | 懒加载属性名称和值的格式 |
+| loading | string | - | 加载中显示的图片URL |
+| metaColor | string | - | meta信息的字体颜色，支持CSS颜色值（如'#FFFFFF'） |
+| color | string | - | 简介文字的字体颜色 |
+
+#### 图片处理
+
+| 参数名 | 类型 | 默认值 | 说明 |
+|-------|------|--------|------|
+| webp | boolean | true | 是否使用webp格式图片（仅支持哔哩哔哩源，可大幅减小图片体积） |
+| coverMirror | string | - | 封面图片镜像服务地址，用于解决防盗链、跨域等问题([图片镜像服务](#图片镜像服务)) |
+
+#### 进度显示
+
+| 参数名 | 类型 | 默认值 | 说明 |
+|-------|------|--------|------|
+| progress | boolean | true | 是否显示数据获取进度条 |
+| progressBar | boolean | true | 是否在追番页面显示观看进度条（仅支持bili和bgmv0源） |
+
+#### 数据处理
+
+| 参数名 | 类型 | 默认值 | 说明 |
+|-------|------|--------|------|
+| pagination | boolean | false | 是否启用分页优化，建议番剧数量较多时启用 |
+| order | string | - | 排序方式：score=评分升序，-score=评分降序 ，其他=默认顺序|
+| extraOrder | number | - | 手动添加数据的显示顺序：1=优先显示，其他=默认顺序 |
+| showMyComment | boolean | false | 是否显示个人评论（仅支持bgm、anilist源） |
+
+#### 代理设置
+
+| 参数名 | 类型 | 默认值 | 说明 |
+|-------|------|--------|------|
+| proxy.host | string | - | 代理服务器地址 |
+| proxy.port | number | - | 代理服务器端口 |
+
+#### 扩展选项
+
+| 参数名 | 类型 | 默认值 | 说明 |
+|-------|------|--------|------|
+| extra_options | object | - | 扩展配置，会被注入到Hexo的page变量中 |
+| bgmInfoApi | string | 'bgmApi' | Bangumi信息源：`bgmApi`: [Bangumi Api](https://github.com/bangumi/api/), `bgmSub`: [Bangumi-Subject](https://github.com/czy0729/Bangumi-Subject) |
+
+### 图片镜像服务
+
+当遇到图片加载失败（403错误）或加载缓慢时，可以配置 `coverMirror` 使用镜像服务：
+
+```yaml
+coverMirror: 'https://image.baidu.com/search/down?url='  # 示例配置
 ```
 
-## 使用
+推荐的镜像服务地址：
 
-> 仅`bili`和`bgmv0`源支持在追番页面显示追番进度。
+```text
+https://image.baidu.com/search/down?url=     # 百度镜像（限制5MB）
+https://images.weserv.nl/?url=               # Weserv
+https://pic1.xuehuaimg.com/proxy/            # 雪花镜像
+https://search.pstatic.net/common?src=       # Naver镜像
+```
 
-1. 在`hexo generate`或`hexo deploy`之前使用`hexo bangumi -u`命令更新追番数据，使用`hexo cinema -u`命令更新追剧数据！
+## 🚀 使用方法
 
-    - 使用bili源时，如果要在追番页面显示追番进度，需使用`hexo bangumi -u 'SESSDATA'`, `SESSDATA`替换为哔哩哔哩cookie中的`SESSDATA`值。例`hexo bangumi -u 'df***EC'`
+### 更新数据
 
-2. 删除数据命令:`hexo bangumi -d`/`hexo cinema -d`
+在生成或部署博客之前，需要更新追番/追剧数据：
 
-## 获取 Bilibili uid
+```bash
+# 更新追番数据
+hexo bangumi -u
 
-登录哔哩哔哩后前往[https://space.bilibili.com/](https://space.bilibili.com/)页面，网址最后的一串数字就是 `uid`
+# 使用 bili 源时显示追番进度（需要 SESSDATA）
+hexo bangumi -u 'your_sessdata_here'
 
-***需要将追番列表设置为公开！***
+# 更新追剧数据
+hexo cinema -u
 
-## 获取 Bangumi 用户名
+# 更新游戏数据
+hexo game -u
+```
 
-登录[Bangumi](https://bangumi.tv/)后打开控制台(`Ctrl`+`Shift`+`J`)，输入`document.getElementById('header').getElementsByTagName('a')[0].getAttribute('href').split('/').at(-1)`回车，下面会输出`用户名`
+### 删除数据
 
-## 获取 Bangumi id
+```bash
+# 删除追番数据
+hexo bangumi -d
 
-登录[Bangumi](https://bangumi.tv/)后打开控制台(`Ctrl`+`Shift`+`J`)，输入`CHOBITS_UID`回车，下面会输出`id`
+# 删除追剧数据
+hexo cinema -d
 
-## 示例
+# 删除游戏数据
+hexo game -d
+```
 
-![示例图片](https://github.com/HCLonely/hexo-bilibili-bangumi/raw/master/example.png)
+## 📝 手动添加数据
 
-## 手动添加番剧/追剧数据
-因为某些番剧在哔哩哔哩上没有，但是又想在hexo中展示，怎么办呢？现在支持手动添加番剧数据了！
-
-在 `sources/_data/` 目录下新建文件，命名为 `extra_bangumis.json`(追番数据)或`extra_cinemas.json`(追剧数据) ，并添加如下内容:
+在 `source/_data/` 目录下创建 `extra_bangumis.json`（追番）或 `extra_cinemas.json`（追剧）：
 
 ```json
 {
   "watchedExtra": [
     {
-      "title": "缘之空",
+      "title": "番剧标题",
       "type": "番剧",
       "area": "日本",
-      "cover": "https://cdn.jsdelivr.net/gh/mmdjiji/bangumis@main/Yosuga-no-Sora/cover.jpg",
+      "cover": "封面图片链接",
       "totalCount": "全12话",
-      "id": 0,
       "link": "https://example.com/xxx",
-      "follow": "不可用",
-      "view": "不可用",
-      "danmaku": "不可用",
-      "coin": "不可用",
-      "score": "不可用",
-      "des": "远离都市的田园小镇，奥木染。春日野悠带着妹妹穹，来到了这座城镇。坐落在这里的是，儿时暑假经常造访的充满回忆的已故祖父的家。双亲因意外事故而丧生，变得无依无靠..."
+      "des": "简介内容..."
     }
   ]
 }
 ```
 
-`title` 是番剧的标题，`cover` 是封面图链接， `des` 是简介，上述字段均根据需要修改。
+可用数组名：
 
-另外除了 `watchedExtra` 数组，还可以在后面添加新的数组，可用数组名如下:
+- `wantWatchExtra`: 想看
+- `watchingExtra`: 在看
+- `watchedExtra`: 看过
 
-|可用数组名|含义|
-|-|-|
-|wantWatchExtra|想看|
-|watchingExtra|在看|
-|watchedExtra|看过|
+## 🔍 获取用户 ID
 
-需要注意，在两个数组之间需要用 `,` 分隔。
+<details>
+<summary>哔哩哔哩 UID</summary>
 
-## 多主题兼容
+1. 登录 [哔哩哔哩](https://www.bilibili.com/)
+2. 访问 [个人空间](https://space.bilibili.com/)
+3. 网址最后的数字即为 UID
+4. **注意：** 需要将追番列表设为公开
 
-1. [Fork](https://github.com/HCLonely/hexo-bilibili-bangumi/fork)此项目并克隆到本地；
-2. 进入项目目录并安装依赖`npm install`;
-3. 在`src/lib/templates/theme/`目录内添加`主题.css`文件（例：`butterfly.css`）；
-4. 在`主题.css`文件内添加主题兼容样式表；
-5. 运行命令`npm run build`;
-6. 提交PR.
+</details>
 
-## License
+<details>
+<summary>Bangumi 用户名</summary>
 
-[Apache Licence 2.0](https://github.com/HCLonely/hexo-bilibili-bangumi/blob/master/LICENSE)
+1. 登录 [Bangumi](https://bangumi.tv/)
+2. 打开控制台 (Ctrl + Shift + J)
+3. 输入：
+
+```javascript
+document.getElementById('header').getElementsByTagName('a')[0].getAttribute('href').split('/').at(-1)
+```
+
+</details>
+
+<details>
+<summary>Bangumi 用户 ID</summary>
+
+1. 登录 [Bangumi](https://bangumi.tv/)
+2. 打开控制台 (Ctrl + Shift + J)
+3. 输入：
+
+```javascript
+CHOBITS_UID
+```
+
+</details>
+
+<details>
+<summary>AniList ID</summary>
+
+1. 登录 [AniList](https://anilist.co/home)
+2. 打开控制台 (Ctrl + Shift + J)
+3. 输入：
+
+```javascript
+JSON.parse(window.localStorage.getItem('auth')).id
+```
+
+</details>
+
+<details>
+<summary>Simkl Token</summary>
+
+1. 登录 [Simkl](https://simkl.com/)
+2. 创建一个App: [https://simkl.com/settings/developer/new/](https://simkl.com/settings/developer/new/)
+3. `Name`和`Description`随便填，`Redirect URI`填写`127.0.0.1`
+4. 创建App后记住`Client ID`和`Client Secret`
+5. 打开`https://simkl.com/oauth/authorize?response_type=code&client_id={your_client_id}&redirect_uri=http://127.0.0.1`，注意把`{your_client_id}`改成你的`Client ID`
+6. 授权后会跳转到`127.0.0.1/?code=your_code`，记住`your_code`
+7. 打开`https://simkl.docs.apiary.io/#reference/authentication-oauth-2.0/exchange-code-for-access_token?console=1`，找到右侧的`Body`并点击。修改如下
+
+```json
+{
+    "code"          : "你的code",
+    "client_id"     : "你的Client ID",
+    "client_secret" : "你的Client Secret",
+    "redirect_uri"  : "127.0.0.1",
+    "grant_type"    : "authorization_code"
+}
+```
+
+8. 修改后点击右下角的`Call Resource`按钮，然后拉到最下面，右下角找到`"access_token": "your_token",`，记住`your_token`
+9. `vmid`填入`{your_client_id}-{your_token}`，`{your_client_id}`替换为App的`Client ID`，`{your_token}`替换为上一步得到的`your_token`
+
+</details>
+
+## 🎨 主题适配
+
+1. Fork 本项目并克隆到本地
+2. 安装依赖：`npm install`
+3. 在 `src/lib/templates/theme/` 添加主题样式文件
+4. 运行 `npm run build`
+5. 提交 PR
+
+## 📄 开源协议
+
+[Apache License 2.0](./LICENSE)

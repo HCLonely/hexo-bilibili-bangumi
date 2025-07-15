@@ -1,0 +1,31 @@
+.bangumi-item
+  .bangumi-picture
+    img(
+      src=lazyload ? (loading || "https://cdn.jsdelivr.net/npm/hexo-bilibili-bangumi@1.2.0/lib/img/loading.gif") : (srcValue === '__loading__' ? (loading || "https://cdn.jsdelivr.net/npm/hexo-bilibili-bangumi@1.2.0/lib/img/loading.gif") : 'https:' + item.cover.replace(/^https:/, ''))
+      data-src=lazyload ? item.cover : null
+      referrerpolicy="no-referrer"
+      width="110"
+      height="160"
+      style="width:110px;margin:10px auto;"
+    )&attributes(lazyloadAttrName ? {[lazyloadAttrName.split('=')[0]]: lazyloadAttrName.split('=')[1] === '__loading__' ? (loading || "https://cdn.jsdelivr.net/npm/hexo-bilibili-bangumi@1.2.0/lib/img/loading.gif") : (lazyloadAttrName.split('=')[1] === '__image__' ? 'https:' + item.cover.replace(/^https:/, '') : (lazyloadAttrName.split('=')[1] || ''))} : {})
+  .bangumi-info
+    .bangumi-title
+      a(target="_blank" href=item.link || ('https://simkl.com/anime/' + item.id + '/'))=item.title || __('unknown')
+    .bangumi-meta
+      span.bangumi-info-items(style=metaColor ? 'color:' + metaColor + ';' : '')
+        if item.totalCount
+          span.bangumi-info-item
+            span.bangumi-info-total=item.totalCount ? '全' + item.totalCount + '话' : '-'
+            em.bangumi-info-label-em 0
+        span.bangumi-info-item.bangumi-type
+          span.bangumi-info-label= __('type')
+          em= item.type
+        span.bangumi-info-item.bangumi-follow
+          span.bangumi-info-label=__('year')
+          em= item.year || "-"
+    if item.progress !== false && progressBar !== false
+      .bangumi-progress(style="margin-top:5px;")
+        .bangumi-progress-text 追#{type==='bangumi' ? '番' : '剧'}进度：#{item.ep_status}/#{item.new_ep}
+        .progress-bar(style='width: ' + (item.progress > 100 ? 100 : item.progress) + '%;')
+    .bangumi-comments(style='margin-top: 10px;' + (color ? 'color:' + color + ';' : ''))
+      p #{__('summary')}：#{item.des || __('noSummary')}
