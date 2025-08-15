@@ -42,7 +42,6 @@ bangumi: # 追番设置
   quote: '生命不息，追番不止！' # 页面引言
   show: 1              # 初始显示页面: 0=想看, 1=在看, 2=看过
   lazyload: true       # 是否启用图片懒加载
-  loading:             # 加载动画
   metaColor:           # meta 信息字体颜色
   color:               # 简介字体颜色
   webp: true          # 是否使用 webp 格式图片
@@ -73,8 +72,8 @@ bangumi: # 追番设置
   show: 1
   lazyload: true
   srcValue: '__image__'
-  lazyloadAttrName: 'data-src=__image__'
-  loading:
+  # lazyloadAttrName: 'data-src=__image__' # 已弃用
+  # loading: 已弃用
   showMyComment: false
   pagination: false
   metaColor:
@@ -99,8 +98,6 @@ cinema: # 追剧设置
   show: 1
   lazyload: true
   srcValue: '__image__'
-  lazyloadAttrName: 'data-src=__image__'
-  loading:
   metaColor:
   color:
   webp:
@@ -121,8 +118,6 @@ game: # 游戏设置，仅支持source: bgmv0
   show: 1
   lazyload: true
   srcValue: '__image__'
-  lazyloadAttrName: 'data-src=__image__'
-  loading:
   metaColor:
   color:
   webp:
@@ -157,8 +152,6 @@ game: # 游戏设置，仅支持source: bgmv0
 | show | number | 1 | 初始显示的内容类型：0=想看，1=在看，2=看过 |
 | lazyload | boolean | true | 是否启用图片懒加载，可避免首次加载时间过长 |
 | srcValue | string | '\_\_image\_\_' | 设置封面图的默认src值，`__image__`为封面链接，`__loading__`为loading图片链接 |
-| lazyloadAttrName | string | 'data-src=\_\_image\_\_' | 懒加载属性名称和值的格式 |
-| loading | string | - | 加载中显示的图片URL |
 | metaColor | string | - | meta信息的字体颜色，支持CSS颜色值（如'#FFFFFF'） |
 | color | string | - | 简介文字的字体颜色 |
 

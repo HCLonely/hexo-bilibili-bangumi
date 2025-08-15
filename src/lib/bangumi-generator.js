@@ -1,7 +1,7 @@
 /*
  * @Author       : HCLonely
  * @Date         : 2024-09-11 15:40:57
- * @LastEditTime : 2025-07-10 17:50:02
+ * @LastEditTime : 2025-08-15 09:58:47
  * @LastEditors  : HCLonely
  * @FilePath     : /hexo-bilibili-bangumi/src/lib/bangumi-generator.js
  * @Description  : Hexo页面生成器模块，负责生成番剧、影视和游戏的展示页面。
@@ -86,11 +86,11 @@ module.exports = async function (locals, type = 'bangumi') {
   const contents = await pug.renderFile(path.join(__dirname, 'templates/bangumi.pug'), {
     quote: config[type].quote,
     show: config[type].show || 1,
-    loading: config[type].loading,
+    // loading: config[type].loading,
     metaColor: config[type].metaColor,
     color: config[type].color,
     lazyload: config[type].lazyload ?? true,
-    lazyloadAttrName: config[type].lazyloadAttrName,
+    // lazyloadAttrName: config[type].lazyloadAttrName,
     srcValue: config[type].srcValue || '__image__',
     source: config[type].source ?? 'bili',
     showMyComment: config[type].showMyComment ?? false,
