@@ -46,6 +46,7 @@ bangumi: # 追番设置
   color:               # 简介字体颜色
   webp: true          # 是否使用 webp 格式图片
   progress: true      # 是否显示进度条
+  swup: false         # 是否启用swup兼容，需要主题支持
   ...
 cinema: # 追剧设置
   enable: true           # 是否启用

@@ -1,7 +1,7 @@
 /*
  * @Author       : HCLonely
  * @Date         : 2024-09-11 15:40:57
- * @LastEditTime : 2025-08-15 09:58:47
+ * @LastEditTime : 2025-12-13 13:13:32
  * @LastEditors  : HCLonely
  * @FilePath     : /hexo-bilibili-bangumi/src/lib/bangumi-generator.js
  * @Description  : Hexo页面生成器模块，负责生成番剧、影视和游戏的展示页面。
@@ -96,6 +96,7 @@ module.exports = async function (locals, type = 'bangumi') {
     showMyComment: config[type].showMyComment ?? false,
     pagination: config[type].pagination ?? false,
     progressBar: config[type].progressBar ?? true,
+    swupCompatible: config[type].swup ?? false,
     theme: fs.existsSync(path.join(__dirname, `templates/theme/${config.theme}.min.css`)) ? config.theme : null,
     pugTemplate: config[type].pagination ? fs.readFileSync(path.join(__dirname, `templates/${TEMPLATE_MAP[config[type].source]}`)).toString()
       .replace('.bangumi-item', '.bangumi-item.bangumi-hide')
