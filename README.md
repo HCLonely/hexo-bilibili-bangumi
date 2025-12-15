@@ -75,6 +75,7 @@ bangumi: # 追番设置
   srcValue: '__image__'
   # lazyloadAttrName: 'data-src=__image__' # 已弃用
   # loading: 已弃用
+  swup: false
   showMyComment: false
   pagination: false
   metaColor:
@@ -99,6 +100,7 @@ cinema: # 追剧设置
   show: 1
   lazyload: true
   srcValue: '__image__'
+  swup: false
   metaColor:
   color:
   webp:
@@ -119,6 +121,7 @@ game: # 游戏设置，仅支持source: bgmv0
   show: 1
   lazyload: true
   srcValue: '__image__'
+  swup: false
   metaColor:
   color:
   webp:
@@ -155,6 +158,7 @@ game: # 游戏设置，仅支持source: bgmv0
 | srcValue | string | '\_\_image\_\_' | 设置封面图的默认src值，`__image__`为封面链接，`__loading__`为loading图片链接 |
 | metaColor | string | - | meta信息的字体颜色，支持CSS颜色值（如'#FFFFFF'） |
 | color | string | - | 简介文字的字体颜色 |
+| swup | boolean | false | 是否启用swup兼容，需要主题支持 |
 
 #### 图片处理
 
