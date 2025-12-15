@@ -3,8 +3,12 @@ if quote
         p!= quote
 
 if pagination
-    script(src="https://pugjs.org/js/pug.js")
-    script(src="https://cdn.jsdelivr.net/npm/axios@0.27.2/dist/axios.min.js")
+    if swupCompatible
+        script(src="https://pugjs.org/js/pug.js" data-swup-reload-script='')
+        script(src="https://cdn.jsdelivr.net/npm/axios@0.27.2/dist/axios.min.js" data-swup-reload-script='')
+    else
+        script(src="https://pugjs.org/js/pug.js")
+        script(src="https://cdn.jsdelivr.net/npm/axios@0.27.2/dist/axios.min.js" )
 
 style
     include index.css
@@ -129,26 +133,51 @@ div
                         include simkl-template.pug
             include pagination.pug
 
-script.
-    window.hexoBilibiliBangumiOptions = {
-        bangumiLazyload: #{!!lazyload},
-        show: #{show}
-    }
-    if (#{pagination}) {
-        hexoBilibiliBangumiOptions.pugTemplate = `!{pugTemplate}`;
-        hexoBilibiliBangumiOptions.pugOptions = {
-            loading: '#{loading}',
-            metaColor: '#{metaColor}',
-            type: '#{type}',
-            color: '#{color}',
-            lazyload: #{!!lazyload},
-            showMyComment: #{showMyComment},
-            lazyloadAttrName: '#{lazyloadAttrName || ''}',
-            srcValue: '#{srcValue}'
+if swupCompatible
+    script(data-swup-reload-script='').
+        window.hexoBilibiliBangumiOptions = {
+            bangumiLazyload: #{!!lazyload},
+            show: #{show}
         }
-        hexoBilibiliBangumiOptions.pagenumsPre = #{JSON.stringify([wantWatch.length, watching.length, watched.length])};
-        hexoBilibiliBangumiOptions.pug = require('pug');
-    }
-script
-    include index.js
-    include pagination.js
+        if (#{pagination}) {
+            hexoBilibiliBangumiOptions.pugTemplate = `!{pugTemplate}`;
+            hexoBilibiliBangumiOptions.pugOptions = {
+                loading: '#{loading}',
+                metaColor: '#{metaColor}',
+                type: '#{type}',
+                color: '#{color}',
+                lazyload: #{!!lazyload},
+                showMyComment: #{showMyComment},
+                lazyloadAttrName: '#{lazyloadAttrName || ''}',
+                srcValue: '#{srcValue}'
+            }
+            hexoBilibiliBangumiOptions.pagenumsPre = #{JSON.stringify([wantWatch.length, watching.length, watched.length])};
+            hexoBilibiliBangumiOptions.pug = require('pug');
+        }
+    script(data-swup-reload-script='')
+        include index.js
+        include pagination.js
+else
+    script.
+        window.hexoBilibiliBangumiOptions = {
+            bangumiLazyload: #{!!lazyload},
+            show: #{show}
+        }
+        if (#{pagination}) {
+            hexoBilibiliBangumiOptions.pugTemplate = `!{pugTemplate}`;
+            hexoBilibiliBangumiOptions.pugOptions = {
+                loading: '#{loading}',
+                metaColor: '#{metaColor}',
+                type: '#{type}',
+                color: '#{color}',
+                lazyload: #{!!lazyload},
+                showMyComment: #{showMyComment},
+                lazyloadAttrName: '#{lazyloadAttrName || ''}',
+                srcValue: '#{srcValue}'
+            }
+            hexoBilibiliBangumiOptions.pagenumsPre = #{JSON.stringify([wantWatch.length, watching.length, watched.length])};
+            hexoBilibiliBangumiOptions.pug = require('pug');
+        }
+    script
+        include index.js
+        include pagination.js
