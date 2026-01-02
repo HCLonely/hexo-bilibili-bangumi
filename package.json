@@ -47,7 +47,7 @@
     "clean-css": "^5.3.3",
     "eslint": "^9.0.0",
     "glob-exec": "^0.1.1",
-    "globals": "^16.3.0",
+    "globals": "^17.0.0",
     "pug-lint": "^2.7.0"
   }
 }
