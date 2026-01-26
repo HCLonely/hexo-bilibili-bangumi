@@ -79,7 +79,7 @@ const getDataPage = async (vmid, status, typeNum) => {
     axios.get(`${CONSTANTS.API.BASE_URL}?type=${typeNum}&follow_status=${status}&vmid=${vmid}&ps=1&pn=1`)
   ));
 
-  if (response?.data?.code === 0 && response?.data?.message === '0' && response?.data?.data?.total !== undefined) {
+  if (response?.data?.code === 0 && response?.data?.message === 'OK' && response?.data?.data?.total !== undefined) {
     return {
       success: true,
       data: Math.ceil(response.data.data.total / CONSTANTS.API.PAGE_SIZE) + 1
