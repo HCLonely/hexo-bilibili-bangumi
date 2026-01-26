@@ -2,6 +2,7 @@
   .bangumi-picture
     img(
       src=('https:' + item.cover.replace(/^https:/, ''))
+      data-src=lazyload ? item.cover : null
       referrerpolicy="no-referrer"
       loading=lazyload ? "lazy" : "eager"
       width="110"
