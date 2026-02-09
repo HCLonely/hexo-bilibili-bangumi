@@ -45,7 +45,7 @@
     "@eslint/js": "^10.0.1",
     "babel-preset-minify": "^0.5.2",
     "clean-css": "^5.3.3",
-    "eslint": "^9.0.0",
+    "eslint": "^10.0.0",
     "glob-exec": "^0.1.1",
     "globals": "^17.0.0",
     "pug-lint": "^2.7.0"
