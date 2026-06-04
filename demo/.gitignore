@@ -1,0 +1,7 @@
+node_modules/
+public/
+.deploy_git/
+db.json
+server.log
+server.err.log
+.DS_Store

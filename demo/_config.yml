@@ -1,0 +1,60 @@
+title: hexo-bilibili-bangumi Demo
+subtitle: 用真实 Hexo 页面展示插件渲染效果
+description: A deployable demo site for hexo-bilibili-bangumi.
+keywords:
+author: HCLonely
+language: zh-CN
+timezone: Asia/Shanghai
+
+url: https://example.com
+root: /
+permalink: :year/:month/:day/:title/
+permalink_defaults:
+pretty_urls:
+  trailing_index: true
+  trailing_html: true
+
+source_dir: source
+public_dir: public
+tag_dir: tags
+archive_dir: archives
+category_dir: categories
+code_dir: downloads/code
+i18n_dir: :lang
+skip_render:
+
+new_post_name: :title.md
+default_layout: post
+titlecase: false
+external_link:
+  enable: true
+  field: site
+  exclude: ''
+filename_case: 0
+render_drafts: false
+post_asset_folder: false
+relative_link: false
+future: true
+syntax_highlighter: highlight.js
+
+theme: landscape
+
+deploy:
+  type: ''
+
+bangumi:
+  enable: true
+  source: bgmv0
+  path: bangumis/index.html
+  vmid: 1
+  title: 追番列表
+  quote: 这里是使用本地示例数据渲染。
+  theme: dark
+  show: 1
+  lazyload: true
+  webp: false
+  progress: false
+  progressBar: true
+  metaColor: '#5b6472'
+  color: '#3f4754'
+  skipNsfw: true
