@@ -71,15 +71,18 @@ var COMMAND_OPTIONS = {
 var DATA_TYPES = {
   bangumi: {
     jsonFile: 'bangumis.json',
-    configKey: 'bangumi'
+    configKey: 'bangumi',
+    alias: 'bgm'
   },
   cinema: {
     jsonFile: 'cinemas.json',
-    configKey: 'cinema'
+    configKey: 'cinema',
+    alias: 'cnm'
   },
   game: {
     jsonFile: 'games.json',
-    configKey: 'game'
+    configKey: 'game',
+    alias: 'gm'
   }
 };
 
@@ -100,8 +103,14 @@ Object.entries(DATA_TYPES).forEach(function (_ref) {
   });
 });
 hexo.extend.filter.register('after_render:html', function (html) {
-  return hoistBangumiAssets(html);
+  hoistBangumiAssets(html);
 });
+hexo.extend.filter.register('after_post_render', function (data) {
+  if (data.path.split('.').at(-1) === 'json') {
+    data.content = data._content;
+  }
+  return data;
+}, 11);
 
 /**
  * @function validateConfig
@@ -224,7 +233,10 @@ Object.entries(DATA_TYPES).forEach(function (_ref4) {
   var _ref5 = (0, _slicedToArray2["default"])(_ref4, 2),
     type = _ref5[0],
     config = _ref5[1];
-  hexo.extend.console.register(type, "Generate pages of ".concat(type, " for Hexo"), COMMAND_OPTIONS, function (args) {
+  var options = _objectSpread({
+    alias: config.alias
+  }, COMMAND_OPTIONS);
+  hexo.extend.console.register(type, "Generate pages of ".concat(type, " for Hexo"), options, function (args) {
     if (args.d) {
       handleDataDelete(this.source_dir, type);
     } else if (args.u) {

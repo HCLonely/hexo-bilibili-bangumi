@@ -54,15 +54,18 @@ const COMMAND_OPTIONS = {
 const DATA_TYPES = {
   bangumi: {
     jsonFile: 'bangumis.json',
-    configKey: 'bangumi'
+    configKey: 'bangumi',
+    alias: 'bgm'
   },
   cinema: {
     jsonFile: 'cinemas.json',
-    configKey: 'cinema'
+    configKey: 'cinema',
+    alias: 'cnm'
   },
   game: {
     jsonFile: 'games.json',
-    configKey: 'game'
+    configKey: 'game',
+    alias: 'gm'
   }
 };
 
@@ -79,7 +82,17 @@ Object.entries(DATA_TYPES).forEach(([type, config]) => {
   });
 });
 
+// 修复style和script被Vue净化
 hexo.extend.filter.register('after_render:html', (html) => hoistBangumiAssets(html));
+
+// 修复hexo-tag-aplayer强制注入json文件
+hexo.extend.filter.register('after_post_render', (data) => {
+  if (data.path.split('.').at(-1) === 'json') {
+    // eslint-disable-next-line no-underscore-dangle
+    data.content = data._content;
+  }
+  return data;
+}, 11);
 
 /**
  * @function validateConfig
@@ -189,7 +202,11 @@ const handleDataUpdate = async function (config, type, sourceDir, args) {
  * 为每种数据类型注册对应的命令，支持更新(-u)和删除(-d)操作
  */
 Object.entries(DATA_TYPES).forEach(([type, config]) => {
-  hexo.extend.console.register(type, `Generate pages of ${type} for Hexo`, COMMAND_OPTIONS, function (args) {
+  const options = {
+    alias: config.alias,
+    ...COMMAND_OPTIONS
+  };
+  hexo.extend.console.register(type, `Generate pages of ${type} for Hexo`, options, function (args) {
     if (args.d) {
       handleDataDelete(this.source_dir, type);
     } else if (args.u) {
