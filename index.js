@@ -102,11 +102,16 @@ Object.entries(DATA_TYPES).forEach(function (_ref) {
     return require('./lib/bangumi-generator').call(this, locals, type);
   });
 });
+
+// 修复style和script被Vue净化
 hexo.extend.filter.register('after_render:html', function (html) {
-  hoistBangumiAssets(html);
+  return hoistBangumiAssets(html);
 });
+
+// 修复hexo-tag-aplayer强制注入json文件
 hexo.extend.filter.register('after_post_render', function (data) {
   if (data.path.split('.').at(-1) === 'json') {
+    // eslint-disable-next-line no-underscore-dangle
     data.content = data._content;
   }
   return data;

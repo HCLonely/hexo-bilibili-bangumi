@@ -188,7 +188,7 @@ game: # 游戏设置，仅支持source: bgmv0
 | 参数名 | 类型 | 默认值 | 说明 |
 | ------- | ------ | -------- | ------ |
 | pagination | boolean | false | 是否启用分页优化，建议番剧数量较多时启用 |
-| order | string | - | 排序方式：score=评分升序，-score=评分降序 ，其他=默认顺序|
+| order | string | - | 排序方式：score=评分升序，-score=评分降序 ，其他=默认顺序 |
 | extraOrder | number | - | 手动添加数据的显示顺序：1=优先显示，其他=默认顺序 |
 | showMyComment | boolean | false | 是否显示个人评论（仅支持bgm、anilist源） |
 | skipNsfw | boolean | false | 是否显示nsfw内容（仅支持bangumi源） |
