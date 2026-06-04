@@ -20,6 +20,10 @@ const nodeFiles = [
     to: 'lib/util.js'
   },
   {
+    from: 'src/lib/asset-hoist.js',
+    to: 'lib/asset-hoist.js'
+  },
+  {
     from: 'src/lib/get-bili-data.js',
     to: 'lib/get-bili-data.js'
   },

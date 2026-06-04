@@ -40,9 +40,11 @@ var _require4 = require('./lib/get-anilist-data'),
   getAnilistData = _require4.getAnilistData;
 var _require5 = require('./lib/get-simkl-data'),
   getSimklData = _require5.getSimklData;
+var _require6 = require('./lib/asset-hoist'),
+  hoistBangumiAssets = _require6.hoistBangumiAssets;
 if (typeof URL !== 'function') {
-  var _require6 = require('url'),
-    _URL = _require6.URL;
+  var _require7 = require('url'),
+    _URL = _require7.URL;
   global.URL = _URL;
 }
 
@@ -97,6 +99,9 @@ Object.entries(DATA_TYPES).forEach(function (_ref) {
     return require('./lib/bangumi-generator').call(this, locals, type);
   });
 });
+hexo.extend.filter.register('after_render:html', function (html) {
+  return hoistBangumiAssets(html);
+});
 
 /**
  * @function validateConfig
@@ -145,7 +150,7 @@ var handleDataDelete = function handleDataDelete(sourceDir, type) {
  */
 var handleDataUpdate = /*#__PURE__*/function () {
   var _ref3 = (0, _asyncToGenerator2["default"])(/*#__PURE__*/_regenerator["default"].mark(function _callee(config, type, sourceDir, args) {
-    var _config$progress, _config$coverMirror;
+    var _config$progress, _config$coverMirror, _config$skipNsfw;
     var baseConfig, typeMapping, _t;
     return _regenerator["default"].wrap(function (_context) {
       while (1) switch (_context.prev = _context.next) {
@@ -166,7 +171,8 @@ var handleDataUpdate = /*#__PURE__*/function () {
             type: type,
             proxy: config.proxy,
             infoApi: config.bgmInfoApi,
-            host: "".concat(config.source, ".tv")
+            host: "".concat(config.source, ".tv"),
+            skipNsfw: (_config$skipNsfw = config.skipNsfw) !== null && _config$skipNsfw !== void 0 ? _config$skipNsfw : false
           })));
         case 2:
           typeMapping = {

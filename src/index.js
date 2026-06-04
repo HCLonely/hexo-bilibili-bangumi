@@ -27,6 +27,7 @@ const { getBgmData } = require('./lib/get-bgm-data');
 const { getBgmv0Data } = require('./lib/get-bgmv0-data');
 const { getAnilistData } = require('./lib/get-anilist-data');
 const { getSimklData } = require('./lib/get-simkl-data');
+const { hoistBangumiAssets } = require('./lib/asset-hoist');
 
 if (typeof URL !== 'function') {
   const { URL } = require('url');
@@ -77,6 +78,8 @@ Object.entries(DATA_TYPES).forEach(([type, config]) => {
     return require('./lib/bangumi-generator').call(this, locals, type);
   });
 });
+
+hexo.extend.filter.register('after_render:html', (html) => hoistBangumiAssets(html));
 
 /**
  * @function validateConfig
