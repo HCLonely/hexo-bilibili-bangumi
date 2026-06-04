@@ -141,7 +141,8 @@ const handleDataUpdate = async function (config, type, sourceDir, args) {
         type,
         proxy: config.proxy,
         infoApi: config.bgmInfoApi,
-        host: `${config.source}.tv`
+        host: `${config.source}.tv`,
+        skipNsfw: config.skipNsfw ?? false
       });
     case 'bgmv0':
     {

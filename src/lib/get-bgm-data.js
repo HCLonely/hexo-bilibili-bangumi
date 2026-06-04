@@ -127,7 +127,7 @@ const handleApiError = (error) => {
  * @returns {Object} 格式化后的数据
  */
 const formatSubjectData = (data, config, coverMirror) => {
-  const { id, name, type, image, rating = {}, summary, collection = {}, eps, epsLength } = data;
+  const { id, name, type, image, rating = {}, summary, collection = {}, eps, epsLength, nsfw } = data;
   const totalCount = epsLength || eps?.length;
 
   return {
@@ -142,7 +142,8 @@ const formatSubjectData = (data, config, coverMirror) => {
     collect: collection.collect || '-',
     totalCount: totalCount ? `全${totalCount}${type === 6 ? '集' : '话'}` : '-',
     myStars: config.itemData.myStars,
-    myComment: config.itemData.myComment
+    myComment: config.itemData.myComment,
+    nsfw
   };
 };
 
@@ -158,7 +159,7 @@ const formatApiData = (data, config, coverMirror) => {
     id, name, name_cn, type,
     images: { common: image } = {},
     rating = {}, summary,
-    collection = {}, eps, total_episodes
+    collection = {}, eps, total_episodes, nsfw
   } = data;
 
   const totalCount = total_episodes || eps;
@@ -175,7 +176,8 @@ const formatApiData = (data, config, coverMirror) => {
     collect: collection.collect || '-',
     totalCount: totalCount ? `全${totalCount}${type === 6 ? '集' : '话'}` : '-',
     myStars: config.itemData.myStars,
-    myComment: config.itemData.myComment
+    myComment: config.itemData.myComment,
+    nsfw
   };
 };
 
@@ -359,7 +361,8 @@ const getItemsId = async ({
   proxy,
   infoApi,
   host,
-  coverMirror
+  coverMirror,
+  skipNsfw
 }) => {
   const getBangumiData = infoApi === 'bgmSub'
     ? getBangumiDataFromBangumiSubject
@@ -396,7 +399,8 @@ const getItemsId = async ({
       extractItemsFromPage($),
       sourceDir,
       proxy,
-      coverMirror
+      coverMirror,
+      skipNsfw
     ));
 
     // 显示进度条
@@ -429,7 +433,8 @@ const getItemsId = async ({
         extractItemsFromPage($),
         sourceDir,
         proxy,
-        coverMirror
+        coverMirror,
+        skipNsfw
       ));
     }
 
@@ -510,7 +515,8 @@ module.exports.getBgmData = async function getBgmData({
   proxy,
   infoApi,
   host,
-  coverMirror
+  coverMirror,
+  skipNsfw
 }) {
   try {
     log.info('Getting bangumis, please wait...');
@@ -524,21 +530,22 @@ module.exports.getBgmData = async function getBgmData({
       proxy,
       infoApi,
       host,
-      coverMirror
+      coverMirror,
+      skipNsfw
     };
     // 获取三种状态的数据
     const wantWatch = await getItemsId({
       ...options,
       status: 'wish'
-    });
+    }).filter((item) => !(skipNsfw && item.nsfw));
     const watching = await getItemsId({
       ...options,
       status: 'do'
-    });
+    }).filter((item) => !(skipNsfw && item.nsfw));
     const watched = await getItemsId({
       ...options,
       status: 'collect'
-    });
+    }).filter((item) => !(skipNsfw && item.nsfw));
 
     const endTime = new Date().getTime();
     log.info(`${wantWatch.length + watching.length + watched.length} ${type}s have been loaded in ${endTime - startTime} ms`);
