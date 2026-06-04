@@ -32,6 +32,7 @@ test('uses page theme config independently from global theme config', async () =
   assert.match(page.data.content, /class="bangumi-quote"/);
   assert.match(page.data.content, /bangumi-container/);
   assert.match(page.data.content, /bangumi-theme-dark/);
+  assert.match(page.data.content, /<div class="bangumi-container bangumi-theme-dark">[\s\S]*<blockquote class="bangumi-quote">/);
   assert.doesNotMatch(page.data.content, /bangumi-theme-site-theme/);
 });
 

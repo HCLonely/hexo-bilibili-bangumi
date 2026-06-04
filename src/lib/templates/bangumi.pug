@@ -1,7 +1,3 @@
-if quote
-    blockquote.bangumi-quote
-        p!= quote
-
 if pagination
     if swupCompatible
         script(src="https://pugjs.org/js/pug.js" data-swup-reload-script='')
@@ -20,6 +16,10 @@ style
                 include theme/nexmoe.min.css
 
 .bangumi-container(class='bangumi-theme-' + pageTheme)
+    if quote
+        blockquote.bangumi-quote
+            p!= quote
+
     .bangumi-tabs
         a#bangumi-tab1.bangumi-tab(href="javascript:;" rel="external" target="_self" onclick="return false")
             | #{__(type === 'game' ? 'wantPlay' : 'wantWatch')}
