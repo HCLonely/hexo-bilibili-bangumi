@@ -127,7 +127,10 @@ const formatTotal = (count, typeNum) => {
 const getData = async (vmid, status, useWebp, typeNum, pn, coverMirror, SESSDATA) => {
   const response = await withRetry(() => (
     axios.get(`${CONSTANTS.API.BASE_URL}?type=${typeNum}&follow_status=${status}&vmid=${vmid}&ps=${CONSTANTS.API.PAGE_SIZE}&pn=${pn}`, {
-      headers: SESSDATA ? { cookie: `SESSDATA=${SESSDATA};` } : {}
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0',
+        Cookie: SESSDATA ? `SESSDATA=${SESSDATA};` : null
+      }
     })
   ));
 
