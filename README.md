@@ -18,7 +18,7 @@
 - 🖼️ 支持图片镜像缓存
 - 📄 支持手动添加数据
 
-[效果预览](https://demo.hclonely.com/bangumis/)
+[效果预览](https://hexo-bilibili-bangumi.vercel.app/bangumis/)
 
 | 亮色模式 | 暗色模式 |
 | ------- | ------ |
@@ -156,7 +156,7 @@ game: # 游戏设置，仅支持source: bgmv0
 | vmid | string/number | - | 用户Id。[如何获取](#-获取用户-id) |
 | title | string | '追番列表' | 页面标题 |
 | quote | string | '生命不息，追番不止！' | 页面顶部的引言，支持HTML |
-| theme | string | 'auto' | 页面颜色主题：`light`=亮色，`dark`=暗色，`auto`=跟随系统设置。该参数写在 `bangumi`/`cinema`/`game` 配置下，不影响站点根配置 `theme` 的 Hexo 主题适配 |
+| theme | string | 'auto' | 页面颜色主题：`light`: 亮色，`dark`: 暗色 |
 
 #### 显示控制
 

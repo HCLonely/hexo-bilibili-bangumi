@@ -49,7 +49,7 @@ bangumi:
   vmid: 1
   title: 追番列表
   quote: 这里是使用本地示例数据渲染。
-  theme: dark
+  theme: light
   show: 1
   lazyload: true
   webp: false
