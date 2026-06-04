@@ -60,6 +60,7 @@ const browserFiles = [
 ];
 
 const nodeOptions = {
+  comments: false,
   presets: [
     '@babel/preset-env'
   ],
@@ -69,6 +70,7 @@ const nodeOptions = {
 };
 
 const browserOptions = {
+  comments: false,
   presets: ['@babel/preset-env', 'minify'],
   targets: '> 0.25%, not dead'
 };
