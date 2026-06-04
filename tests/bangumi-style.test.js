@@ -27,10 +27,10 @@ const fluidBlockFor = (selector) => {
 };
 
 test('keeps legacy responsive metadata hiding rules', () => {
-  assert.match(mediaBlockFor(650), /\.bangumi-coin,\s*\n\s*\.bangumi-type\s*\{[\s\S]*?display: none;/);
+  assert.match(mediaBlockFor(650), /\.bangumi-coin,\s*\n\s*\.bangumi-type,\s*\n\s*\.bangumi-follow,\s*\n\s*\.bangumi-info-item-follow\s*\{[\s\S]*?display: none;/);
   assert.match(mediaBlockFor(590), /\.bangumi-danmaku,\s*\n\s*\.bangumi-wish\s*\{[\s\S]*?display: none;/);
   assert.match(mediaBlockFor(520), /\.bangumi-play,\s*\n\s*\.bangumi-doing\s*\{[\s\S]*?display: none;/);
-  assert.match(mediaBlockFor(480), /\.bangumi-follow,\s*\n\s*\.bangumi-info-item-follow,\s*\n\s*\.bangumi-collect\s*\{[\s\S]*?display: none;/);
+  assert.match(mediaBlockFor(480), /\.bangumi-collect\s*\{[\s\S]*?display: none;/);
   assert.match(mediaBlockFor(400), /\.bangumi-area,\s*\n\s*\.bangumi-tag\s*\{[\s\S]*?display: none;/);
   assert.match(mediaBlockFor(270), /\.bangumi-info-item-score\s*\{[\s\S]*?display: none;/);
 });
@@ -42,6 +42,10 @@ test('lays out cover and info as aligned columns with left breathing room', () =
   assert.match(blockFor('.bangumi-picture'), /position: static;/);
   assert.match(blockFor('.bangumi-picture'), /margin-left: 4px;/);
   assert.match(blockFor('.bangumi-info'), /padding-left: 0;/);
+});
+
+test('keeps progress visually separated from metadata', () => {
+  assert.match(blockFor('.bangumi-info .bangumi-progress'), /margin-top: 16px !important;/);
 });
 
 test('fluid compatibility styles preserve the non-overlapping cover layout', () => {
