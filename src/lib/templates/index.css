@@ -82,11 +82,14 @@ a.bangumi-tab {
 }
 
 .bangumi-item {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
   position: relative;
   clear: both;
   min-height: 184px;
   margin: 14px 0;
-  padding: 16px;
+  padding: 18px 20px;
   border: 1px solid var(--bangumi-border);
   border-radius: 8px;
   background: var(--bangumi-bg);
@@ -94,9 +97,9 @@ a.bangumi-tab {
 }
 
 .bangumi-picture {
-  position: absolute;
-  top: 16px;
-  left: 16px;
+  position: static;
+  flex: 0 0 110px;
+  margin-left: 4px;
   width: 110px;
 }
 
@@ -110,9 +113,11 @@ a.bangumi-tab {
 }
 
 .bangumi-info {
+  flex: 1 1 auto;
+  min-width: 0;
   min-height: 152px;
   margin-top: 0;
-  padding-left: 130px;
+  padding-left: 0;
 }
 
 .bangumi-title {
@@ -363,6 +368,48 @@ a.bangumi-tab {
   opacity: 0.7;
 }
 
+@media (max-width: 650px) {
+  .bangumi-coin,
+  .bangumi-type {
+    display: none;
+  }
+}
+
+@media (max-width: 590px) {
+  .bangumi-danmaku,
+  .bangumi-wish {
+    display: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .bangumi-play,
+  .bangumi-doing {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .bangumi-follow,
+  .bangumi-info-item-follow,
+  .bangumi-collect {
+    display: none;
+  }
+}
+
+@media (max-width: 400px) {
+  .bangumi-area,
+  .bangumi-tag {
+    display: none;
+  }
+}
+
+@media (max-width: 270px) {
+  .bangumi-info-item-score {
+    display: none;
+  }
+}
+
 @media screen and (max-width: 600px) {
   .bangumi-tabs {
     gap: 6px;
@@ -376,6 +423,7 @@ a.bangumi-tab {
   }
 
   .bangumi-item {
+    display: block;
     min-height: 0;
     padding: 14px;
   }
