@@ -40,6 +40,7 @@ bangumi: # 追番设置
   vmid:                 # 用户ID
   title: '追番列表'      # 页面标题
   quote: '生命不息，追番不止！' # 页面引言
+  theme: auto          # 页面主题: light=亮色, dark=暗色, auto=跟随系统
   show: 1              # 初始显示页面: 0=想看, 1=在看, 2=看过
   lazyload: true       # 是否启用图片懒加载
   metaColor:           # meta 信息字体颜色
@@ -70,6 +71,7 @@ bangumi: # 追番设置
   vmid:
   title: '追番列表'
   quote: '生命不息，追番不止！'
+  theme: auto
   show: 1
   lazyload: true
   srcValue: '__image__'
@@ -97,6 +99,7 @@ cinema: # 追剧设置
   vmid:
   title: '追剧列表'
   quote: '生命不息，追剧不止！'
+  theme: auto
   show: 1
   lazyload: true
   srcValue: '__image__'
@@ -118,6 +121,7 @@ game: # 游戏设置，仅支持source: bgmv0
   vmid:
   title: '游戏列表'
   quote: '生命不息，游戏不止！'
+  theme: auto
   show: 1
   lazyload: true
   srcValue: '__image__'
@@ -148,6 +152,7 @@ game: # 游戏设置，仅支持source: bgmv0
 | vmid | string/number | - | 用户Id。[如何获取](#-获取用户-id) |
 | title | string | '追番列表' | 页面标题 |
 | quote | string | '生命不息，追番不止！' | 页面顶部的引言，支持HTML |
+| theme | string | 'auto' | 页面颜色主题：`light`=亮色，`dark`=暗色，`auto`=跟随系统设置。该参数写在 `bangumi`/`cinema`/`game` 配置下，不影响站点根配置 `theme` 的 Hexo 主题适配 |
 
 #### 显示控制
 

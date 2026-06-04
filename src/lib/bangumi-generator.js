@@ -83,6 +83,9 @@ module.exports = async function (locals, type = 'bangumi') {
     anilist: 'anilist-template.pug',
     simkl: 'simkl-template.pug'
   };
+  const pageTheme = ['light', 'dark', 'auto'].includes(String(config[type].theme).toLowerCase())
+    ? String(config[type].theme).toLowerCase()
+    : 'auto';
   const contents = await pug.renderFile(path.join(__dirname, 'templates/bangumi.pug'), {
     quote: config[type].quote,
     show: config[type].show || 1,
@@ -98,6 +101,7 @@ module.exports = async function (locals, type = 'bangumi') {
     progressBar: config[type].progressBar ?? true,
     swupCompatible: config[type].swup ?? false,
     theme: fs.existsSync(path.join(__dirname, `templates/theme/${config.theme}.min.css`)) ? config.theme : null,
+    pageTheme,
     pugTemplate: config[type].pagination ? fs.readFileSync(path.join(__dirname, `templates/${TEMPLATE_MAP[config[type].source]}`)).toString()
       .replace('.bangumi-item', '.bangumi-item.bangumi-hide')
       // .replace(/=\s*?__\('(.+?)'\)/g, (match, key) => ` ${__(key)}`)

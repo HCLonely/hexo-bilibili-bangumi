@@ -4,7 +4,7 @@
   "description": "hexo bilibili番剧页",
   "main": "index.js",
   "scripts": {
-    "test": "eslint --fix && npm run puglint",
+    "test": "node --test tests/*.test.js && eslint --fix && npm run puglint",
     "build": "node scripts/babel.js && node scripts/cleancss.js && node scripts/copy-pug.js",
     "puglint": "glob-exec \"./src/lib/templates/*.pug\" -- \"pug-lint {{files.join(' ')}}\"",
     "cpPug": "node scripts/copy-pug.js",
