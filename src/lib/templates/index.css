@@ -1,4 +1,4 @@
-.bangumi-container {
+:root {
   --bangumi-bg: #fff;
   --bangumi-surface: #f7f9fc;
   --bangumi-surface-strong: #eef3f8;
@@ -9,6 +9,9 @@
   --bangumi-accent-strong: #1766c2;
   --bangumi-accent-soft: #e8f2ff;
   --bangumi-shadow: rgba(25, 39, 52, 0.09);
+}
+
+.bangumi-container {
   color: var(--bangumi-text);
   color-scheme: light;
 }
@@ -41,6 +44,39 @@
     --bangumi-shadow: rgba(0, 0, 0, 0.32);
     color-scheme: dark;
   }
+}
+
+.bangumi-quote {
+  position: relative;
+  overflow: hidden;
+  margin: 18px 0;
+  padding: 16px 18px 16px 48px;
+  border: 1px solid var(--bangumi-border);
+  border-left: 4px solid var(--bangumi-accent);
+  border-radius: 8px;
+  color: var(--bangumi-text);
+  background: linear-gradient(135deg, var(--bangumi-accent-soft), var(--bangumi-bg));
+  box-shadow: 0 10px 26px var(--bangumi-shadow);
+}
+
+.bangumi-quote::before {
+  content: "“";
+  position: absolute;
+  top: 8px;
+  left: 15px;
+  color: var(--bangumi-accent);
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1;
+  opacity: 0.6;
+}
+
+.bangumi-quote > p {
+  position: relative;
+  margin: 0;
+  color: inherit;
+  font-size: 15px;
+  line-height: 1.8;
 }
 
 .bangumi-tabs {

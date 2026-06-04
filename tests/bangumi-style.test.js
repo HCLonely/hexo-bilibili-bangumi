@@ -42,6 +42,14 @@ test('hides metadata based on bangumi item width', () => {
   assert.match(containerBlockFor(270), /\.bangumi-info-item-score\s*\{[\s\S]*?display: none;/);
 });
 
+test('styles the bangumi quote without touching global blockquotes', () => {
+  assert.match(blockFor('.bangumi-quote'), /border-left: 4px solid var\(--bangumi-accent\);/);
+  assert.match(blockFor('.bangumi-quote'), /background: linear-gradient/);
+  assert.match(blockFor('.bangumi-quote::before'), /content: "“";/);
+  assert.match(blockFor('.bangumi-quote > p'), /margin: 0;/);
+  assert.doesNotMatch(css, /blockquote\s*\{/);
+});
+
 test('lays out cover and info as aligned columns with left breathing room', () => {
   assert.match(blockFor('.bangumi-item'), /display: flex;/);
   assert.match(blockFor('.bangumi-item'), /align-items: flex-start;/);
