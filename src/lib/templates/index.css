@@ -424,28 +424,27 @@ a.bangumi-tab {
   }
 
   .bangumi-item {
-    display: block;
+    display: flex;
+    gap: 12px;
     min-height: 0;
-    padding: 14px;
+    padding: 12px;
   }
 
   .bangumi-picture {
     position: static;
-    width: 96px;
-    margin: 0 auto 12px;
+    flex: 0 0 82px;
+    width: 82px;
+    margin: 0;
   }
 
   .bangumi-picture img {
-    width: 96px !important;
+    width: 82px !important;
   }
 
   .bangumi-info {
+    min-width: 0;
     min-height: 0;
     padding-left: 0;
-  }
-
-  .bangumi-title {
-    text-align: center;
   }
 
   .bangumi-info-items {

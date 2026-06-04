@@ -19,6 +19,12 @@ const containerBlockFor = (width) => {
   return match[1];
 };
 
+const mediaBlockFor = (width) => {
+  const match = css.match(new RegExp(`@media screen and \\(max-width: ${width}px\\) \\{([\\s\\S]*?)\\n\\}`));
+  assert.ok(match, `Missing max-width:${width}px media block`);
+  return match[1];
+};
+
 const fluidBlockFor = (selector) => {
   const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const match = fluidCss.match(new RegExp(`${escaped}\\s*\\{([^}]*)\\}`));
@@ -43,6 +49,15 @@ test('lays out cover and info as aligned columns with left breathing room', () =
   assert.match(blockFor('.bangumi-picture'), /position: static;/);
   assert.match(blockFor('.bangumi-picture'), /margin-left: 4px;/);
   assert.match(blockFor('.bangumi-info'), /padding-left: 0;/);
+});
+
+test('keeps cover beside info below 600px viewport width', () => {
+  const mobileBlock = mediaBlockFor(600);
+
+  assert.match(mobileBlock, /\.bangumi-item\s*\{[\s\S]*?display: flex;/);
+  assert.doesNotMatch(mobileBlock, /\.bangumi-item\s*\{[\s\S]*?display: block;/);
+  assert.match(mobileBlock, /\.bangumi-picture\s*\{[\s\S]*?flex: 0 0 82px;/);
+  assert.match(mobileBlock, /\.bangumi-info\s*\{[\s\S]*?min-width: 0;/);
 });
 
 test('keeps progress visually separated from metadata', () => {
