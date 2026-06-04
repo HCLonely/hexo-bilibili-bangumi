@@ -30,6 +30,20 @@
   color-scheme: dark;
 }
 
+[data-theme="dark"] .bangumi-container.bangumi-theme-auto {
+  --bangumi-bg: #171b22;
+  --bangumi-surface: #202630;
+  --bangumi-surface-strong: #29313d;
+  --bangumi-text: #edf2f7;
+  --bangumi-muted: #a5b1bf;
+  --bangumi-border: #333d4a;
+  --bangumi-accent: #7bb7ff;
+  --bangumi-accent-strong: #9fcbff;
+  --bangumi-accent-soft: #1f354d;
+  --bangumi-shadow: rgba(0, 0, 0, 0.32);
+  color-scheme: dark;
+}
+
 @media (prefers-color-scheme: dark) {
   .bangumi-container.bangumi-theme-auto {
     --bangumi-bg: #171b22;

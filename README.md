@@ -156,7 +156,7 @@ game: # 游戏设置，仅支持source: bgmv0
 | vmid | string/number | - | 用户Id。[如何获取](#-获取用户-id) |
 | title | string | '追番列表' | 页面标题 |
 | quote | string | '生命不息，追番不止！' | 页面顶部的引言，支持HTML |
-| theme | string | 'auto' | 页面颜色主题：`light`: 亮色，`dark`: 暗色 |
+| theme | string | 'auto' | 页面颜色主题：`light`: 亮色，`dark`: 暗色，`auto`: 跟最主题（仅支持通过`[data-theme="dark"]`实现暗色模式的主题） |
 
 #### 显示控制
 
