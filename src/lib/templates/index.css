@@ -85,6 +85,7 @@ a.bangumi-tab {
   display: flex;
   gap: 20px;
   align-items: flex-start;
+  container-type: inline-size;
   position: relative;
   clear: both;
   min-height: 184px;
@@ -368,7 +369,7 @@ a.bangumi-tab {
   opacity: 0.7;
 }
 
-@media (max-width: 650px) {
+@container (max-width: 650px) {
   .bangumi-coin,
   .bangumi-type,
   .bangumi-follow,
@@ -377,34 +378,34 @@ a.bangumi-tab {
   }
 }
 
-@media (max-width: 590px) {
+@container (max-width: 590px) {
   .bangumi-danmaku,
   .bangumi-wish {
     display: none;
   }
 }
 
-@media (max-width: 520px) {
+@container (max-width: 520px) {
   .bangumi-play,
   .bangumi-doing {
     display: none;
   }
 }
 
-@media (max-width: 480px) {
+@container (max-width: 480px) {
   .bangumi-collect {
     display: none;
   }
 }
 
-@media (max-width: 400px) {
+@container (max-width: 400px) {
   .bangumi-area,
   .bangumi-tag {
     display: none;
   }
 }
 
-@media (max-width: 270px) {
+@container (max-width: 270px) {
   .bangumi-info-item-score {
     display: none;
   }

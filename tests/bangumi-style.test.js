@@ -13,9 +13,9 @@ const blockFor = (selector) => {
   return match[1];
 };
 
-const mediaBlockFor = (width) => {
-  const match = css.match(new RegExp(`@media \\(max-width: ${width}px\\) \\{([\\s\\S]*?)\\n\\}`));
-  assert.ok(match, `Missing max-width:${width}px media block`);
+const containerBlockFor = (width) => {
+  const match = css.match(new RegExp(`@container \\(max-width: ${width}px\\) \\{([\\s\\S]*?)\\n\\}`));
+  assert.ok(match, `Missing max-width:${width}px container block`);
   return match[1];
 };
 
@@ -26,13 +26,14 @@ const fluidBlockFor = (selector) => {
   return match[1];
 };
 
-test('keeps legacy responsive metadata hiding rules', () => {
-  assert.match(mediaBlockFor(650), /\.bangumi-coin,\s*\n\s*\.bangumi-type,\s*\n\s*\.bangumi-follow,\s*\n\s*\.bangumi-info-item-follow\s*\{[\s\S]*?display: none;/);
-  assert.match(mediaBlockFor(590), /\.bangumi-danmaku,\s*\n\s*\.bangumi-wish\s*\{[\s\S]*?display: none;/);
-  assert.match(mediaBlockFor(520), /\.bangumi-play,\s*\n\s*\.bangumi-doing\s*\{[\s\S]*?display: none;/);
-  assert.match(mediaBlockFor(480), /\.bangumi-collect\s*\{[\s\S]*?display: none;/);
-  assert.match(mediaBlockFor(400), /\.bangumi-area,\s*\n\s*\.bangumi-tag\s*\{[\s\S]*?display: none;/);
-  assert.match(mediaBlockFor(270), /\.bangumi-info-item-score\s*\{[\s\S]*?display: none;/);
+test('hides metadata based on bangumi item width', () => {
+  assert.match(blockFor('.bangumi-item'), /container-type: inline-size;/);
+  assert.match(containerBlockFor(650), /\.bangumi-coin,\s*\n\s*\.bangumi-type,\s*\n\s*\.bangumi-follow,\s*\n\s*\.bangumi-info-item-follow\s*\{[\s\S]*?display: none;/);
+  assert.match(containerBlockFor(590), /\.bangumi-danmaku,\s*\n\s*\.bangumi-wish\s*\{[\s\S]*?display: none;/);
+  assert.match(containerBlockFor(520), /\.bangumi-play,\s*\n\s*\.bangumi-doing\s*\{[\s\S]*?display: none;/);
+  assert.match(containerBlockFor(480), /\.bangumi-collect\s*\{[\s\S]*?display: none;/);
+  assert.match(containerBlockFor(400), /\.bangumi-area,\s*\n\s*\.bangumi-tag\s*\{[\s\S]*?display: none;/);
+  assert.match(containerBlockFor(270), /\.bangumi-info-item-score\s*\{[\s\S]*?display: none;/);
 });
 
 test('lays out cover and info as aligned columns with left breathing room', () => {
