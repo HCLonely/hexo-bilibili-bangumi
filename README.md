@@ -20,6 +20,10 @@
 
 [效果预览](https://demo.hclonely.com/bangumis/)
 
+| 亮色模式 | 暗色模式 |
+| ------- | ------ |
+| ![亮色模式](./example1.png?raw=true) | ![暗色模式](./example2.png?raw=true) |
+
 ## 📦 安装
 
 ```bash
