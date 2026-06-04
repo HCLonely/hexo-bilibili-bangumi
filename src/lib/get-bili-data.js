@@ -31,7 +31,7 @@ const CONSTANTS = {
   },
   API: {
     BASE_URL: 'https://api.bilibili.com/x/space/bangumi/follow/list',
-    PAGE_SIZE: 30
+    PAGE_SIZE: 24
   },
   MAX_RETRIES: 3,
   RETRY_DELAY: 1000
@@ -76,7 +76,7 @@ async function withRetry(apiCall, retries = CONSTANTS.MAX_RETRIES) {
  */
 const getDataPage = async (vmid, status, typeNum) => {
   const response = await withRetry(() => (
-    axios.get(`${CONSTANTS.API.BASE_URL}?type=${typeNum}&follow_status=${status}&vmid=${vmid}&ps=1&pn=1`)
+    axios.get(`${CONSTANTS.API.BASE_URL}?playform=web&type=${typeNum}&follow_status=${status}&vmid=${vmid}&ps=1&pn=1`)
   ));
 
   if (response?.data?.code === 0 && response?.data?.message === 'OK' && response?.data?.data?.total !== undefined) {
@@ -126,9 +126,10 @@ const formatTotal = (count, typeNum) => {
 
 const getData = async (vmid, status, useWebp, typeNum, pn, coverMirror, SESSDATA) => {
   const response = await withRetry(() => (
-    axios.get(`${CONSTANTS.API.BASE_URL}?type=${typeNum}&follow_status=${status}&vmid=${vmid}&ps=${CONSTANTS.API.PAGE_SIZE}&pn=${pn}`, {
+    axios({
+      method: 'GET',
+      url: `${CONSTANTS.API.BASE_URL}?playform=web&type=${typeNum}&follow_status=${status}&vmid=${vmid}&ps=${CONSTANTS.API.PAGE_SIZE}&pn=${pn}`,
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0',
         Cookie: SESSDATA ? `SESSDATA=${SESSDATA};` : null
       }
     })
@@ -162,7 +163,7 @@ const getData = async (vmid, status, useWebp, typeNum, pn, coverMirror, SESSDATA
       des: bangumi?.evaluate,
       progress: !SESSDATA ? false : Math.round(
         ((parseInt(bangumi?.progress.match(/\d+/)?.[0] || '0', 10) || 0) /
-        (bangumi?.total_count > 0 ? bangumi.total_count : (bangumi.new_ep?.title || 1))) * 100
+          (bangumi?.total_count > 0 ? bangumi.total_count : (bangumi.new_ep?.title || 1))) * 100
       ),
       ep_status: !SESSDATA ? false : (parseInt(bangumi?.progress.match(/\d+/)?.[0] || '0', 10) || 0),
       new_ep: bangumi?.total_count > 0 ? bangumi.total_count : (bangumi.new_ep?.title || -1)
