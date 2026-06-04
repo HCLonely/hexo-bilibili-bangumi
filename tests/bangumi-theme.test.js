@@ -29,6 +29,7 @@ const renderBangumi = async (typeConfig) => generator.call({
 test('uses page theme config independently from global theme config', async () => {
   const page = await renderBangumi({ theme: 'dark' });
 
+  assert.match(page.data.content, /class="bangumi-quote"/);
   assert.match(page.data.content, /bangumi-container/);
   assert.match(page.data.content, /bangumi-theme-dark/);
   assert.doesNotMatch(page.data.content, /bangumi-theme-site-theme/);
