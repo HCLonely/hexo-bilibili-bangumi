@@ -8,7 +8,7 @@
 .bangumi-item {
  position:relative;
  clear:both;
- padding:25px 0;
+ padding:25px 20px;
  min-height:180px
 }
 
@@ -40,8 +40,8 @@
 }
 
 .bangumi-picture {
- position:absolute;
- left:0;
- top:15px;
+ position:static;
+ flex:0 0 110px;
+ margin-left:4px;
  width:110px
 }

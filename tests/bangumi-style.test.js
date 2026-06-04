@@ -4,6 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const css = fs.readFileSync(path.join(__dirname, '../src/lib/templates/index.css'), 'utf8');
+const fluidCss = fs.readFileSync(path.join(__dirname, '../src/lib/templates/theme/fluid.css'), 'utf8');
 
 const blockFor = (selector) => {
   const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -15,6 +16,13 @@ const blockFor = (selector) => {
 const mediaBlockFor = (width) => {
   const match = css.match(new RegExp(`@media \\(max-width: ${width}px\\) \\{([\\s\\S]*?)\\n\\}`));
   assert.ok(match, `Missing max-width:${width}px media block`);
+  return match[1];
+};
+
+const fluidBlockFor = (selector) => {
+  const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const match = fluidCss.match(new RegExp(`${escaped}\\s*\\{([^}]*)\\}`));
+  assert.ok(match, `Missing Fluid CSS block for ${selector}`);
   return match[1];
 };
 
@@ -34,4 +42,12 @@ test('lays out cover and info as aligned columns with left breathing room', () =
   assert.match(blockFor('.bangumi-picture'), /position: static;/);
   assert.match(blockFor('.bangumi-picture'), /margin-left: 4px;/);
   assert.match(blockFor('.bangumi-info'), /padding-left: 0;/);
+});
+
+test('fluid compatibility styles preserve the non-overlapping cover layout', () => {
+  assert.match(fluidBlockFor('.bangumi-item'), /padding:25px 20px;/);
+  assert.match(fluidBlockFor('.bangumi-picture'), /position:static;/);
+  assert.match(fluidBlockFor('.bangumi-picture'), /flex:0 0 110px;/);
+  assert.match(fluidBlockFor('.bangumi-picture'), /margin-left:4px;/);
+  assert.doesNotMatch(fluidBlockFor('.bangumi-picture'), /position:absolute;/);
 });
