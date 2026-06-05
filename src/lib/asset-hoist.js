@@ -41,4 +41,3 @@ const hoistBangumiAssets = (html) => {
 module.exports = {
   hoistBangumiAssets
 };
-

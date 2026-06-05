@@ -46,30 +46,48 @@
   }
 
   if (typeof hexoBilibiliBangumiOptions.pagenumsPre !== 'undefined') {
-    axios.get(new URL('../bangumis.json', window.location.href)).then((response) => {
-      if (response.data) {
-        const html = {
-          wantWatch: response.data.wantWatch.slice(10).map((item) => hexoBilibiliBangumiOptions.pug.render(hexoBilibiliBangumiOptions.pugTemplate, {
-            item,
-            ...hexoBilibiliBangumiOptions.pugOptions
-          }))
-            .join('\n'),
-          watching: response.data.watching.slice(10).map((item) => hexoBilibiliBangumiOptions.pug.render(hexoBilibiliBangumiOptions.pugTemplate, {
-            item,
-            ...hexoBilibiliBangumiOptions.pugOptions
-          }))
-            .join('\n'),
-          watched: response.data.watched.slice(10).map((item) => hexoBilibiliBangumiOptions.pug.render(hexoBilibiliBangumiOptions.pugTemplate, {
-            item,
-            ...hexoBilibiliBangumiOptions.pugOptions
-          }))
-            .join('\n')
+    function waitForPug(timeout = 60000) {
+      return new Promise((resolve, reject) => {
+        if (hexoBilibiliBangumiOptions.pug) return resolve();
+        const startTime = Date.now();
+        const check = () => {
+          if (hexoBilibiliBangumiOptions.pug) {
+            resolve();
+          } else if (Date.now() - startTime > timeout) {
+            reject(new Error('pug timeout'));
+          } else {
+            setTimeout(check, 100);
+          }
         };
-        document.querySelectorAll('#bangumi-item1>.bangumi-pagination')[0].insertAdjacentHTML('beforeBegin', html.wantWatch);
-        document.querySelectorAll('#bangumi-item2>.bangumi-pagination')[0].insertAdjacentHTML('beforeBegin', html.watching);
-        document.querySelectorAll('#bangumi-item3>.bangumi-pagination')[0].insertAdjacentHTML('beforeBegin', html.watched);
-      }
-    });
+        setTimeout(check, 100);
+      });
+    }
+    waitForPug().then(() => {
+      fetch(new URL('../bangumis.json', window.location.href)).then((response) => response.json()).then((data) => {
+        if (data) {
+          const html = {
+            wantWatch: data.wantWatch.slice(10).map((item) => hexoBilibiliBangumiOptions.pug.render(hexoBilibiliBangumiOptions.pugTemplate, {
+              item,
+              ...hexoBilibiliBangumiOptions.pugOptions
+            }))
+              .join('\n'),
+            watching: data.watching.slice(10).map((item) => hexoBilibiliBangumiOptions.pug.render(hexoBilibiliBangumiOptions.pugTemplate, {
+              item,
+              ...hexoBilibiliBangumiOptions.pugOptions
+            }))
+              .join('\n'),
+            watched: data.watched.slice(10).map((item) => hexoBilibiliBangumiOptions.pug.render(hexoBilibiliBangumiOptions.pugTemplate, {
+              item,
+              ...hexoBilibiliBangumiOptions.pugOptions
+            }))
+              .join('\n')
+          };
+          document.querySelectorAll('#bangumi-item1>.bangumi-pagination')[0].insertAdjacentHTML('beforeBegin', html.wantWatch);
+          document.querySelectorAll('#bangumi-item2>.bangumi-pagination')[0].insertAdjacentHTML('beforeBegin', html.watching);
+          document.querySelectorAll('#bangumi-item3>.bangumi-pagination')[0].insertAdjacentHTML('beforeBegin', html.watched);
+        }
+      });
+    }).catch(() => {});
   }
 
   document.getElementsByClassName('bangumi-tab')[hexoBilibiliBangumiOptions.show].click();
