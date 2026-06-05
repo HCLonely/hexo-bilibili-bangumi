@@ -9,7 +9,8 @@
  *                 支持自定义预加载数据量配置。
  */
 
-(function () {
+// eslint-disable-next-line no-unused-vars
+function pagination() {
   const firstpages = document.getElementsByClassName('bangumi-firstpage');
   const previouspages = document.getElementsByClassName('bangumi-previouspage');
   const nextpages = document.getElementsByClassName('bangumi-nextpage');
@@ -83,4 +84,4 @@
     firstpages[i].click();
     pagenums[i].innerText = `1 / ${Math.ceil(size / 10) === 0 ? 1 : Math.ceil(size / 10)}`;
   }
-}());
+};

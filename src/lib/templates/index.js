@@ -9,7 +9,8 @@
  *                 通过AJAX异步加载更多数据的分页功能。
  */
 
-(function () {
+// eslint-disable-next-line no-unused-vars
+function initPagination() {
   Element.prototype.siblings = function () {
     const siblingElement = [];
     const sibs = this.parentNode.children;
@@ -45,50 +46,33 @@
     tabs[i].onclick.apply(tabs[i]);
   }
 
-  if (typeof hexoBilibiliBangumiOptions.pagenumsPre !== 'undefined') {
-    function waitForPug(timeout = 60000) {
-      return new Promise((resolve, reject) => {
-        if (hexoBilibiliBangumiOptions.pug) return resolve();
-        const startTime = Date.now();
-        const check = () => {
-          if (hexoBilibiliBangumiOptions.pug) {
-            resolve();
-          } else if (Date.now() - startTime > timeout) {
-            reject(new Error('pug timeout'));
-          } else {
-            setTimeout(check, 100);
-          }
+  if (typeof hexoBilibiliBangumiOptions.pagenumsPre !== 'undefined' && !window.hexoBilibiliBangumiIndexLoaded) {
+    window.hexoBilibiliBangumiIndexLoaded = true;
+    fetch(new URL('../bangumis.json', window.location.href)).then((response) => response.json()).then((data) => {
+      if (data) {
+        const html = {
+          wantWatch: data.wantWatch.slice(10).map((item) => hexoBilibiliBangumiOptions.pug.render(hexoBilibiliBangumiOptions.pugTemplate, {
+            item,
+            ...hexoBilibiliBangumiOptions.pugOptions
+          }))
+            .join('\n'),
+          watching: data.watching.slice(10).map((item) => hexoBilibiliBangumiOptions.pug.render(hexoBilibiliBangumiOptions.pugTemplate, {
+            item,
+            ...hexoBilibiliBangumiOptions.pugOptions
+          }))
+            .join('\n'),
+          watched: data.watched.slice(10).map((item) => hexoBilibiliBangumiOptions.pug.render(hexoBilibiliBangumiOptions.pugTemplate, {
+            item,
+            ...hexoBilibiliBangumiOptions.pugOptions
+          }))
+            .join('\n')
         };
-        setTimeout(check, 100);
-      });
-    }
-    waitForPug().then(() => {
-      fetch(new URL('../bangumis.json', window.location.href)).then((response) => response.json()).then((data) => {
-        if (data) {
-          const html = {
-            wantWatch: data.wantWatch.slice(10).map((item) => hexoBilibiliBangumiOptions.pug.render(hexoBilibiliBangumiOptions.pugTemplate, {
-              item,
-              ...hexoBilibiliBangumiOptions.pugOptions
-            }))
-              .join('\n'),
-            watching: data.watching.slice(10).map((item) => hexoBilibiliBangumiOptions.pug.render(hexoBilibiliBangumiOptions.pugTemplate, {
-              item,
-              ...hexoBilibiliBangumiOptions.pugOptions
-            }))
-              .join('\n'),
-            watched: data.watched.slice(10).map((item) => hexoBilibiliBangumiOptions.pug.render(hexoBilibiliBangumiOptions.pugTemplate, {
-              item,
-              ...hexoBilibiliBangumiOptions.pugOptions
-            }))
-              .join('\n')
-          };
-          document.querySelectorAll('#bangumi-item1>.bangumi-pagination')[0].insertAdjacentHTML('beforeBegin', html.wantWatch);
-          document.querySelectorAll('#bangumi-item2>.bangumi-pagination')[0].insertAdjacentHTML('beforeBegin', html.watching);
-          document.querySelectorAll('#bangumi-item3>.bangumi-pagination')[0].insertAdjacentHTML('beforeBegin', html.watched);
-        }
-      });
-    }).catch(() => {});
+        document.querySelectorAll('#bangumi-item1>.bangumi-pagination')[0].insertAdjacentHTML('beforeBegin', html.wantWatch);
+        document.querySelectorAll('#bangumi-item2>.bangumi-pagination')[0].insertAdjacentHTML('beforeBegin', html.watching);
+        document.querySelectorAll('#bangumi-item3>.bangumi-pagination')[0].insertAdjacentHTML('beforeBegin', html.watched);
+      }
+    });
   }
 
   document.getElementsByClassName('bangumi-tab')[hexoBilibiliBangumiOptions.show].click();
-}());
+};

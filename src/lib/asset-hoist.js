@@ -22,18 +22,19 @@ const hoistBangumiAssets = (html) => {
   const content = html.replace(ASSET_BLOCK_RE, (_, block) => {
     block.replace(STYLE_RE, (style) => {
       styles.push(style);
-      return '';
+      return style;
     });
     block.replace(SCRIPT_RE, (script) => {
       scripts.push(script);
-      return '';
+      return script;
     });
-    return '';
+    return block;
   });
 
   return injectBefore(
     injectBefore(content, /<\/head>/i, styles.join('')),
-    /<\/body>/i,
+    // /<\/body>/i,
+    /<\/head>/i,
     scripts.join('')
   );
 };
