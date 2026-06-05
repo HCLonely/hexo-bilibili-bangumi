@@ -2,10 +2,8 @@
 if pagination
     if swupCompatible
         script(src="https://pugjs.org/js/pug.js" data-swup-reload-script='')
-        script(src="https://cdn.jsdelivr.net/npm/axios@0.27.2/dist/axios.min.js" data-swup-reload-script='')
     else
         script(src="https://pugjs.org/js/pug.js")
-        script(src="https://cdn.jsdelivr.net/npm/axios@0.27.2/dist/axios.min.js" )
 
 style
     include index.css
@@ -138,51 +136,87 @@ style
 
 // hexo-bilibili-bangumi-assets-start
 if swupCompatible
-    script(data-swup-reload-script='').
-        window.hexoBilibiliBangumiOptions = {
-            bangumiLazyload: #{!!lazyload},
-            show: #{show}
-        }
-        if (#{pagination}) {
-            hexoBilibiliBangumiOptions.pugTemplate = `!{pugTemplate}`;
-            hexoBilibiliBangumiOptions.pugOptions = {
-                loading: '#{loading}',
-                metaColor: '#{metaColor}',
-                type: '#{type}',
-                color: '#{color}',
-                lazyload: #{!!lazyload},
-                showMyComment: #{showMyComment},
-                lazyloadAttrName: '#{lazyloadAttrName || ''}',
-                srcValue: '#{srcValue}'
-            }
-            hexoBilibiliBangumiOptions.pagenumsPre = #{JSON.stringify([wantWatch.length, watching.length, watched.length])};
-            hexoBilibiliBangumiOptions.pug = require('pug');
-        }
     script(data-swup-reload-script='')
         include index.js
         include pagination.js
-else
-    script.
-        window.hexoBilibiliBangumiOptions = {
-            bangumiLazyload: #{!!lazyload},
-            show: #{show}
-        }
-        if (#{pagination}) {
-            hexoBilibiliBangumiOptions.pugTemplate = `!{pugTemplate}`;
-            hexoBilibiliBangumiOptions.pugOptions = {
-                loading: '#{loading}',
-                metaColor: '#{metaColor}',
-                type: '#{type}',
-                color: '#{color}',
-                lazyload: #{!!lazyload},
-                showMyComment: #{showMyComment},
-                lazyloadAttrName: '#{lazyloadAttrName || ''}',
-                srcValue: '#{srcValue}'
+    script(data-swup-reload-script='').
+        function renderBilibiliBangumi() {
+            if (!window.hexoBilibiliBangumiPaginationLoaded) {
+                window.hexoBilibiliBangumiPaginationLoaded = true;
+                window.hexoBilibiliBangumiOptions = {
+                    bangumiLazyload: #{!!lazyload},
+                    show: #{show}
+                }
+                if (#{pagination}) {
+                    window.hexoBilibiliBangumiOptions.pugTemplate = `!{pugTemplate}`;
+                    window.hexoBilibiliBangumiOptions.pugOptions = {
+                        loading: '#{loading}',
+                        metaColor: '#{metaColor}',
+                        type: '#{type}',
+                        color: '#{color}',
+                        lazyload: #{!!lazyload},
+                        showMyComment: #{showMyComment},
+                        lazyloadAttrName: '#{lazyloadAttrName || ''}',
+                        srcValue: '#{srcValue}'
+                    }
+                    window.hexoBilibiliBangumiOptions.pagenumsPre = #{JSON.stringify([wantWatch.length, watching.length, watched.length])};
+                    (function waitForPug() {
+                        if (typeof require !== 'undefined' && require('pug')) {
+                            window.hexoBilibiliBangumiOptions.pug = require('pug');
+                            initPagination();
+                            pagination();
+                        } else {
+                            setTimeout(waitForPug, 100);
+                        }
+                    })();
+                } else {
+                    initPagination();
+                    pagination();
+                }
             }
-            hexoBilibiliBangumiOptions.pagenumsPre = #{JSON.stringify([wantWatch.length, watching.length, watched.length])};
-            hexoBilibiliBangumiOptions.pug = require('pug');
         }
+        document.addEventListener('DOMContentLoaded', renderBilibiliBangumi);
+        window.addEventListener('pjax:complete', renderBilibiliBangumi);
+else
     script
         include index.js
         include pagination.js
+    script.
+        function renderBilibiliBangumi() {
+            if (!window.hexoBilibiliBangumiPaginationLoaded) {
+                window.hexoBilibiliBangumiPaginationLoaded = true;
+                window.hexoBilibiliBangumiOptions = {
+                    bangumiLazyload: #{!!lazyload},
+                    show: #{show}
+                }
+                if (#{pagination}) {
+                    window.hexoBilibiliBangumiOptions.pugTemplate = `!{pugTemplate}`;
+                    window.hexoBilibiliBangumiOptions.pugOptions = {
+                        loading: '#{loading}',
+                        metaColor: '#{metaColor}',
+                        type: '#{type}',
+                        color: '#{color}',
+                        lazyload: #{!!lazyload},
+                        showMyComment: #{showMyComment},
+                        lazyloadAttrName: '#{lazyloadAttrName || ''}',
+                        srcValue: '#{srcValue}'
+                    }
+                    window.hexoBilibiliBangumiOptions.pagenumsPre = #{JSON.stringify([wantWatch.length, watching.length, watched.length])};
+                    (function waitForPug() {
+                        if (typeof require !== 'undefined' && require('pug')) {
+                            window.hexoBilibiliBangumiOptions.pug = require('pug');
+                            initPagination();
+                            pagination();
+                        } else {
+                            setTimeout(waitForPug, 100);
+                        }
+                    })();
+                } else {
+                    initPagination();
+                    pagination();
+                }
+            }
+        }
+        document.addEventListener('DOMContentLoaded', renderBilibiliBangumi);
+        window.addEventListener('pjax:complete', renderBilibiliBangumi);
 // hexo-bilibili-bangumi-assets-end
