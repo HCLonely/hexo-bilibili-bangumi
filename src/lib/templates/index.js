@@ -46,8 +46,8 @@ function initPagination() {
     tabs[i].onclick.apply(tabs[i]);
   }
 
-  if (typeof hexoBilibiliBangumiOptions.pagenumsPre !== 'undefined' && !window.hexoBilibiliBangumiIndexLoaded) {
-    window.hexoBilibiliBangumiIndexLoaded = true;
+  if (typeof hexoBilibiliBangumiOptions.pagenumsPre !== 'undefined' && !document.querySelectorAll('.bangumi-tabs')[0].getAttribute('fetched')) {
+    document.querySelectorAll('.bangumi-tabs')[0].setAttribute('fetched', 'true');
     fetch(new URL('../bangumis.json', window.location.href)).then((response) => response.json()).then((data) => {
       if (data) {
         const html = {

@@ -141,38 +141,38 @@ if swupCompatible
         include pagination.js
     script(data-swup-reload-script='').
         function renderBilibiliBangumi() {
-            if (!window.hexoBilibiliBangumiPaginationLoaded) {
-                window.hexoBilibiliBangumiPaginationLoaded = true;
+            if (!window.hexoBilibiliBangumiOptions) {
                 window.hexoBilibiliBangumiOptions = {
                     bangumiLazyload: #{!!lazyload},
                     show: #{show}
                 }
-                if (#{pagination}) {
-                    window.hexoBilibiliBangumiOptions.pugTemplate = `!{pugTemplate}`;
-                    window.hexoBilibiliBangumiOptions.pugOptions = {
-                        loading: '#{loading}',
-                        metaColor: '#{metaColor}',
-                        type: '#{type}',
-                        color: '#{color}',
-                        lazyload: #{!!lazyload},
-                        showMyComment: #{showMyComment},
-                        lazyloadAttrName: '#{lazyloadAttrName || ''}',
-                        srcValue: '#{srcValue}'
-                    }
-                    window.hexoBilibiliBangumiOptions.pagenumsPre = #{JSON.stringify([wantWatch.length, watching.length, watched.length])};
-                    (function waitForPug() {
-                        if (typeof require !== 'undefined' && require('pug')) {
-                            window.hexoBilibiliBangumiOptions.pug = require('pug');
-                            initPagination();
-                            pagination();
-                        } else {
-                            setTimeout(waitForPug, 100);
-                        }
-                    })();
-                } else {
-                    initPagination();
-                    pagination();
+            }
+            if (#{pagination} && !document.querySelectorAll('.bangumi-tabs')[0].getAttribute('pagination')) {
+                document.querySelectorAll('.bangumi-tabs')[0].setAttribute('pagination', 'true');
+                window.hexoBilibiliBangumiOptions.pugTemplate = `!{pugTemplate}`;
+                window.hexoBilibiliBangumiOptions.pugOptions = {
+                    loading: '#{loading}',
+                    metaColor: '#{metaColor}',
+                    type: '#{type}',
+                    color: '#{color}',
+                    lazyload: #{!!lazyload},
+                    showMyComment: #{showMyComment},
+                    lazyloadAttrName: '#{lazyloadAttrName || ''}',
+                    srcValue: '#{srcValue}'
                 }
+                window.hexoBilibiliBangumiOptions.pagenumsPre = #{JSON.stringify([wantWatch.length, watching.length, watched.length])};
+                (function waitForPug() {
+                    if (typeof require !== 'undefined' && require('pug')) {
+                        window.hexoBilibiliBangumiOptions.pug = require('pug');
+                        initPagination();
+                        pagination();
+                    } else {
+                        setTimeout(waitForPug, 100);
+                    }
+                })();
+            } else {
+                initPagination();
+                pagination();
             }
         }
         document.addEventListener('DOMContentLoaded', renderBilibiliBangumi);
@@ -183,38 +183,38 @@ else
         include pagination.js
     script.
         function renderBilibiliBangumi() {
-            if (!window.hexoBilibiliBangumiPaginationLoaded) {
-                window.hexoBilibiliBangumiPaginationLoaded = true;
+            if (!window.hexoBilibiliBangumiOptions) {
                 window.hexoBilibiliBangumiOptions = {
                     bangumiLazyload: #{!!lazyload},
                     show: #{show}
                 }
-                if (#{pagination}) {
-                    window.hexoBilibiliBangumiOptions.pugTemplate = `!{pugTemplate}`;
-                    window.hexoBilibiliBangumiOptions.pugOptions = {
-                        loading: '#{loading}',
-                        metaColor: '#{metaColor}',
-                        type: '#{type}',
-                        color: '#{color}',
-                        lazyload: #{!!lazyload},
-                        showMyComment: #{showMyComment},
-                        lazyloadAttrName: '#{lazyloadAttrName || ''}',
-                        srcValue: '#{srcValue}'
-                    }
-                    window.hexoBilibiliBangumiOptions.pagenumsPre = #{JSON.stringify([wantWatch.length, watching.length, watched.length])};
-                    (function waitForPug() {
-                        if (typeof require !== 'undefined' && require('pug')) {
-                            window.hexoBilibiliBangumiOptions.pug = require('pug');
-                            initPagination();
-                            pagination();
-                        } else {
-                            setTimeout(waitForPug, 100);
-                        }
-                    })();
-                } else {
-                    initPagination();
-                    pagination();
+            }
+            if (#{pagination} && !document.querySelectorAll('.bangumi-tabs')[0].getAttribute('pagination')) {
+                document.querySelectorAll('.bangumi-tabs')[0].setAttribute('pagination', 'true');
+                window.hexoBilibiliBangumiOptions.pugTemplate = `!{pugTemplate}`;
+                window.hexoBilibiliBangumiOptions.pugOptions = {
+                    loading: '#{loading}',
+                    metaColor: '#{metaColor}',
+                    type: '#{type}',
+                    color: '#{color}',
+                    lazyload: #{!!lazyload},
+                    showMyComment: #{showMyComment},
+                    lazyloadAttrName: '#{lazyloadAttrName || ''}',
+                    srcValue: '#{srcValue}'
                 }
+                window.hexoBilibiliBangumiOptions.pagenumsPre = #{JSON.stringify([wantWatch.length, watching.length, watched.length])};
+                (function waitForPug() {
+                    if (typeof require !== 'undefined' && require('pug')) {
+                        window.hexoBilibiliBangumiOptions.pug = require('pug');
+                        initPagination();
+                        pagination();
+                    } else {
+                        setTimeout(waitForPug, 100);
+                    }
+                })();
+            } else {
+                initPagination();
+                pagination();
             }
         }
         document.addEventListener('DOMContentLoaded', renderBilibiliBangumi);
