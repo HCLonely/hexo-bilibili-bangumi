@@ -30,7 +30,7 @@
   color-scheme: dark;
 }
 
-[data-theme="dark"] .bangumi-container.bangumi-theme-auto {
+[data-theme="dark"] .bangumi-container.bangumi-theme-auto, .theme-dark .bangumi-container.bangumi-theme-auto {
   --bangumi-bg: #171b22;
   --bangumi-surface: #202630;
   --bangumi-surface-strong: #29313d;
@@ -321,7 +321,7 @@ a.bangumi-tab {
 }
 
 .bangumi-hide {
-  display: none;
+  display: none !important;
 }
 
 .bangumi-show {
