@@ -64,7 +64,7 @@ function pagination() {
         arr[i].classList.remove('bangumi-hide');
         const [img] = arr[i].getElementsByTagName('img');
         if (hexoBilibiliBangumiOptions.bangumiLazyload) {
-          img.src = img.getAttribute('data-src');
+          img.src = img.getAttribute('data-bangumi-src');
         }
       } else {
         arr[i].classList.add('bangumi-hide');

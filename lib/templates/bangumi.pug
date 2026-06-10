@@ -151,13 +151,11 @@ if swupCompatible
                 document.querySelectorAll('.bangumi-tabs')[0].setAttribute('pagination', 'true');
                 window.hexoBilibiliBangumiOptions.pugTemplate = `!{pugTemplate}`;
                 window.hexoBilibiliBangumiOptions.pugOptions = {
-                    loading: '#{loading}',
                     metaColor: '#{metaColor}',
                     type: '#{type}',
                     color: '#{color}',
                     lazyload: #{!!lazyload},
                     showMyComment: #{showMyComment},
-                    lazyloadAttrName: '#{lazyloadAttrName || ''}',
                     srcValue: '#{srcValue}'
                 }
                 window.hexoBilibiliBangumiOptions.pagenumsPre = #{JSON.stringify([wantWatch.length, watching.length, watched.length])};
@@ -193,13 +191,11 @@ else
                 document.querySelectorAll('.bangumi-tabs')[0].setAttribute('pagination', 'true');
                 window.hexoBilibiliBangumiOptions.pugTemplate = `!{pugTemplate}`;
                 window.hexoBilibiliBangumiOptions.pugOptions = {
-                    loading: '#{loading}',
                     metaColor: '#{metaColor}',
                     type: '#{type}',
                     color: '#{color}',
                     lazyload: #{!!lazyload},
                     showMyComment: #{showMyComment},
-                    lazyloadAttrName: '#{lazyloadAttrName || ''}',
                     srcValue: '#{srcValue}'
                 }
                 window.hexoBilibiliBangumiOptions.pagenumsPre = #{JSON.stringify([wantWatch.length, watching.length, watched.length])};
