@@ -46,30 +46,88 @@ function initPagination() {
     tabs[i].onclick.apply(tabs[i]);
   }
 
+  function runWhenIdle(callback) {
+    if (typeof requestIdleCallback === 'function') {
+      requestIdleCallback(callback);
+      return;
+    }
+    setTimeout(() => {
+      callback({
+        timeRemaining: () => 0
+      });
+    }, 16);
+  }
+
+  function createBangumiPageRenderer() {
+    if (hexoBilibiliBangumiOptions.pug && typeof hexoBilibiliBangumiOptions.pug.compile === 'function') {
+      const render = hexoBilibiliBangumiOptions.pug.compile(hexoBilibiliBangumiOptions.pugTemplate);
+      return function hexoBilibiliBangumiRenderPage(item) {
+        return render({
+          item,
+          ...hexoBilibiliBangumiOptions.pugOptions
+        });
+      };
+    }
+    return function hexoBilibiliBangumiRenderPage(item) {
+      return hexoBilibiliBangumiOptions.pug.render(hexoBilibiliBangumiOptions.pugTemplate, {
+        item,
+        ...hexoBilibiliBangumiOptions.pugOptions
+      });
+    };
+  }
+
+  function renderItemsInIdle(items, renderPage, onComplete) {
+    const html = [];
+    let index = 0;
+    function renderBatch(deadline) {
+      let renderedInFrame = false;
+      while (index < items.length && (!renderedInFrame || deadline.timeRemaining() > 0)) {
+        html.push(renderPage(items[index]));
+        index++;
+        renderedInFrame = true;
+      }
+      if (index < items.length) {
+        runWhenIdle(renderBatch);
+        return;
+      }
+      onComplete(html.join('\n'));
+    }
+    runWhenIdle(renderBatch);
+  }
+
+  function renderTasksInIdle(tasks) {
+    const renderPage = createBangumiPageRenderer();
+    let taskIndex = 0;
+    function runNextTask() {
+      if (taskIndex >= tasks.length) return;
+      const task = tasks[taskIndex];
+      taskIndex++;
+      renderItemsInIdle(task.items, renderPage, (html) => {
+        document.querySelectorAll(task.selector)[0].insertAdjacentHTML('beforeBegin', html);
+        runNextTask();
+      });
+    }
+    runNextTask();
+  }
+
   if (typeof hexoBilibiliBangumiOptions.pagenumsPre !== 'undefined' && !document.querySelectorAll('.bangumi-tabs')[0].getAttribute('fetched')) {
     document.querySelectorAll('.bangumi-tabs')[0].setAttribute('fetched', 'true');
     fetch(new URL('../bangumis.json', window.location.href)).then((response) => response.json()).then((data) => {
       if (data) {
-        const html = {
-          wantWatch: data.wantWatch.slice(10).map((item) => hexoBilibiliBangumiOptions.pug.render(hexoBilibiliBangumiOptions.pugTemplate, {
-            item,
-            ...hexoBilibiliBangumiOptions.pugOptions
-          }))
-            .join('\n'),
-          watching: data.watching.slice(10).map((item) => hexoBilibiliBangumiOptions.pug.render(hexoBilibiliBangumiOptions.pugTemplate, {
-            item,
-            ...hexoBilibiliBangumiOptions.pugOptions
-          }))
-            .join('\n'),
-          watched: data.watched.slice(10).map((item) => hexoBilibiliBangumiOptions.pug.render(hexoBilibiliBangumiOptions.pugTemplate, {
-            item,
-            ...hexoBilibiliBangumiOptions.pugOptions
-          }))
-            .join('\n')
-        };
-        document.querySelectorAll('#bangumi-item1>.bangumi-pagination')[0].insertAdjacentHTML('beforeBegin', html.wantWatch);
-        document.querySelectorAll('#bangumi-item2>.bangumi-pagination')[0].insertAdjacentHTML('beforeBegin', html.watching);
-        document.querySelectorAll('#bangumi-item3>.bangumi-pagination')[0].insertAdjacentHTML('beforeBegin', html.watched);
+        renderTasksInIdle([
+          {
+            items: data.wantWatch.slice(10),
+            selector: '#bangumi-item1>.bangumi-pagination'
+          },
+          {
+            items: data.watching.slice(10),
+            selector: '#bangumi-item2>.bangumi-pagination'
+          },
+          {
+            items: data.watched.slice(10),
+            selector: '#bangumi-item3>.bangumi-pagination'
+          }
+        ]);
       }
     });
   }
