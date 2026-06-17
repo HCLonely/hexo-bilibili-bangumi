@@ -22,7 +22,7 @@
     "anime"
   ],
   "dependencies": {
-    "@babel/runtime": "^7.18.0",
+    "@babel/runtime": "^8.0.0",
     "axios": "^1.0.0",
     "bangumi-data": "^0.3.91",
     "cheerio": "^1.0.0-rc.11",
