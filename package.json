@@ -38,7 +38,7 @@
     "url": "git+https://github.com/HCLonely/hexo-bilibili-bangumi.git"
   },
   "devDependencies": {
-    "@babel/core": "^7.18.0",
+    "@babel/core": "^8.0.1",
     "@babel/plugin-transform-runtime": "^7.18.0",
     "@babel/preset-env": "^7.18.0",
     "@eslint/eslintrc": "^3.3.1",
