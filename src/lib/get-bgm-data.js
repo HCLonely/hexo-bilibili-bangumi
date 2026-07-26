@@ -534,18 +534,18 @@ module.exports.getBgmData = async function getBgmData({
       skipNsfw
     };
     // 获取三种状态的数据
-    const wantWatch = await getItemsId({
+    const wantWatch = (await getItemsId({
       ...options,
       status: 'wish'
-    }).filter((item) => !(skipNsfw && item.nsfw));
-    const watching = await getItemsId({
+    })).filter((item) => !(skipNsfw && item.nsfw));
+    const watching = (await getItemsId({
       ...options,
       status: 'do'
-    }).filter((item) => !(skipNsfw && item.nsfw));
-    const watched = await getItemsId({
+    })).filter((item) => !(skipNsfw && item.nsfw));
+    const watched = (await getItemsId({
       ...options,
       status: 'collect'
-    }).filter((item) => !(skipNsfw && item.nsfw));
+    })).filter((item) => !(skipNsfw && item.nsfw));
 
     const endTime = new Date().getTime();
     log.info(`${wantWatch.length + watching.length + watched.length} ${type}s have been loaded in ${endTime - startTime} ms`);
