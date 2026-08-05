@@ -1,6 +1,6 @@
 {
   "name": "hexo-bilibili-bangumi",
-  "version": "2.1.8",
+  "version": "2.1.9",
   "description": "hexo bilibili番剧页",
   "main": "index.js",
   "scripts": {
@@ -43,12 +43,12 @@
     "@babel/preset-env": "^8.0.1",
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^10.0.1",
-    "babel-preset-minify": "^0.5.2",
     "clean-css": "^5.3.3",
     "eslint": "^10.0.0",
     "glob-exec": "^0.1.1",
     "globals": "^17.0.0",
-    "pug-lint": "^2.7.0"
+    "pug-lint": "^2.7.0",
+    "terser": "^5.49.1"
   },
   "allowScripts": {
     "core-js@2.6.12": true,

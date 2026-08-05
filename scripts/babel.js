@@ -9,6 +9,7 @@
  */
 const babel = require('@babel/core');
 const fs = require('fs');
+const { minify } = require('terser');
 
 const nodeFiles = [
   {
@@ -71,7 +72,7 @@ const nodeOptions = {
 
 const browserOptions = {
   comments: false,
-  presets: ['@babel/preset-env', 'minify'],
+  presets: ['@babel/preset-env'],
   targets: '> 0.25%, not dead'
 };
 
@@ -81,8 +82,16 @@ nodeFiles.forEach((file) => {
   fs.writeFileSync(file.to, result.code);
 });
 
-browserFiles.forEach((file) => {
-  const code = fs.readFileSync(file.from, 'utf-8');
-  const result = babel.transformSync(code, browserOptions);
-  fs.writeFileSync(file.to, result.code);
+const buildBrowserFiles = async () => {
+  await Promise.all(browserFiles.map(async (file) => {
+    const code = fs.readFileSync(file.from, 'utf-8');
+    const result = babel.transformSync(code, browserOptions);
+    const minifiedResult = await minify(result.code);
+    fs.writeFileSync(file.to, minifiedResult.code);
+  }));
+};
+
+buildBrowserFiles().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
 });
