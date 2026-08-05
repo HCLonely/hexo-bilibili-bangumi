@@ -1,6 +1,6 @@
 {
   "name": "hexo-bilibili-bangumi",
-  "version": "2.1.7",
+  "version": "2.1.8",
   "description": "hexo bilibili番剧页",
   "main": "index.js",
   "scripts": {
@@ -49,5 +49,9 @@
     "glob-exec": "^0.1.1",
     "globals": "^17.0.0",
     "pug-lint": "^2.7.0"
+  },
+  "allowScripts": {
+    "core-js@2.6.12": true,
+    "hexo-util@3.3.0": true
   }
 }

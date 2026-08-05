@@ -88,7 +88,7 @@ module.exports = async function (locals, type = 'bangumi') {
     : 'auto';
   const contents = await pug.renderFile(path.join(__dirname, 'templates/bangumi.pug'), {
     quote: config[type].quote,
-    show: config[type].show || 1,
+    show: config[type].show ?? 1,
     // loading: config[type].loading,
     metaColor: config[type].metaColor,
     color: config[type].color,
