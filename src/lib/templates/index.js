@@ -95,6 +95,14 @@ function initPagination() {
     runWhenIdle(renderBatch);
   }
 
+  function sanitizeBangumiHtml(html) {
+    // 过滤掉可能来自被篡改的 bangumis.json 中的恶意脚本、事件处理器及 javascript: 链接
+    return html
+      .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+      .replace(/\s(on\w+)\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '')
+      .replace(/(href|src)\s*=\s*(["'])\s*javascript:[^"']*\2/gi, '$1=$2#$2');
+  }
+
   function renderTasksInIdle(tasks) {
     const renderPage = createBangumiPageRenderer();
     let taskIndex = 0;
@@ -103,7 +111,7 @@ function initPagination() {
       const task = tasks[taskIndex];
       taskIndex++;
       renderItemsInIdle(task.items, renderPage, (html) => {
-        document.querySelectorAll(task.selector)[0].insertAdjacentHTML('beforeBegin', html);
+        document.querySelectorAll(task.selector)[0].insertAdjacentHTML('beforeBegin', sanitizeBangumiHtml(html));
         runNextTask();
       });
     }
